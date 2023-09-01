@@ -1,5 +1,10 @@
 {
   "src": [
-    "pages/Index"
+    "pages/Index",
+    "pages/about",
+    "pages/guide",
+    "pages/help",
+    "pages/illustrate",
+    "pages/setting"
   ]
 }

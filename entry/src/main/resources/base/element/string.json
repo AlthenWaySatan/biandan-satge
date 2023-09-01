@@ -1,16 +1,544 @@
 {
   "string": [
     {
-      "name": "module_desc",
-      "value": "module description"
-    },
-    {
       "name": "EntryAbility_desc",
       "value": "description"
     },
     {
       "name": "EntryAbility_label",
       "value": "便单"
+    },
+    {
+      "name": "EntryFormAbility_desc",
+      "value": "form_description"
+    },
+    {
+      "name": "EntryFormAbility_label",
+      "value": "form_label"
+    },
+    {
+      "name": "title_immersive",
+      "value": "Today's delicious food"
+    },
+    {
+      "name": "detail_immersive",
+      "value": "A bowl of fragrant fried noodles, back to childhood memories"
+    },
+    {
+      "name": "module_desc",
+      "value": "模块描述"
+    },
+    {
+      "name": "MainAbility_desc",
+      "value": "description"
+    },
+    {
+      "name": "MainAbility_label",
+      "value": "便单"
+    },
+    {
+      "name": "DataAbility_desc",
+      "value": "hap sample empty provider"
+    },
+    {
+      "name": "Todo",
+      "value": "清单"
+    },
+    {
+      "name": "Calendar",
+      "value": "日历"
+    },
+    {
+      "name": "Four_quadrant",
+      "value": "四象限"
+    },
+    {
+      "name": "Setting",
+      "value": "设置"
+    },
+    {
+      "name": "Today",
+      "value": "今天"
+    },
+    {
+      "name": "AllTodo",
+      "value": "全部待办"
+    },
+    {
+      "name": "Done_things",
+      "value": "已完成"
+    },
+    {
+      "name": "Todo_things",
+      "value": "待完成"
+    },
+    {
+      "name": "Path_things",
+      "value": "已过期"
+    },
+    {
+      "name": "No_folder",
+      "value": "未分类"
+    },
+    {
+      "name": "Todo_folder",
+      "value": "待办单"
+    },
+    {
+      "name": "My_favorite",
+      "value": "我的收藏"
+    },
+    {
+      "name": "Important_things",
+      "value": "重要待办"
+    },
+    {
+      "name": "Add_folder",
+      "value": "添加待办单"
+    },
+    {
+      "name": "Edit_folder",
+      "value": "编辑待办单"
+    },
+    {
+      "name": "share",
+      "value": "分享"
+    },
+    {
+      "name": "collect",
+      "value": "收藏"
+    },
+    {
+      "name": "cancelCollect",
+      "value": "取消收藏"
+    },
+    {
+      "name": "move",
+      "value": "移动"
+    },
+    {
+      "name": "delete",
+      "value": "删除"
+    },
+    {
+      "name": "allChoose",
+      "value": "全选"
+    },
+    {
+      "name": "cancelAllChoose",
+      "value": "取消全选"
+    },
+    {
+      "name": "putOff",
+      "value": "顺延"
+    },
+    {
+      "name": "allPutOff",
+      "value": "全部顺延"
+    },
+    {
+      "name": "editTitle",
+      "value": "已选择 %s 项"
+    },
+    {
+      "name": "deleteEvent",
+      "value": "删除待办"
+    },
+    {
+      "name": "done",
+      "value": "完成"
+    },
+    {
+      "name": "deleteEvent_info",
+      "value": "所选待办将从本地及所有同步设备删除。是否删除？"
+    },
+    {
+      "name": "cancel",
+      "value": "取消"
+    },
+    {
+      "name": "confirm",
+      "value": "确认"
+    },
+    {
+      "name": "save",
+      "value": "保存"
+    },
+    {
+      "name": "pleaseChooseFolder",
+      "value": "确认"
+    },
+    {
+      "name": "deleteEvent_info2",
+      "value": "选择的待办中含有重复待办，请选择删除方式。"
+    },
+    {
+      "name": "deleteEventOnly",
+      "value": "仅删除此次待办"
+    },
+    {
+      "name": "deleteEventAll",
+      "value": "删除全部重复待办"
+    },
+    {
+      "name": "addFolder",
+      "value": "添加待办单"
+    },
+    {
+      "name": "folderEntryNull",
+      "value": "输入待办单名称不能为空"
+    },
+    {
+      "name": "eventEntryNull",
+      "value": "输入待办标题不能为空"
+    },
+    {
+      "name": "inputFolderName",
+      "value": "输入待办单名称..."
+    },
+    {
+      "name": "noClock",
+      "value": "不提醒"
+    },
+    {
+      "name": "beforeStartClock",
+      "value": "开始前提醒"
+    },
+    {
+      "name": "fixedTimeClock",
+      "value": "固定时间提醒"
+    },
+    {
+      "name": "onlyOneTime",
+      "value": "仅一次"
+    },
+    {
+      "name": "customize",
+      "value": "自定义"
+    },
+    {
+      "name": "everyWorkingDay",
+      "value": "每个非周末"
+    },
+    {
+      "name": "everyNonworkingDay",
+      "value": "每个周末"
+    },
+    {
+      "name": "everyDay",
+      "value": "每天"
+    },
+    {
+      "name": "ebbinghaus",
+      "value": "艾宾浩斯"
+    },
+    {
+      "name": "day",
+      "value": "天"
+    },
+    {
+      "name": "week",
+      "value": "周"
+    },
+    {
+      "name": "month",
+      "value": "月"
+    },
+    {
+      "name": "year",
+      "value": "年"
+    },
+    {
+      "name": "Monday",
+      "value": "星期一"
+    },
+    {
+      "name": "Tuesday",
+      "value": "星期二"
+    },
+    {
+      "name": "Wednesday",
+      "value": "星期三"
+    },
+    {
+      "name": "Thursday",
+      "value": "星期四"
+    },
+    {
+      "name": "Friday",
+      "value": "星期五"
+    },
+    {
+      "name": "Saturday",
+      "value": "星期六"
+    },
+    {
+      "name": "Sunday",
+      "value": "星期日"
+    },
+    {
+      "name": "Mon",
+      "value": "周一"
+    },
+    {
+      "name": "Tue",
+      "value": "周二"
+    },
+    {
+      "name": "Wed",
+      "value": "周三"
+    },
+    {
+      "name": "Thu",
+      "value": "周四"
+    },
+    {
+      "name": "Fri",
+      "value": "周五"
+    },
+    {
+      "name": "Sat",
+      "value": "周六"
+    },
+    {
+      "name": "Sun",
+      "value": "周日"
+    },
+    {
+      "name": "timeWrong",
+      "value": "开始时间不能晚于结束时间"
+    },
+    {
+      "name": "urgentTimeWrong",
+      "value": "紧急事件的结束时间不能为一天的最后一分钟"
+    },
+    {
+      "name": "numberWrong",
+      "value": "输入的数字无效"
+    },
+    {
+      "name": "clockCantBeEarlier",
+      "value": "提前提醒时间不能跨天"
+    },
+    {
+      "name": "createEvent",
+      "value": "新建待办"
+    },
+    {
+      "name": "doSomething",
+      "value": "做点什么吧！"
+    },
+    {
+      "name": "Tomorrow",
+      "value": "明天"
+    },
+    {
+      "name": "Remark",
+      "value": "备注..."
+    },
+    {
+      "name": "cycle",
+      "value": "重复"
+    },
+    {
+      "name": "cycleState",
+      "value": "重复模式"
+    },
+    {
+      "name": "cycleStartTime",
+      "value": "重复开始时间"
+    },
+    {
+      "name": "cycleEndTime",
+      "value": "重复结束时间"
+    },
+    {
+      "name": "cycleTime",
+      "value": "重复周期"
+    },
+    {
+      "name": "cycleSpecificTime",
+      "value": "重复具体时间"
+    },
+    {
+      "name": "timeLimit",
+      "value": "时限"
+    },
+    {
+      "name": "validTime",
+      "value": "有效时间"
+    },
+    {
+      "name": "validStartTime",
+      "value": "有效开始时间"
+    },
+    {
+      "name": "validEndTime",
+      "value": "有效结束时间"
+    },
+    {
+      "name": "clock",
+      "value": "提醒"
+    },
+    {
+      "name": "clockState",
+      "value": "提醒模式"
+    },
+    {
+      "name": "leadTime",
+      "value": "提前时间"
+    },
+    {
+      "name": "fixedTime",
+      "value": "固定时间"
+    },
+    {
+      "name": "times",
+      "value": "完成次数"
+    },
+    {
+      "name": "fullDay",
+      "value": "全天"
+    },
+    {
+      "name": "dateCantBeEmpty",
+      "value": "选择日期不能为空"
+    },
+    {
+      "name": "quadrant0",
+      "value": "重要且紧急"
+    },
+    {
+      "name": "quadrant1",
+      "value": "重要但不紧急"
+    },
+    {
+      "name": "quadrant2",
+      "value": "不重要但紧急"
+    },
+    {
+      "name": "quadrant3",
+      "value": "不重要且不紧急"
+    },
+    {
+      "name": "accentColor",
+      "value": "主题色"
+    },
+    {
+      "name": "defineCycleLength",
+      "value": "默认重复时长"
+    },
+    {
+      "name": "defaultClockTime",
+      "value": "默认提醒时间"
+    },
+    {
+      "name": "defaultUrgentTime",
+      "value": "默认紧急结束时间"
+    },
+    {
+      "name": "firstDayOfWeek",
+      "value": "星期开始于"
+    },
+    {
+      "name": "defaultTimeFormat",
+      "value": "时间制式设置"
+    },
+    {
+      "name": "24TimeFormat",
+      "value": "24小时制"
+    },
+    {
+      "name": "12TimeFormat",
+      "value": "12小时制"
+    },
+    {
+      "name": "checkForUpdates",
+      "value": "检查更新"
+    },
+    {
+      "name": "privacyPolicy",
+      "value": "隐私声明"
+    },
+    {
+      "name": "about",
+      "value": "关于"
+    },
+    {
+      "name": "restartToTakeEffect",
+      "value": "重启应用生效"
+    },
+    {
+      "name": "back",
+      "value": "返回"
+    },
+    {
+      "name": "deleteFolder",
+      "value": "删除待办单"
+    },
+    {
+      "name": "folderIsNotNull",
+      "value": "所选待办单不为空，请选择其中待办的处理方式"
+    },
+    {
+      "name": "folderMove",
+      "value": "移动到未分类待办单"
+    },
+    {
+      "name": "deleteAll",
+      "value": "全部删除"
+    },
+    {
+      "name": "version",
+      "value": "版本：%s"
+    },
+    {
+      "name": "ourWebsite",
+      "value": "官网"
+    },
+    {
+      "name": "contactUs",
+      "value": "联系我们"
+    },
+    {
+      "name": "support",
+      "value": "支持一下"
+    },
+    {
+      "name": "copyright",
+      "value": "版权所有 © biandangroup 保留一切权利"
+    },
+    {
+      "name": "technicalSupport",
+      "value": "技术支持：华为开发者联盟"
+    },
+    {
+      "name": "userAgreement",
+      "value": "便单用户协议"
+    },
+    {
+      "name": "_and_",
+      "value": " 和 "
+    },
+    {
+      "name": "privacyStatement",
+      "value": "隐私声明"
+    },
+    {
+      "name": "FromAbility_desc",
+      "value": "hap sample empty service"
+    },
+    {
+      "name": "FormSettingAbility_desc",
+      "value": "description"
+    },
+    {
+      "name": "FormSettingAbility_label",
+      "value": "label"
+    },
+    {
+      "name": "fileDataAbility_desc",
+      "value": "hap sample empty provider"
     }
   ]
 }
