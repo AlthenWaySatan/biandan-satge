@@ -4,18 +4,23 @@ import { get_accent, get_translucentSaturation_accent } from '../../control/Acce
 
 @Component
 export struct CalendarDate {
-  @State @Watch('getResource') date: number[] = []
+  @Link @Watch('getResource') date: number[]
   @StorageLink('showDate') showDate: number[] = [(new Date().getFullYear()), (new Date().getMonth() + 1), (new Date().getDate())]
   @StorageLink('folderId') folderId: number = 0
   @StorageLink('openCalendar') openCalendar: boolean = false
-  @State isHidden: boolean = false
-  @State showResource: [number, number, [string, Resource, number][]] = [0, 0, []]
+  @Link isHidden: boolean;
+  @State showResource0: number = 0;
+  @State showResource1: number = 0;
+  @State showResource: [string, Resource, number][] = []
   private accentColor: Resource
   private translucentSaturationAccentColor: Resource
 
   private getResource() {
     getResource_little(this.date[0], this.date[1], this.date[2], this.folderId).then((ret) => {
-      this.showResource = ret
+      this.showResource = ret[2]
+      this.showResource0 = ret[0];
+      this.showResource1 = ret[1];
+      console.log('getResource_little ', this.showResource);
     })
   }
 
@@ -41,7 +46,7 @@ export struct CalendarDate {
               .alignItems(VerticalAlign.Bottom)
 
               Progress({
-                value: ((this.showResource[1] + this.showResource[0]) == 0) ? 0 : ((this.showResource[0]) / (this.showResource[1] + this.showResource[0]) * 100),
+                value: ((this.showResource1 + this.showResource0) == 0) ? 0 : ((this.showResource0) / (this.showResource1 + this.showResource0) * 100),
                 total: 100,
                 type: ProgressType.Ring
               })
@@ -62,8 +67,8 @@ export struct CalendarDate {
             Column() {
               if (!this.isHidden && (this.showDate[1] == this.date[1])) {
                 EventsList_little({
-                  doneNum: this.showResource[0],
-                  showResource: this.showResource[2],
+                  doneNum: $showResource0,
+                  showResource: $showResource,
                   titleColor: (this.showDate[2] == this.date[2] && this.showDate[1] == this.date[1]) &&
                               (new Date().getDate() == this.date[2] && new Date().getMonth() + 1 == this.date[1]) ?
                   $r('app.color.foreground') : $r('app.color.text_level1')

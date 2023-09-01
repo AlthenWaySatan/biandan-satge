@@ -15,7 +15,9 @@ export struct EventsTable {
   @StorageLink('isHidden') isHidden: boolean[] = [false, false, false]
 
   //旋转下键三角
-  @State IsRotate: number[] = [0, 0, 0]
+  @State IsRotate0: number = 0;
+  @State IsRotate1: number = 0;
+  @State IsRotate2: number = 0;
   private accentColor: Resource
   @State isRefreshing: boolean = false
   @State isScroll: boolean = false
@@ -32,8 +34,9 @@ export struct EventsTable {
     this.accentColor = get_accent()
     this.tootleOffset = 0
     this.isScroll = false
-    for (let i = 0; i < 3; i++)
-      this.IsRotate[i] = this.isHidden[i] ? -90 : 0
+    this.IsRotate0 = this.isHidden[0] ? -90 : 0
+    this.IsRotate1 = this.isHidden[1] ? -90 : 0
+    this.IsRotate2 = this.isHidden[2] ? -90 : 0
   }
 
   /**
@@ -42,11 +45,27 @@ export struct EventsTable {
    */
   private hideCard(id: number): void {
     console.info('Click: ' + id.toString())
-    if (this.isHidden[id]) {
-      this.IsRotate[id] = 0
-    }
-    else {
-      this.IsRotate[id] = -90
+    if (id == 0) {
+      if (this.isHidden[id]) {
+        this.IsRotate0 = 0
+      }
+      else {
+        this.IsRotate0 = -90
+      }
+    } else if (id == 1) {
+      if (this.isHidden[id]) {
+        this.IsRotate1 = 0
+      }
+      else {
+        this.IsRotate1 = -90
+      }
+    } else if (id == 2) {
+      if (this.isHidden[id]) {
+        this.IsRotate2 = 0
+      }
+      else {
+        this.IsRotate2 = -90
+      }
     }
     this.isHidden[id] = !this.isHidden[id]
   }
@@ -67,7 +86,7 @@ export struct EventsTable {
             Column() {
               TitleOne_small({
                 mainTitle: $r('app.string.Todo_things'),
-                rotateAngle: this.IsRotate[0],
+                rotateAngle: $IsRotate0,
                 offHeight: -12
               })
             }
@@ -84,7 +103,7 @@ export struct EventsTable {
               Column() {
                 TitleOne_small({
                   mainTitle: $r('app.string.Path_things'),
-                  rotateAngle: this.IsRotate[1]
+                  rotateAngle: $IsRotate1
                 })
               }.onClick(() => this.hideCard(1))
               .layoutWeight(1)
@@ -106,7 +125,7 @@ export struct EventsTable {
                     putOffAll()
                   })
               }
-              .padding({ top: 16 })
+              .padding({ top: 8 })
               .height(48)
               .width(this.isEdit || this.isHidden[1] ? 0 : 108)
             }
@@ -122,7 +141,7 @@ export struct EventsTable {
             Column() {
               TitleOne_small({
                 mainTitle: $r('app.string.Done_things'),
-                rotateAngle: this.IsRotate[2]
+                rotateAngle: $IsRotate2
               })
             }.onClick(() => this.hideCard(2))
 

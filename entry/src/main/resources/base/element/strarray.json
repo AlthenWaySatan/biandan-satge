@@ -1,0 +1,47 @@
+{
+  "strarray": [
+    {
+      "name": "dateUnit",
+      "value": [
+        {
+          "value": "天"
+        },
+        {
+          "value": "周"
+        },
+        {
+          "value": "月"
+        },
+        {
+          "value": "年"
+        }
+      ]
+    },
+    {
+      "name": "weekDays",
+      "value": [
+        {
+          "value": "星期一"
+        },
+        {
+          "value": "星期二"
+        },
+        {
+          "value": "星期三"
+        },
+        {
+          "value": "星期四"
+        },
+        {
+          "value": "星期五"
+        },
+        {
+          "value": "星期六"
+        },
+        {
+          "value": "星期日"
+        }
+      ]
+    }
+  ]
+}

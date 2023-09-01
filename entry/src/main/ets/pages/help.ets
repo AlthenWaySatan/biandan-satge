@@ -10,6 +10,10 @@ struct ProgressExample {
   @State showAnswer: boolean[] = []
 
   aboutToAppear() {
+    console.log('length my', helpResources.length.toString());
+    this.showAnswer = new Array(helpResources.length);
+    for(var i = 0; i < this.showAnswer.length; i++)
+        this.showAnswer[i] = false;
   }
 
   aboutToDisappear() {
@@ -17,11 +21,11 @@ struct ProgressExample {
     this.showAnswer = []
   }
 
-  @Builder listItem(title: string, subTitle: string[], showAnswer: boolean) {
+  @Builder listItem($$: {title: string, subTitle: string[], showAnswer: boolean}) {
     Column() {
       Column() {
         Row() {
-          Text(title)
+          Text($$.title)
             .fontColor($r('app.color.text_level1'))
             .fontSize(16)
             .fontWeight(FontWeight.Medium)
@@ -31,9 +35,9 @@ struct ProgressExample {
       .alignItems(HorizontalAlign.Start)
       .width('100%')
 
-      if (showAnswer)
+      if ($$.showAnswer)
       Column() {
-        ForEach(subTitle, (item: string) => {
+        ForEach($$.subTitle, (item: string) => {
           Text(item)
             .fontColor($r('app.color.text_level2'))
             .fontSize(16)
@@ -76,10 +80,11 @@ struct ProgressExample {
             Column() {
               ForEach(helpResources, (item: object, index: number) => {
                 Column() {
-                  this.listItem(item['Question'], item['Answer'], this.showAnswer[index])
+                  this.listItem({title: item['Question'], subTitle: item['Answer'], showAnswer: this.showAnswer[index]})
                 }
                 .onClick(() => {
                   this.showAnswer[index] = !this.showAnswer[index]
+                  console.log(index.toString(), this.showAnswer[index].toString())
                 })
               })
             }

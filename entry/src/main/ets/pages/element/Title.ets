@@ -1,4 +1,4 @@
-import prompt from '@ohos.promptAction'
+import prompt from '@ohos.prompt'
 import FolderResource from '../../model/FolderResourceContact';
 import ThingsResource from '../../model/EventsResourceContact';
 import { getResource } from '../../control/EventsController';
@@ -6,8 +6,8 @@ import { get_accent } from '../../control/AccentController';
 
 @Component
 export struct TitleTwo {
-  private mainTitle: string | Resource
-  private subTitle: string | Resource
+  @Link mainTitle: string;
+  @State subTitle: string = '全部待办';
   private columnNum: number
   private offsetNum: number
   private changeDate: number[]
@@ -18,6 +18,33 @@ export struct TitleTwo {
   @StorageLink('showDate') showDate: number[] = []
   @StorageLink('folderId') folderId: number = 0
   @StorageLink('showFolderAddPanel') showFolderAddPanel: boolean = false
+  private todayDate: number[] = [(new Date().getFullYear()), (new Date().getMonth() + 1), (new Date().getDate())]
+
+  /**
+   * 获取日期
+   */
+  private getShowDate() {
+    if (this.todayDate[0] == this.showDate[0]) {
+      if (this.todayDate[1] == this.showDate[1] && this.todayDate[2] == this.showDate[2])
+        return '今天';
+      else
+        return this.showDate[1] + '月' + this.showDate[2] + '日';
+    }
+    else
+      return this.showDate[0] + '年' + this.showDate[1] + '月' + this.showDate[2] + '日';
+  }
+
+  /**
+   * 获取当前待办单标题
+   */
+  private getFolderTitle() {
+    if (this.folderId <= 0)
+      return this.systemFolderResource[-this.folderId].title;
+    else {
+      let id = this.userFolderResource.findIndex((item) => item.id == this.folderId)
+      return this.userFolderResource[id].title;
+    }
+  }
 
   private accentColor: Resource
   aboutToAppear() {
@@ -32,6 +59,7 @@ export struct TitleTwo {
 
   private changeFolder(NewFolder: number): void {
     this.folderId = NewFolder
+    this.subTitle = this.getFolderTitle()
     getResource(this.showDate[0], this.showDate[1], this.showDate[2], this.folderId)
     console.info('Click: ' + NewFolder.toString())
   }
@@ -74,7 +102,7 @@ export struct TitleTwo {
         }
         .onTouch(() => this.changeFolder(item.id))
         .padding({ left: 12, right: 12 })
-      }, (item: FolderResource) => item.toString())
+      })
       Column().height(6).width('100%').backgroundColor($r('app.color.background'))
       ForEach(this.userFolderResource, (item: FolderResource) => {
         Column() {
@@ -111,7 +139,7 @@ export struct TitleTwo {
         }
         .onTouch(() => this.changeFolder(item.id))
         .padding({ left: 12, right: 12 })
-      }, (item: FolderResource) => item.toString())
+      })
       Column() {
         Row() {
           Row() {
@@ -146,6 +174,7 @@ export struct TitleTwo {
       })
       .padding({ left: 12, right: 12 })
     }
+    .width(240)
   }
 
   @State isLunar: boolean = false
@@ -173,6 +202,7 @@ export struct TitleTwo {
           Button($r('app.string.Today'))
             .onTouch(() => {
               this.showDate = [(new Date().getFullYear()), (new Date().getMonth() + 1), (new Date().getDate())]
+              this.mainTitle = this.getShowDate();
               getResource(this.showDate[0], this.showDate[1], this.showDate[2], this.folderId);
             })
             .fontColor(this.accentColor)
@@ -189,6 +219,7 @@ export struct TitleTwo {
           Button($r('app.string.confirm'))
             .onTouch(() => {
               this.showDate = this.changeDate
+              this.mainTitle = this.getShowDate();
               getResource(this.showDate[0], this.showDate[1], this.showDate[2], this.folderId);
             })
             .fontColor(this.accentColor)
@@ -255,7 +286,7 @@ export struct TitleTwo {
 
 @Component
 export struct TitleOne {
-  private mainTitle: string | Resource
+  @Link mainTitle: string;
   private columnNum: number
   private offsetNum: number
   @Link showDate: number[]
@@ -263,8 +294,23 @@ export struct TitleOne {
   private changeDate: number[]
   @StorageLink('doneNum') doneNum: number = 0
   @StorageLink('todoNum') todoNum: number = 0
-  @StorageLink('thingsShowResource') thingsShowResource: ThingsResource[][] = [[]]
+  @StorageLink('thingsShowResource') thingsShowResource: ThingsResource[][] = [[], [], []]
   @StorageLink('folderId') folderId: number = 0
+
+  /**
+   * 获取日期
+   */
+  private todayDate: number[] = [(new Date().getFullYear()), (new Date().getMonth() + 1), (new Date().getDate())]
+  private getShowDate() {
+    if (this.todayDate[0] == this.showDate[0]) {
+      if (this.todayDate[1] == this.showDate[1] && this.todayDate[2] == this.showDate[2])
+        return '今天';
+      else
+        return this.showDate[1] + '月' + this.showDate[2] + '日';
+    }
+    else
+      return this.showDate[0] + '年' + this.showDate[1] + '月' + this.showDate[2] + '日';
+  }
 
   private accentColor: Resource
   aboutToAppear() {
@@ -294,6 +340,7 @@ export struct TitleOne {
           Button($r('app.string.Today'))
             .onTouch(() => {
               this.showDate = [(new Date().getFullYear()), (new Date().getMonth() + 1), (new Date().getDate())]
+              this.mainTitle = this.getShowDate();
               getResource(this.showDate[0], this.showDate[1], this.showDate[2], this.folderId);
             })
             .fontColor(this.accentColor)
@@ -310,6 +357,7 @@ export struct TitleOne {
           Button($r('app.string.confirm'))
             .onTouch(() => {
               this.showDate = this.changeDate
+              this.mainTitle = this.getShowDate();
               getResource(this.showDate[0], this.showDate[1], this.showDate[2], this.folderId);
             })
             .fontColor(this.accentColor)
@@ -363,7 +411,7 @@ export struct TitleOne {
 
 @Component
 export struct TitleOne_large {
-  @State mainTitle: any = ''
+  @State mainTitle: Resource = $r('app.string.Today')
   private columnNum: number
   private offsetNum: number
 
@@ -395,7 +443,7 @@ export struct TitleOne_large {
 
 @Component
 export struct TitleOne_middle {
-  @State mainTitle: any = ''
+  @State mainTitle: Resource = $r('app.string.Today')
   private columnNum: number
   private offsetNum: number
 
@@ -427,7 +475,7 @@ export struct TitleOne_middle {
 
 @Component
 export struct TitleOne_small {
-  @State rotateAngle: number = 0
+  @Link rotateAngle: number
   private mainTitle: string | Resource
   private offHeight: number = 0
 
@@ -467,7 +515,7 @@ export struct TitleOne_small {
 @Component
 export struct EditTitleOne {
   //显示资源
-  @StorageLink('eventsShowResource') eventsShowResource: ThingsResource[][] = [[]]
+  @StorageLink('eventsShowResource') eventsShowResource: ThingsResource[][] = [[], [], []]
 
   //是否编辑模式
   @StorageLink('isEdit') isEdit: boolean = false
@@ -530,8 +578,8 @@ export struct EditTitleOne {
     return ret;
   }
 
-  @Builder SquareText(label: string | Resource) {
-    Text(label)
+  @Builder SquareText($$:{label: string | Resource}) {
+    Text($$.label)
       .fontSize(30)
       .fontColor($r('app.color.text_level1'))
       .fontWeight(FontWeight.Medium)
@@ -547,7 +595,7 @@ export struct EditTitleOne {
             .height(30)
             .onClick(() => this.quitEdit())
           Row() {
-            this.SquareText($r('app.string.editTitle', this.getCounter().toString()))
+            this.SquareText({label: $r('app.string.editTitle', this.getCounter().toString())})
           }
           .margin({ left: 18 })
         }

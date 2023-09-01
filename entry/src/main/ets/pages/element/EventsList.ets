@@ -12,7 +12,7 @@ export struct EventsList {
   @StorageLink('showDate') showDate: number[] = []
 
   //显示资源
-  @StorageLink('eventsShowResource') eventsShowResource: ThingsResource[][] = [[]]
+  @StorageLink('eventsShowResource') eventsShowResource: ThingsResource[][] = [[], [], []]
 
   //是否编辑模式
   @StorageLink('isEdit') isEdit: boolean = false
@@ -244,15 +244,15 @@ export struct EventsList {
           delay: 0, // 动画延迟
           iterations: 1, // 播放次数
         })
-      }, (item: ThingsResource) => item.toString())
+      })
     }
   }
 }
 
 @Component
 export struct EventsList_little {
-  private doneNum: number = 0
-  private showResource: [string, Resource, number][]
+  @Link doneNum: number
+  @Link showResource: [string, Resource, number][]
   @State titleColor: Resource = $r('app.color.text_level1')
 
   build() {

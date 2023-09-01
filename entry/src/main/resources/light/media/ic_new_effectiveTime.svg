@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     viewBox="0 0 24 24" fill="none">
+    <defs>
+        <rect id="path_0" x="0" y="0" width="24" height="24"/>
+    </defs>
+    <g opacity="1" transform="translate(0 0)  rotate(0 12 12)">
+        <mask id="bg-mask-0" fill="white">
+            <use xlink:href="#path_0"></use>
+        </mask>
+        <g mask="url(#bg-mask-0)">
+            <g opacity="1" transform="translate(1 1)  rotate(0 11 11)">
+                <g opacity="1" transform="translate(0 0)  rotate(0 11 11)">
+                    <path id="_path-1" fill-rule="evenodd" style="fill:#000000"
+                          transform="translate(0 0)  rotate(0 11 11)" opacity="0.9"
+                          d="M11.75,1.53C16.65,1.91 20.5,6.01 20.5,11C20.5,16.25 16.25,20.5 11,20.5C5.75,20.5 1.5,16.25 1.5,11C1.5,8.46 2.5,6.07 4.26,4.3C4.55,4.01 4.55,3.54 4.26,3.24C3.96,2.95 3.49,2.95 3.2,3.25C1.16,5.29 0,8.06 0,11C0,17.08 4.92,22 11,22C17.08,22 22,17.08 22,11C22,4.92 17.08,0 11,0C10.59,0 10.25,0.34 10.25,0.75L10.25,4.7C10.25,5.11 10.59,5.45 11,5.45C11.41,5.45 11.75,5.11 11.75,4.7L11.75,1.53Z "/>
+                    <path id="_path-1" fill-rule="evenodd" style="fill:#000000"
+                          transform="translate(6 6)  rotate(0 2.999990806510416 2.999990806510416)" opacity="0.9"
+                          d="M0.75,0.07C0.68,0.02 0.59,0 0.5,0C0.22,0 0,0.22 0,0.5C0,0.63 0.05,0.75 0.13,0.84L4.21,5.61C4.22,5.62 4.23,5.64 4.24,5.65L4.27,5.68L4.29,5.71L4.39,5.79C4.78,6.1 5.35,6.07 5.71,5.71L5.79,5.61C6.1,5.22 6.07,4.65 5.71,4.29L5.69,4.27L5.69,4.27L0.83,0.12C0.82,0.12 0.82,0.12 0.81,0.11L0.75,0.07Z "/>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

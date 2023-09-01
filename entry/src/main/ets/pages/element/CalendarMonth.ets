@@ -12,7 +12,7 @@ export struct CalendarMonth {
   //是否编辑模式
   @StorageLink('isEdit') isEdit: boolean = false
   @StorageLink('screenType') screenType: string = ''
-  @StorageLink('showDate') showDate: number[] = [(new Date().getFullYear()), (new Date().getMonth() + 1), (new Date().getDate())]
+  @StorageLink('showDate') @Watch('RefreshResource') showDate: number[] = [(new Date().getFullYear()), (new Date().getMonth() + 1), (new Date().getDate())]
   @StorageLink('folderId') folderId: number = 0
   @StorageLink('openCalendar') openCalendar: boolean = false
   @StorageLink('showSixLine') showSixLine: boolean = false
@@ -52,6 +52,7 @@ export struct CalendarMonth {
       this.showDate = this.getNextNDay(this.showDate, 7 * value)
     else
       this.showDate = this.getNextNMonth(this.showDate, value)
+    console.log('1-2.事件内容：??? next -> ', this.showDate);
     getResource(this.showDate[0], this.showDate[1], this.showDate[2], this.folderId);
   }
 
@@ -64,10 +65,10 @@ export struct CalendarMonth {
     return true
   }
 
-  @Builder WeekTitle(text: string | Resource) {
+  @Builder WeekTitle($$:{text: string | Resource}) {
     Column() {
       Column() {
-        Text(text)
+        Text($$.text)
           .fontColor($r('app.color.text_level2'))
           .fontWeight(FontWeight.Medium)
           .fontSize(14)
@@ -83,6 +84,36 @@ export struct CalendarMonth {
     .layoutWeight(1)
   }
 
+  @State startDate0:number[] = this.getStartDate(this.showDate);
+  @State startDate7:number[] = this.getNextNDay(this.getStartDate(this.showDate), 7);
+  @State startDate14:number[] = this.getNextNDay(this.getStartDate(this.showDate), 14);
+  @State startDate21:number[] = this.getNextNDay(this.getStartDate(this.showDate), 21);
+  @State startDate28:number[] = this.getNextNDay(this.getStartDate(this.showDate), 28);
+  @State startDate35:number[] = this.getNextNDay(this.getStartDate(this.showDate), 35);
+
+  @State isNeedClose0: boolean = this.checkNeedClose(this.getStartDate(this.showDate));
+  @State isNeedClose7: boolean = this.checkNeedClose(this.getNextNDay(this.getStartDate(this.showDate), 7));
+  @State isNeedClose14: boolean = this.checkNeedClose(this.getNextNDay(this.getStartDate(this.showDate), 14));
+  @State isNeedClose21: boolean = this.checkNeedClose(this.getNextNDay(this.getStartDate(this.showDate), 21));
+  @State isNeedClose28: boolean = this.checkNeedClose(this.getNextNDay(this.getStartDate(this.showDate), 28));
+  @State isNeedClose35: boolean = this.checkNeedClose(this.getNextNDay(this.getStartDate(this.showDate), 35));
+
+  private RefreshResource() {
+    this.startDate0 = this.getStartDate(this.showDate);
+    this.startDate7 = this.getNextNDay(this.getStartDate(this.showDate), 7);
+    this.startDate14 = this.getNextNDay(this.getStartDate(this.showDate), 14);
+    this.startDate21 = this.getNextNDay(this.getStartDate(this.showDate), 21);
+    this.startDate28 = this.getNextNDay(this.getStartDate(this.showDate), 28);
+    this.startDate35 = this.getNextNDay(this.getStartDate(this.showDate), 35);
+
+    this.isNeedClose0 = this.checkNeedClose(this.getStartDate(this.showDate));
+    this.isNeedClose7 = this.checkNeedClose(this.getNextNDay(this.getStartDate(this.showDate), 7));
+    this.isNeedClose14 = this.checkNeedClose(this.getNextNDay(this.getStartDate(this.showDate), 14));
+    this.isNeedClose21 = this.checkNeedClose(this.getNextNDay(this.getStartDate(this.showDate), 21));
+    this.isNeedClose28 = this.checkNeedClose(this.getNextNDay(this.getStartDate(this.showDate), 28));
+    this.isNeedClose35 = this.checkNeedClose(this.getNextNDay(this.getStartDate(this.showDate), 35));
+  }
+
   build() {
     Column() {
       if (this.selectPos == 1)
@@ -90,15 +121,15 @@ export struct CalendarMonth {
         Column() {
           Row() {
             if (this.FirstDayOfWeek == 1)
-              this.WeekTitle($r('app.string.Sun'))
-            this.WeekTitle($r('app.string.Mon'))
-            this.WeekTitle($r('app.string.Tue'))
-            this.WeekTitle($r('app.string.Wed'))
-            this.WeekTitle($r('app.string.Thu'))
-            this.WeekTitle($r('app.string.Fri'))
-            this.WeekTitle($r('app.string.Sat'))
+              this.WeekTitle({text: $r('app.string.Sun')})
+            this.WeekTitle({text: $r('app.string.Mon')})
+            this.WeekTitle({text: $r('app.string.Tue')})
+            this.WeekTitle({text: $r('app.string.Wed')})
+            this.WeekTitle({text: $r('app.string.Thu')})
+            this.WeekTitle({text: $r('app.string.Fri')})
+            this.WeekTitle({text: $r('app.string.Sat')})
             if (this.FirstDayOfWeek == 0)
-              this.WeekTitle($r('app.string.Sun'))
+              this.WeekTitle({text: $r('app.string.Sun')})
           }
           .height(24)
           .width('100%')
@@ -110,34 +141,34 @@ export struct CalendarMonth {
 
           Column() {
             CalendarWeek({
-              startDate: this.getStartDate(this.showDate),
-              isNeedClose: this.checkNeedClose(this.getStartDate(this.showDate))
+              startDate: $startDate0,
+              isNeedClose: $isNeedClose0
             })
 
             CalendarWeek({
-              startDate: this.getNextNDay(this.getStartDate(this.showDate), 7),
-              isNeedClose: this.checkNeedClose(this.getNextNDay(this.getStartDate(this.showDate), 7))
+              startDate: $startDate7,
+              isNeedClose: $isNeedClose7
             })
 
             CalendarWeek({
-              startDate: this.getNextNDay(this.getStartDate(this.showDate), 14),
-              isNeedClose: this.checkNeedClose(this.getNextNDay(this.getStartDate(this.showDate), 14))
+              startDate: $startDate14,
+              isNeedClose: $isNeedClose14
             })
 
             CalendarWeek({
-              startDate: this.getNextNDay(this.getStartDate(this.showDate), 21),
-              isNeedClose: this.checkNeedClose(this.getNextNDay(this.getStartDate(this.showDate), 21))
+              startDate: $startDate21,
+              isNeedClose: $isNeedClose21
             })
 
             CalendarWeek({
-              startDate: this.getNextNDay(this.getStartDate(this.showDate), 28),
-              isNeedClose: this.checkNeedClose(this.getNextNDay(this.getStartDate(this.showDate), 28))
+              startDate: $startDate28,
+              isNeedClose: $isNeedClose28
             })
 
             if (this.showSixLine = (this.getNextNDay(this.getStartDate(this.showDate), 35)[1] == this.showDate[1])) {
               CalendarWeek({
-                startDate: this.getNextNDay(this.getStartDate(this.showDate), 35),
-                isNeedClose: this.checkNeedClose(this.getNextNDay(this.getStartDate(this.showDate), 35))
+                startDate: $startDate35,
+                isNeedClose: $isNeedClose35
               })
             }
           }
@@ -220,7 +251,7 @@ export struct CalendarMonth {
         .layoutWeight(1)
 
         ToolBar({
-          isHidden: !this.isEdit,
+          isHidden: $isEdit,
         })
       }
       .height('70%')

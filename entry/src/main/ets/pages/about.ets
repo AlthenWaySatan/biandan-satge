@@ -8,7 +8,7 @@ import { get_accent } from '../control/AccentController';
 struct ProgressExample {
   private statusBarHeightVp: number = router.getParams()['statusBarHeightVp'];
   // private statusBarHeightVp: number = 0;
-  @State versionName: string = '0.0.0'
+  @State versionName: string = '1.1.15'
   @State name: Resource = $r('app.string.MainAbility_label')
   //屏幕类型
   @StorageLink('screenType') screenType: string = ''
@@ -35,11 +35,11 @@ struct ProgressExample {
     this.settingNum = 0
   }
 
-  @Builder listItem(title: string | Resource, showDivider: boolean = true) {
+  @Builder listItem($$:{title: string | Resource, showDivider: boolean}) {
     Column() {
       Row() {
         Column() {
-          Text(title)
+          Text($$.title)
             .fontWeight(FontWeight.Medium)
             .fontColor($r('app.color.text_level1'))
             .fontSize(16)
@@ -55,7 +55,7 @@ struct ProgressExample {
       .height(48)
       .width('100%')
 
-      if (showDivider)
+      if ($$.showDivider)
       Column() {
         Divider().width('100%').color($r('app.color.divider'))
       }
@@ -65,15 +65,15 @@ struct ProgressExample {
     .width('100%')
   }
 
-  @Builder listItem2(title: string | Resource, subTitle: string | Resource, showDivider: boolean = true) {
+  @Builder listItem2($$:{title: string | Resource, subTitle: string | Resource, showDivider: boolean}) {
     Column() {
       Row() {
         Column() {
-          Text(title)
+          Text($$.title)
             .fontWeight(FontWeight.Medium)
             .fontColor($r('app.color.text_level1'))
             .fontSize(16)
-          Text(subTitle)
+          Text($$.subTitle)
             .fontColor($r('app.color.text_level2'))
             .fontSize(14)
             .margin({ top: 2 })
@@ -89,7 +89,7 @@ struct ProgressExample {
       .height(64)
       .width('100%')
 
-      if (showDivider)
+      if ($$.showDivider)
       Column() {
         Divider().width('100%').color($r('app.color.divider'))
       }
@@ -143,7 +143,7 @@ struct ProgressExample {
           Scroll() {
             Column() {
               Column(){
-                  this.listItem2($r('app.string.ourWebsite'), 'www.biandangroup.cn')
+                  this.listItem2({title: $r('app.string.ourWebsite'), subTitle: 'www.biandangroup.cn', showDivider: true})
                 }.onClick(() => {
                 featureAbility.startAbility({
                   want: {
@@ -153,7 +153,7 @@ struct ProgressExample {
                 });
               })
               Column(){
-                  this.listItem2($r('app.string.contactUs'), 'althenwaysatan@outlook.com')
+                  this.listItem2({title: $r('app.string.contactUs'), subTitle: 'althenwaysatan@outlook.com', showDivider: true})
                 }.onClick(() => {
                 featureAbility.startAbility({
                   want: {
@@ -163,7 +163,7 @@ struct ProgressExample {
                 });
               })
               Column(){
-                  this.listItem2("QQ交流群", '798942683')
+                  this.listItem2({title: "QQ交流群", subTitle: '798942683', showDivider: true})
                 }.onClick(() => {
                 featureAbility.startAbility({
                   want: {
@@ -179,7 +179,7 @@ struct ProgressExample {
               //   });
               // })
               Column() {
-                this.listItem('打开引导界面', false)
+                this.listItem({title: '打开引导界面', showDivider: false})
               }.onClick(() => {
                 router.replace({
                   url: 'pages/guide'

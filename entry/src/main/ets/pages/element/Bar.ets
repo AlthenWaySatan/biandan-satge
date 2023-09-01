@@ -25,17 +25,17 @@ export struct lgBar {
     console.info(id.toString());
   }
 
-  @Builder BarIcon(icon: Resource) {
-    Image(icon)
+  @Builder BarIcon($$:{icon: Resource}) {
+    Image($$.icon)
       .width(24)
       .height(24)
   }
 
-  @Builder BarTextBut(text: Resource, color: Resource) {
-    Text(text)
+  @Builder BarTextBut($$:{text: Resource, color: Resource}) {
+    Text($$.text)
       .size({ width: '100%', height: 14 })
       .textAlign(TextAlign.Center)
-      .fontColor(color)
+      .fontColor($$.color)
       .fontSize(10)
       .fontWeight('Medium')
       .margin({ top: 4 })
@@ -48,8 +48,8 @@ export struct lgBar {
           ForEach(this.barResource, (item: BarResource) => {
             Button({ type: ButtonType.Normal }) {
               Column() {
-                this.BarIcon((this.selectPos == item.id ? item.iconOn : item.iconOff))
-                this.BarTextBut(item.text, (this.selectPos == item.id ? this.accentColor : $r('app.color.text_level3')))
+                this.BarIcon({icon: (this.selectPos == item.id ? item.iconOn : item.iconOff)})
+                this.BarTextBut({text: item.text, color: (this.selectPos == item.id ? this.accentColor : $r('app.color.text_level3'))})
               }
               .justifyContent(FlexAlign.Center)
               .layoutWeight(1)
@@ -98,18 +98,18 @@ export struct mdBar {
     console.info(id.toString());
   }
 
-  @Builder BarIcon(icon: Resource) {
-    Image(icon)
+  @Builder BarIcon($$:{icon: Resource}) {
+    Image($$.icon)
       .width(24)
       .height(24)
   }
 
-  @Builder BarTextRig(text: Resource, color: Resource) {
-    Text(text)
+  @Builder BarTextRig($$:{text: Resource, color: Resource}) {
+    Text($$.text)
       .size({ height: 16 })
       .textAlign(TextAlign.Center)
       .fontSize(12)
-      .fontColor(color)
+      .fontColor($$.color)
       .fontWeight('Medium')
       .margin({ left: 8 })
   }
@@ -119,8 +119,8 @@ export struct mdBar {
       ForEach(this.barResource, (item: BarResource) => {
         Button({ type: ButtonType.Normal }) {
           Row() {
-            this.BarIcon((this.selectPos == item.id ? item.iconOn : item.iconOff))
-            this.BarTextRig(item.text, (this.selectPos == item.id ? this.accentColor : $r('app.color.text_level3')))
+            this.BarIcon({icon: (this.selectPos == item.id ? item.iconOn : item.iconOff)})
+            this.BarTextRig({text: item.text, color: (this.selectPos == item.id ? this.accentColor : $r('app.color.text_level3'))})
           }
           .justifyContent(FlexAlign.Center)
         }
@@ -153,17 +153,17 @@ export struct smBar {
     console.info(id.toString());
   }
 
-  @Builder BarIcon(icon: Resource) {
-    Image(icon)
+  @Builder BarIcon($$:{icon: Resource}) {
+    Image($$.icon)
       .width(24)
       .height(24)
   }
 
-  @Builder BarTextBut(text: Resource, color: Resource) {
-    Text(text)
+  @Builder BarTextBut($$: {text: Resource, color: Resource}) {
+    Text($$.text)
       .size({ width: '100%', height: 14 })
       .textAlign(TextAlign.Center)
-      .fontColor(color)
+      .fontColor($$.color)
       .fontSize(10)
       .fontWeight('Medium')
       .margin({ top: 4 })
@@ -174,8 +174,8 @@ export struct smBar {
       ForEach(this.barResource, (item: BarResource) => {
         Button({ type: ButtonType.Normal }) {
           Column() {
-            this.BarIcon((this.selectPos == item.id ? item.iconOn : item.iconOff))
-            this.BarTextBut(item.text, (this.selectPos == item.id ? this.accentColor : $r('app.color.text_level3')))
+            this.BarIcon({icon: (this.selectPos == item.id ? item.iconOn : item.iconOff)})
+            this.BarTextBut({text: item.text, color: (this.selectPos == item.id ? this.accentColor : $r('app.color.text_level3'))})
           }
           .height("100%")
           .padding({ top: 7 })

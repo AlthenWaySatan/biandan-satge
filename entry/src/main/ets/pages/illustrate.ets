@@ -24,13 +24,13 @@ struct Illustrate {
     );
   }
 
-  @Builder textLink(text: string) {
-    Text(text)
+  @Builder textLink($$:{text: string}) {
+    Text($$.text)
       .fontWeight(FontWeight.Bold)
       .fontColor($r('app.color.accent'))
       .fontSize(16)
       .onClick(() => {
-        if(text == "althenwaysatan@outlook.com") {
+        if($$.text == "althenwaysatan@outlook.com") {
           featureAbility.startAbility({
             want: {
               action: 'ohos.want.action.sendSms',
@@ -39,7 +39,7 @@ struct Illustrate {
           });
           return;
         }
-        else if(text == "www.biandangroup.cn") {
+        else if($$.text == "www.biandangroup.cn") {
           featureAbility.startAbility({
             want: {
               action: 'ohos.want.action.viewData',
@@ -48,7 +48,7 @@ struct Illustrate {
           });
           return;
         }
-        else if(text == "798942683") {
+        else if($$.text == "798942683") {
           featureAbility.startAbility({
             want: {
               bundleName: 'com.tencent.mobileqq',
@@ -59,14 +59,14 @@ struct Illustrate {
       })
   }
 
-  @Builder fileTitle(icon: Resource, title: string | Resource, updateTime: string | Resource) {
+  @Builder fileTitle($$:{icon: Resource, title: string | Resource, updateTime: string | Resource}) {
     Column() {
-      Image(icon)
+      Image($$.icon)
         .height(36)
         .width(36)
         .margin({ top: 16 })
       Column() {
-        Text(title)
+        Text($$.title)
           .fontColor($r('app.color.text_level1'))
           .fontWeight(FontWeight.Bold)
           .fontSize(18)
@@ -77,7 +77,7 @@ struct Illustrate {
       .margin({ top: 16 })
 
       Column() {
-        Text(updateTime)
+        Text($$.updateTime)
           .fontColor($r('app.color.text_level1'))
           .fontSize(14)
       }
@@ -90,11 +90,11 @@ struct Illustrate {
     .width('100%')
   }
 
-  @Builder fileContent(content: Object) {
+  @Builder fileContent($$:{content: Object}) {
     Column() {
       Column() {
         Column() {
-          ForEach(content["induct"], (item2: string) => {
+          ForEach($$.content["induct"], (item2: string) => {
             Row() {
               Text(item2)
                 .fontWeight(FontWeight.Bold)
@@ -109,7 +109,7 @@ struct Illustrate {
         .width('100%')
       }
 
-      ForEach(content["list"], (item: object, index: number) => {
+      ForEach($$.content["list"], (item: object, index: number) => {
         Column() {
           Row() {
             Text((index + 1).toString() + ' ' + item["title"])
@@ -123,7 +123,7 @@ struct Illustrate {
             ForEach(item["introduce"], (item2: string) => {
               Row() {
                 if (this.checkIsUrl(item2)) {
-                  this.textLink(item2)
+                  this.textLink({text: item2})
                 } else {
                   Text(item2)
                     .fontColor($r('app.color.text_level1'))
@@ -157,7 +157,7 @@ struct Illustrate {
                   ForEach(item1["introduce"], (item2: string) => {
                     Row() {
                       if (this.checkIsUrl(item2)) {
-                        this.textLink(item2)
+                        this.textLink({text: item2})
                       } else {
                         Text(item2)
                           .fontColor($r('app.color.text_level1'))
@@ -225,8 +225,8 @@ struct Illustrate {
               Column() {
                 Scroll() {
                   Column() {
-                    this.fileTitle($r('app.media.ic_setting_user'), content0["title"], '更新日期：' + content0["time"])
-                    this.fileContent(content0)
+                    this.fileTitle({icon: $r('app.media.ic_setting_user'), title: content0["title"], updateTime: '更新日期：' + content0["time"]})
+                    this.fileContent({ content:content0 })
                   }
                   .padding({ left: 24, right: 24 })
                 }
@@ -245,8 +245,8 @@ struct Illustrate {
               Column() {
                 Scroll() {
                   Column() {
-                    this.fileTitle($r('app.media.ic_setting_privacy'), content1["title"], '更新日期：' + content1["time"])
-                    this.fileContent(content1)
+                    this.fileTitle({icon: $r('app.media.ic_setting_privacy'), title: content1["title"], updateTime: '更新日期：' + content1["time"]})
+                    this.fileContent({ content: content1 })
                   }
                   .padding({ left: 24, right: 24 })
                 }

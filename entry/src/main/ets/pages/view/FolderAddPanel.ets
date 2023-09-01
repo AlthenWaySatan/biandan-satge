@@ -1,5 +1,5 @@
 import window from '@ohos.window';
-import prompt from '@ohos.promptAction'
+import prompt from '@ohos.prompt'
 import { addNewFolder, editNewFolder } from '../../control/FolderController';
 import { get_accent } from '../../control/AccentController';
 
@@ -66,29 +66,29 @@ export struct FolderAddPanel {
     }
   }
 
-  @Builder classifyRadio(classify: string, classifyColor: Resource, last: boolean = true) {
+  @Builder classifyRadio($$:{classify: string, classifyColor: Resource, last: boolean}) {
     Column() {
       Stack() {
         Circle({
-          height: this.chooseClassify == classify ? '90%' : '75%',
-          width: this.chooseClassify == classify ? '90%' : '75%'
+          height: this.chooseClassify == $$.classify ? '90%' : '75%',
+          width: this.chooseClassify == $$.classify ? '90%' : '75%'
         })
-          .fill(classifyColor)
+          .fill($$.classifyColor)
         Circle({
-          height: this.chooseClassify == classify ? '45%' : 0,
-          width: this.chooseClassify == classify ? '45%' : 0
+          height: this.chooseClassify == $$.classify ? '45%' : 0,
+          width: this.chooseClassify == $$.classify ? '45%' : 0
         })
           .fill($r('app.color.foreground'))
       }
       .onClick(() => {
-        this.chooseClassify = classify
+        this.chooseClassify = $$.classify
       })
     }
     .justifyContent(FlexAlign.Center)
     .height(this.screenType == 'sm' ? 24 : 36)
     .width(this.screenType == 'sm' ? 24 : 36)
 
-    if (last)
+    if ($$.last)
       Column().layoutWeight(1)
   }
 
@@ -149,14 +149,14 @@ export struct FolderAddPanel {
 
           Column() {
             Row() {
-              this.classifyRadio('red', $r('app.color.highSaturation_red'))
-              this.classifyRadio('orange', $r('app.color.highSaturation_orange'))
-              this.classifyRadio('yellow', $r('app.color.highSaturation_yellow'))
-              this.classifyRadio('green', $r('app.color.highSaturation_green'))
-              this.classifyRadio('lakeBlue', $r('app.color.highSaturation_lakeBlue'))
-              this.classifyRadio('lightBlue', $r('app.color.highSaturation_lightBlue'))
-              this.classifyRadio('darkBlue', $r('app.color.highSaturation_darkBlue'))
-              this.classifyRadio('purple', $r('app.color.highSaturation_purple'), false)
+              this.classifyRadio({classify: 'red', classifyColor: $r('app.color.highSaturation_red'), last: true})
+              this.classifyRadio({classify: 'orange', classifyColor: $r('app.color.highSaturation_orange'), last: true})
+              this.classifyRadio({classify: 'yellow', classifyColor: $r('app.color.highSaturation_yellow'), last: true})
+              this.classifyRadio({classify: 'green', classifyColor: $r('app.color.highSaturation_green'), last: true})
+              this.classifyRadio({classify: 'lakeBlue', classifyColor: $r('app.color.highSaturation_lakeBlue'), last: true})
+              this.classifyRadio({classify: 'lightBlue', classifyColor: $r('app.color.highSaturation_lightBlue'), last: true})
+              this.classifyRadio({classify: 'darkBlue', classifyColor: $r('app.color.highSaturation_darkBlue'), last: true})
+              this.classifyRadio({classify: 'purple', classifyColor: $r('app.color.highSaturation_purple'), last: false})
             }
             .padding({ right: 4, left: 4 })
 

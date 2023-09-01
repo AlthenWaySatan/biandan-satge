@@ -13,7 +13,7 @@ struct guide {
   @StorageLink('IsAgreed') IsAgreed: boolean = false
 
   aboutToAppear() {
-    window.getTopWindow((err, data) => {
+    // window.getTopWindow((err, data) => {
       //      var windowClass = data;
       //      var type = window.AvoidAreaType.TYPE_SYSTEM;
       //      windowClass.getAvoidArea(type, (err, data) => {
@@ -34,7 +34,7 @@ struct guide {
       //      fail: function (code) {
       //        console.info("Failed to obtain device information. Error code: %{private}d", code);
       //      },
-    });
+    // });
   }
 
   private endGuide() {
@@ -44,7 +44,7 @@ struct guide {
     })
   }
 
-  @Builder stepPage(img: Resource, title: Resource | string, info: Resource | string, icon: boolean = false) {
+  @Builder stepPage($$:{img: Resource, title: Resource | string, info: Resource | string, icon: boolean}) {
     Column() {
       Column() {
         Button('跳过')
@@ -61,13 +61,13 @@ struct guide {
       .width('100%')
 
       Column() {
-        if (icon) {
-          Image(img)
+        if ($$.icon) {
+          Image($$.img)
             .width(120)
             .height(120)
             .borderRadius(30)
         } else {
-          Image(img)
+          Image($$.img)
         }
       }
       .justifyContent(FlexAlign.Center)
@@ -76,11 +76,11 @@ struct guide {
       .width('70%')
 
       Column() {
-        Text(title)
+        Text($$.title)
           .fontSize(18)
           .fontWeight(FontWeight.Medium)
           .fontColor($r('app.color.text_level1'))
-        Text(info)
+        Text($$.info)
           .fontColor($r('app.color.text_level2'))
           .fontSize(16)
           .margin({ top: 6 })
@@ -157,9 +157,9 @@ struct guide {
 
       StepperItem() {
         Swiper() {
-          this.stepPage($r('app.media.img_todolist'), '修改待办事项', '点击修改待办，长按进入页面编辑')
-          this.stepPage($r('app.media.img_todolist2'), '完成待办事项', '点击完成一次，长按取消一次')
-          this.stepPage($r('app.media.img_todolist3'), '待办事项标记', '三种图标对应三种状态：\n待完成，正在完成，已完成\n不同颜色也对应不同分类 ')
+          this.stepPage({img: $r('app.media.img_todolist'), title: '修改待办事项', info: '点击修改待办，长按进入页面编辑', icon: false})
+          this.stepPage({img: $r('app.media.img_todolist2'), title: '完成待办事项', info: '点击完成一次，长按取消一次', icon: false})
+          this.stepPage({img: $r('app.media.img_todolist3'), title: '待办事项标记', info: '三种图标对应三种状态：\n待完成，正在完成，已完成\n不同颜色也对应不同分类 ', icon: false})
         }
         .cachedCount(2)
         .indicatorStyle({
@@ -168,14 +168,14 @@ struct guide {
       }
 
       StepperItem() {
-        this.stepPage($r('app.media.img_panel'), '添加待办事项', '上划或点击，显示更多')
+        this.stepPage({img: $r('app.media.img_panel'), title: '添加待办事项', info: '上划或点击，显示更多', icon: false})
       }
 
       StepperItem() {
         Swiper() {
-          this.stepPage($r('app.media.img_calendar'), '收起日历', '在日历界面上划可收起日历视图，下滑展开视图')
-          this.stepPage($r('app.media.img_calendar2'), '切换日历', '在日历界面左滑可切换至下一月，右滑切换至上一月')
-          this.stepPage($r('app.media.img_calendar3'), '切换日历', '在日历视图收起时左滑可切换至下一周，右滑切换至上一周')
+          this.stepPage({img: $r('app.media.img_calendar'), title: '收起日历', info: '在日历界面上划可收起日历视图，下滑展开视图', icon: false})
+          this.stepPage({img: $r('app.media.img_calendar2'), title: '切换日历', info: '在日历界面左滑可切换至下一月，右滑切换至上一月', icon: false})
+          this.stepPage({img: $r('app.media.img_calendar3'), title: '切换日历', info: '在日历视图收起时左滑可切换至下一周，右滑切换至上一周', icon: false})
         }
         .cachedCount(2)
         .indicatorStyle({
@@ -184,15 +184,15 @@ struct guide {
       }
 
       StepperItem() {
-        this.stepPage($r('app.media.img_fourQuadrants'), '展开象限', '在四象限界面点击对应象限标题展开象限视图')
+        this.stepPage({img: $r('app.media.img_fourQuadrants'), title: '展开象限', info: '在四象限界面点击对应象限标题展开象限视图', icon: false})
       }
 
       StepperItem() {
-        this.stepPage($r('app.media.img_add'), '快捷同步', '打开设备同步后，长按添加按钮，可向所有设备同步或接受最新数据')
+        this.stepPage({img: $r('app.media.img_add'), title: '快捷同步', info: '打开设备同步后，长按添加按钮，可向所有设备同步或接受最新数据', icon: false})
       }
 
       StepperItem() {
-        this.stepPage($r('app.media.icon'), '欢迎使用！', '一起进入便单的世界！', true)
+        this.stepPage({img: $r('app.media.icon'), title: '欢迎使用！', info: '一起进入便单的世界！', icon: true})
       }
     }
     .backgroundColor($r('app.color.background'))

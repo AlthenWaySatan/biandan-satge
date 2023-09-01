@@ -17,7 +17,7 @@ import { get_accent, get_allChoose_on_Marking, get_collect_on_Marking } from '..
 struct FolderCustomDialog {
   controller: CustomDialogController
   @StorageLink('isHidden') isCardHidden: boolean[] = [false, false, false]
-  @StorageLink('eventsShowResource') eventsShowResource: ThingsResource[][] = [[]]
+  @StorageLink('eventsShowResource') eventsShowResource: ThingsResource[][] = [[], [], []]
   @StorageLink('userFolderResource') userFolderResource: FolderResource[] = []
   @StorageLink('systemFolderResource') systemFolderResource: FolderResource[] = []
   @Link thisFolder: number
@@ -110,7 +110,7 @@ struct FolderCustomDialog {
 struct DirectlyDeleteCustomDialog {
   controller1: CustomDialogController
   @StorageLink('isHidden') isCardHidden: boolean[] = [false, false, false]
-  @StorageLink('eventsShowResource') eventsShowResource: ThingsResource[][] = [[]]
+  @StorageLink('eventsShowResource') eventsShowResource: ThingsResource[][] = [[], [], []]
   private isWhole = false
   private accentColor: Resource
   aboutToAppear() {
@@ -188,7 +188,7 @@ struct DeleteCustomDialog {
   })
   controller: CustomDialogController
   @StorageLink('isHidden') isCardHidden: boolean[] = [false, false, false]
-  @StorageLink('eventsShowResource') eventsShowResource: ThingsResource[][] = [[]]
+  @StorageLink('eventsShowResource') eventsShowResource: ThingsResource[][] = [[], [], []]
 
   private accentColor: Resource
   aboutToAppear() {
@@ -272,7 +272,7 @@ export struct ToolBar {
   /**
    * 展示资源
    */
-  @StorageLink('eventsShowResource') eventsShowResource: ThingsResource[][] = [[]]
+  @StorageLink('eventsShowResource') eventsShowResource: ThingsResource[][] = [[], [], []]
 
   //是否编辑模式
   @StorageLink('isEdit') isEdit: boolean = false
@@ -280,7 +280,7 @@ export struct ToolBar {
   //是否隐藏
   @StorageLink('isHidden') isCardHidden: boolean[] = [false, false, false]
   @StorageLink('screenType') screenType: string = ''
-  private isHidden: boolean
+  @Link isHidden: boolean
 
   private accentColor: Resource
   private ic_allChoose_on_Marking: Resource
@@ -350,17 +350,17 @@ export struct ToolBar {
     }
   }
 
-  @Builder BarIcon(icon: Resource) {
-    Image(icon)
+  @Builder BarIcon($$:{icon: Resource}) {
+    Image($$.icon)
       .width(24)
       .height(24)
   }
 
-  @Builder BarTextBut(text: Resource, color: Resource) {
-    Text(text)
+  @Builder BarTextBut($$:{text: Resource, color: Resource}) {
+    Text($$.text)
       .size({ width: '100%', height: 14 })
       .textAlign(TextAlign.Center)
-      .fontColor(color)
+      .fontColor($$.color)
       .fontSize(10)
       .fontWeight('Medium')
       .margin({ top: 4 })
@@ -433,54 +433,56 @@ export struct ToolBar {
 
         Column() {
           this.BarIcon(
-              this.getCounter() > 0 ? (getIsAllCollect() ? this.ic_collect_on_Marking : $r('app.media.ic_collect')) : $r('app.media.ic_choose_collect_disabled')
+            {icon:this.getCounter() > 0 ? (getIsAllCollect() ? this.ic_collect_on_Marking : $r('app.media.ic_collect')) : $r('app.media.ic_choose_collect_disabled')}
           )
-          this.BarTextBut(
-              (getIsAllCollect() && this.getCounter() > 0) ? $r('app.string.cancelCollect') : $r('app.string.collect'),
-              this.getCounter() > 0 ? (getIsAllCollect() ? this.accentColor : $r('app.color.text_level1')) : $r('app.color.text_level3')
-          )
+          this.BarTextBut({
+              text: (getIsAllCollect() && this.getCounter() > 0) ? $r('app.string.cancelCollect') : $r('app.string.collect'),
+              color: this.getCounter() > 0 ? (getIsAllCollect() ? this.accentColor : $r('app.color.text_level1')) : $r('app.color.text_level3')
+          })
         }
         .Item()
         .onClick(this.barClick.bind(this, 1))
 
         Column() {
-          this.BarIcon(
-              this.getCounter() > 0 ?
+          this.BarIcon({
+            icon: this.getCounter() > 0 ?
             $r('app.media.ic_choose_move_off') :
             $r('app.media.ic_choose_move_disabled')
-          )
-          this.BarTextBut($r('app.string.move'),
-              this.getCounter() > 0 ?
+          })
+          this.BarTextBut({
+            text: $r('app.string.move'),
+            color: this.getCounter() > 0 ?
             $r('app.color.text_level1') :
             $r('app.color.text_level3')
-          )
+          })
         }
         .Item()
         .onClick(this.barClick.bind(this, 2))
 
         Column() {
-          this.BarIcon(
-              this.getCounter() > 0 ?
+          this.BarIcon({
+            icon: this.getCounter() > 0 ?
             $r('app.media.ic_choose_delete_off') :
             $r('app.media.ic_choose_delete_disabled')
-          )
-          this.BarTextBut($r('app.string.delete'),
-              this.getCounter() > 0 ?
+          })
+          this.BarTextBut({
+            text: $r('app.string.delete'),
+            color: this.getCounter() > 0 ?
             $r('app.color.text_level1') :
             $r('app.color.text_level3')
-          )
+          })
         }
         .Item()
         .onClick(this.barClick.bind(this, 3))
 
         Column() {
-          this.BarIcon(getIsAllChecked() ?
+          this.BarIcon({icon: getIsAllChecked() ?
             this.ic_allChoose_on_Marking :
-          $r('app.media.ic_choose_allChoose_off'))
-          this.BarTextBut(
-            getIsAllChecked() ? $r('app.string.cancelAllChoose') : $r('app.string.allChoose'),
-            getIsAllChecked() ? this.accentColor : $r('app.color.text_level1')
-          )
+          $r('app.media.ic_choose_allChoose_off')})
+          this.BarTextBut({
+            text: getIsAllChecked() ? $r('app.string.cancelAllChoose') : $r('app.string.allChoose'),
+            color: getIsAllChecked() ? this.accentColor : $r('app.color.text_level1')
+          })
         }
         .Item()
         .onClick(this.barClick.bind(this, 4))
@@ -489,7 +491,7 @@ export struct ToolBar {
       .height(54)
       .backgroundColor($r('app.color.bar'))
       .padding({ left: this.screenType == 'sm' ? 12 : 24, right: this.screenType == 'sm' ? 12 : 24 })
-      .offset({ x: 0, y: this.isHidden ? 54 : 0 })
+      .offset({ x: 0, y: this.isHidden ? 0 : 54 })
       .animation({
         duration: 200, // 动画时长
         curve: Curve.EaseOut, // 动画曲线
@@ -497,6 +499,6 @@ export struct ToolBar {
         iterations: 1, // 播放次数
       })
     }
-    .height(this.isHidden ? 0 : 54)
+    .height(this.isHidden ? 54 : 0)
   }
 }

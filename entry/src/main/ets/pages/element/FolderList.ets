@@ -11,7 +11,7 @@ export struct FolderList {
   @StorageLink('doneNum') doneNum: number = 0
   @StorageLink('todoNum') todoNum: number = 0
   @StorageLink('showDate') showDate: number[] = []
-  @StorageLink('thingsShowResource') thingsShowResource: ThingsResource[][] = [[]]
+  @StorageLink('thingsShowResource') thingsShowResource: ThingsResource[][] = [[], [], []]
   @StorageLink('showFolderAddPanel') showFolderAddPanel: boolean = false
 
   private accentColor: Resource
@@ -62,7 +62,7 @@ export struct FolderList {
             Divider().width('100%').color($r('app.color.divider'))
         }
         .onClick(() => this.changeFolder(item.id))
-      }, (item: FolderResource) => item.toString())
+      })
 
       if (this.isShowAdd) {
         Column() {
@@ -111,7 +111,7 @@ export struct FolderList_item {
   @StorageLink('doneNum') doneNum: number = 0
   @StorageLink('todoNum') todoNum: number = 0
   @StorageLink('showDate') showDate: number[] = []
-  @StorageLink('thingsShowResource') thingsShowResource: ThingsResource[][] = [[]]
+  @StorageLink('thingsShowResource') thingsShowResource: ThingsResource[][] = [[], [], []]
   @StorageLink('showFolderAddPanel') showFolderAddPanel: boolean = false
 
   @Link thisFolder: number
@@ -162,7 +162,7 @@ export struct FolderList_item {
           }
           .onClick(() => this.changeFolder(item.id))
         }
-      }, (item: FolderResource) => item.toString())
+      })
 
       if (this.isShowAdd) {
         Column() {

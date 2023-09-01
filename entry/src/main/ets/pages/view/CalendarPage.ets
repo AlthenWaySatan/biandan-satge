@@ -12,9 +12,19 @@ export struct CalendarPage {
   @StorageLink('isEdit') isEdit: boolean = false
 
   //当前日期和待办单
-  @StorageLink('showDate') showDate: number[] = []
+  @StorageLink('showDate') @Watch('RefreshShowDate') showDate: number[] = []
   @StorageLink('folderId') folderId: number = 0
   @StorageLink('showEventAddPanel') showEventAddPanel: boolean = false
+
+  @State showDateToSon: string = '今天'
+
+  private RefreshShowDate() {
+    this.showDateToSon = this.getShowDate();
+  }
+
+  aboutToAppear() {
+    this.RefreshShowDate();
+  }
 
   //屏幕类型
   @StorageLink('screenType') screenType: string = ''
@@ -27,10 +37,10 @@ export struct CalendarPage {
   /**
    * 获取日期
    */
-  private getShowDate(): any {
+  private getShowDate() {
     if (this.todayDate[0] == this.showDate[0]) {
       if (this.todayDate[1] == this.showDate[1] && this.todayDate[2] == this.showDate[2])
-        return $r('app.string.Today');
+        return '今天';
       else
         return this.showDate[1] + '月' + this.showDate[2] + '日';
     }
@@ -50,7 +60,7 @@ export struct CalendarPage {
   /**
    * 获取当前待办单标题
    */
-  private getFolderTitle(): any {
+  private getFolderTitle() {
     if (this.folderId <= 0)
       return this.systemFolderResource[-this.folderId].title;
     else {
@@ -78,13 +88,13 @@ export struct CalendarPage {
             if (this.screenType == 'lg') {
               TitleOne({
                 showDate: $showDate,
-                mainTitle: this.getShowDate(),
+                mainTitle: $showDateToSon,
                 columnNum: 4,
                 offsetNum: 0
               })
             } else {
               TitleTwo({
-                mainTitle: this.getShowDate(),
+                mainTitle: $showDateToSon,
                 subTitle: this.getFolderTitle(),
                 columnNum: 4,
                 offsetNum: 0

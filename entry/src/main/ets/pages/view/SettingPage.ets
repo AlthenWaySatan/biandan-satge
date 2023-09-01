@@ -21,7 +21,7 @@ export struct SettingPage {
   }
 
   aboutToAppear() {
-    let bundleName = "cn.biandangroup.biandanas";
+    let bundleName = "cn.biandangroup.biandan";
     let bundleFlags = 0xFFFF0000;
     let options = {
       "userId": 0

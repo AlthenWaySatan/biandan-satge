@@ -122,9 +122,6 @@ export struct FourQuadrant {
               .height(48)
               .width('100%')
               .justifyContent(FlexAlign.Center)
-              .onClick(() => {
-                this.clickCard(0)
-              })
 
               if (!this.isQuadrantHidden[0]) {
                 Column() {
@@ -145,6 +142,9 @@ export struct FourQuadrant {
           .borderRadius(16)
         }
         .column0()
+        .onClick(() => {
+          this.clickCard(0)
+        })
 
         Column() {
           Stack() {
@@ -180,9 +180,6 @@ export struct FourQuadrant {
               .height(48)
               .width('100%')
               .justifyContent(FlexAlign.Center)
-              .onClick(() => {
-                this.clickCard(1)
-              })
 
               if (!this.isQuadrantHidden[1]) {
                 Column() {
@@ -203,6 +200,9 @@ export struct FourQuadrant {
           .borderRadius(16)
         }
         .column1()
+        .onClick(() => {
+          this.clickCard(1)
+        })
       }
       .row0()
 
@@ -241,9 +241,6 @@ export struct FourQuadrant {
               .height(48)
               .width('100%')
               .justifyContent(FlexAlign.Center)
-              .onClick(() => {
-                this.clickCard(2)
-              })
 
               if (!this.isQuadrantHidden[2]) {
                 Column() {
@@ -264,6 +261,9 @@ export struct FourQuadrant {
           .borderRadius(16)
         }
         .column0()
+        .onClick(() => {
+          this.clickCard(2)
+        })
 
         Column() {
           Stack() {
@@ -299,9 +299,6 @@ export struct FourQuadrant {
               .height(48)
               .width('100%')
               .justifyContent(FlexAlign.Center)
-              .onClick(() => {
-                this.clickCard(3)
-              })
 
               if (!this.isQuadrantHidden[3]) {
                 Column() {
@@ -322,6 +319,9 @@ export struct FourQuadrant {
           .borderRadius(16)
         }
         .column1()
+        .onClick(() => {
+          this.clickCard(3)
+        })
       }
       .row1()
 

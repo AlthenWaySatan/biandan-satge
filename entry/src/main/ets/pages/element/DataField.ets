@@ -3,10 +3,15 @@ import { getDoneRate } from '../../control/EventsController';
 
 @Component
 export struct DaraField {
-  @StorageLink('doneNum') doneNum: number = 0
-  @StorageLink('todoNum') todoNum: number = 0
+  @StorageLink('doneNum') @Watch('newRate') doneNum: number = 0
+  @StorageLink('todoNum') @Watch('newRate') todoNum: number = 0
+  @State doneRate:number = 0;
   private columnNum: number
   private offsetNum: number
+
+  private newRate() {
+    this.doneRate = getDoneRate()
+  }
 
   build() {
     GridContainer({ columns: this.columnNum, gutter: 12, margin: 12 }) {
@@ -66,7 +71,7 @@ export struct DaraField {
           .layoutWeight(1)
           .height('100%')
 
-          ProgressRing({ doneRate: getDoneRate() })
+          ProgressRing({ doneRate: $doneRate })
 
         }.width('100%')
       }

@@ -1,6 +1,5 @@
 import router from '@ohos.router'
 import { get_accent, get_translucentSaturation_accent } from '../../control/AccentController';
-// import { setStorage } from '../../FormAbility/controller/storageController';
 //import {client_id, redirect_uri} from '../../model/HMSContact';
 
 PersistentStorage.PersistProp('FirstDayOfWeek', 0)
@@ -11,6 +10,7 @@ PersistentStorage.PersistProp('DefaultUrgentTime', [22, 0])
 PersistentStorage.PersistProp('DefineCycleLength', 90)
 PersistentStorage.PersistProp('IsCloudBackup', false)
 PersistentStorage.PersistProp('IsCalendarSync', false)
+
 
 @Component
 export struct SettingTable {
@@ -89,9 +89,9 @@ export struct SettingTable {
     }
   }
 
-  @Builder settingItem(settingId: number, icon: Resource, title: string | Resource, showDivider: boolean = true) {
+  @Builder settingItem($$:{settingId: number, icon: Resource, title: string | Resource, showDivider: boolean}) {
     Stack() {
-      if (settingId == this.settingNum) {
+      if ($$.settingId == this.settingNum) {
         Column() {
           Column()
             .backgroundColor(get_translucentSaturation_accent())
@@ -106,10 +106,10 @@ export struct SettingTable {
 
       Column() {
         Row() {
-          Image(icon)
+          Image($$.icon)
             .height(24)
             .width(24)
-          Text(title)
+          Text($$.title)
             .fontColor($r('app.color.text_level1'))
             .fontSize(16)
             .fontWeight(FontWeight.Medium)
@@ -117,7 +117,7 @@ export struct SettingTable {
         }
         .height(56)
 
-        if (showDivider) {
+        if ($$.showDivider) {
           Column() {
             Divider().width('100%').color($r('app.color.divider'))
           }.padding({ left: 40 })
@@ -131,9 +131,9 @@ export struct SettingTable {
     .width('100%')
   }
 
-  @Builder settingSubTitle(text: string = '') {
+  @Builder settingSubTitle($$:{text: string}) {
     Row() {
-      Text(text)
+      Text($$.text)
         .fontWeight(FontWeight.Medium)
         .fontColor($r('app.color.text_level2'))
         .fontSize(14)
@@ -146,25 +146,25 @@ export struct SettingTable {
     .justifyContent(FlexAlign.End)
   }
 
-  @Builder selectMenu(thisResource: [string | Resource, number][], outPut: (value: number) => number) {
+  @Builder selectMenu($$:{thisResource: [string | Resource, number][], outPut: (value: number) => number}) {
     Column() {
       Column() {
-        ForEach(thisResource, (item: [string | Resource, number], index: number) => {
+        ForEach($$.thisResource, (item: [string | Resource, number], index: number) => {
           Column() {
             Column() {
               Text(item[0])
-                .fontColor(item[1] == outPut(-1) ? get_accent() : $r('app.color.text_level1'))
+                .fontColor(item[1] == $$.outPut(-1) ? get_accent() : $r('app.color.text_level1'))
                 .fontSize(14)
             }
             .width('100%')
             .alignItems(HorizontalAlign.Start)
             .padding({ bottom: 12, top: 12 })
             .onTouch(() => {
-              outPut(item[1])
-              console.info(outPut(-1).toString())
+              $$.outPut(item[1])
+              console.info($$.outPut(-1).toString())
             })
 
-            if (index != thisResource.length - 1)
+            if (index != $$.thisResource.length - 1)
               Divider().color($r('app.color.divider'))
           }
           .width('100%')
@@ -176,9 +176,9 @@ export struct SettingTable {
     .justifyContent(FlexAlign.Start)
   }
 
-  @Builder settingSelect(thisResource: [string | Resource, number][], outPut: (value: number) => number) {
+  @Builder settingSelect($$:{thisResource: [string | Resource, number][], outPut: (value: number) => number}) {
     Row() {
-      Text(thisResource[outPut(-1)][0])
+      Text($$.thisResource[$$.outPut(-1)][0])
         .fontColor($r('app.color.text_level1'))
         .fontSize(16)
         .fontWeight(FontWeight.Medium)
@@ -186,7 +186,7 @@ export struct SettingTable {
         .width(24)
         .height(24)
     }
-    .bindMenu(this.selectMenu(thisResource, outPut))
+    .bindMenu(this.selectMenu({thisResource: $$.thisResource, outPut: $$.outPut}))
     .padding({ right: 12 })
     .justifyContent(FlexAlign.End)
   }
@@ -229,8 +229,8 @@ export struct SettingTable {
           // })
 
           Stack({ alignContent: Alignment.End }) {
-            this.settingItem(3, $r('app.media.ic_setting_storage'), '本地备份')
-            this.settingSubTitle()
+            this.settingItem({settingId: 3, icon: $r('app.media.ic_setting_storage'), title: '本地备份', showDivider: true})
+            this.settingSubTitle({text: ' '})
           }.height(56).width('100%')
           .onClick(() => {
             this.settingNum = 3
@@ -239,8 +239,8 @@ export struct SettingTable {
           })
 
           Stack({ alignContent: Alignment.End }) {
-            this.settingItem(4, $r('app.media.ic_setting_synchronous'), '多端同步', false)
-            this.settingSubTitle()
+            this.settingItem({settingId: 4, icon: $r('app.media.ic_setting_synchronous'), title: '多端同步', showDivider: false})
+            this.settingSubTitle({text: ''})
           }.height(56).width('100%')
           .onClick(() => {
             this.settingNum = 4
@@ -259,8 +259,8 @@ export struct SettingTable {
 
         Column() {
           Stack({ alignContent: Alignment.End }) {
-            this.settingItem(5, $r('app.media.ic_folder'), $r('app.string.Edit_folder'), false)
-            this.settingSubTitle()
+            this.settingItem({settingId: 5, icon: $r('app.media.ic_folder'), title: $r('app.string.Edit_folder'), showDivider:false})
+            this.settingSubTitle({text: ''})
           }.height(56).width('100%')
           .onClick(() => {
             this.settingNum = 5
@@ -272,8 +272,8 @@ export struct SettingTable {
 
         Column() {
           Stack({ alignContent: Alignment.End }) {
-            this.settingItem(6, $r('app.media.ic_setting_maincolor'), $r('app.string.accentColor'), false)
-            this.settingSubTitle()
+            this.settingItem({settingId: 6, icon: $r('app.media.ic_setting_maincolor'), title: $r('app.string.accentColor'), showDivider: false})
+            this.settingSubTitle({text: this.accentColorArray[this.AccentColor[0]][0]})
           }.height(56).width('100%')
           .onClick(() => {
             this.settingNum = 6
@@ -285,8 +285,8 @@ export struct SettingTable {
 
         Column() {
           Stack({ alignContent: Alignment.End }) {
-            this.settingItem(7, $r('app.media.ic_setting_enovate'), $r('app.string.defineCycleLength'))
-            this.settingSubTitle(this.DefineCycleLength.toString() + '天')
+            this.settingItem({settingId: 7, icon: $r('app.media.ic_setting_enovate'), title: $r('app.string.defineCycleLength'), showDivider: true})
+            this.settingSubTitle({text: this.DefineCycleLength.toString() + '天'})
           }.height(56).width('100%')
           .onClick(() => {
             this.settingNum = 7
@@ -295,8 +295,8 @@ export struct SettingTable {
           })
 
           Stack({ alignContent: Alignment.End }) {
-            this.settingItem(8, $r('app.media.ic_setting_clock'), $r('app.string.defaultClockTime'))
-            this.settingSubTitle(this.getTimeInfo(this.DefaultClockTime, this.DefaultTimeFormat == 0))
+            this.settingItem({settingId: 8, icon: $r('app.media.ic_setting_clock'), title: $r('app.string.defaultClockTime'), showDivider: true})
+            this.settingSubTitle({text: this.getTimeInfo(this.DefaultClockTime, this.DefaultTimeFormat == 0)})
           }.height(56).width('100%')
           .onClick(() => {
             this.settingNum = 8
@@ -305,8 +305,8 @@ export struct SettingTable {
           })
 
           Stack({ alignContent: Alignment.End }) {
-            this.settingItem(15, $r('app.media.ic_new_effectiveTime'), $r('app.string.defaultUrgentTime'))
-            this.settingSubTitle(this.getTimeInfo(this.DefaultUrgentTime, this.DefaultTimeFormat == 0))
+            this.settingItem({settingId: 15, icon: $r('app.media.ic_new_effectiveTime'), title: $r('app.string.defaultUrgentTime'), showDivider: true})
+            this.settingSubTitle({text: this.getTimeInfo(this.DefaultUrgentTime, this.DefaultTimeFormat == 0)})
           }.height(56).width('100%')
           .onClick(() => {
             this.settingNum = 15
@@ -315,31 +315,29 @@ export struct SettingTable {
           })
 
           Stack({ alignContent: Alignment.End }) {
-            this.settingItem(9, $r('app.media.ic_setting_calendarSet'), $r('app.string.firstDayOfWeek'))
-            this.settingSelect([
+            this.settingItem({settingId: 9, icon: $r('app.media.ic_setting_calendarSet'), title: $r('app.string.firstDayOfWeek'), showDivider: true})
+            this.settingSelect({thisResource: [
               [$r('app.string.Monday'), 0],
               [$r('app.string.Sunday'), 1]
-            ], (value: number) => {
+            ], outPut: (value: number) => {
               if (value > -1) {
                 this.FirstDayOfWeek = value
-                // setStorage("appStorage", "FirstDayOfWeek", value.toString())
               }
               return this.FirstDayOfWeek
-            })
+            }})
           }.height(56).width('100%')
 
           Stack({ alignContent: Alignment.End }) {
-            this.settingItem(10, $r('app.media.ic_setting_time'), $r('app.string.defaultTimeFormat'), false)
-            this.settingSelect([
+            this.settingItem({settingId: 10, icon: $r('app.media.ic_setting_time'), title: $r('app.string.defaultTimeFormat'), showDivider: false})
+            this.settingSelect({thisResource: [
               [$r('app.string.24TimeFormat'), 0],
               [$r('app.string.12TimeFormat'), 1]
-            ], (value: number) => {
+            ], outPut: (value: number) => {
               if (value > -1) {
                 this.DefaultTimeFormat = value
-                // setStorage("appStorage", "DefaultTimeFormat", value.toString())
               }
               return this.DefaultTimeFormat
-            })
+            }})
           }.height(56).width('100%')
         }
         .Card()
@@ -351,8 +349,8 @@ export struct SettingTable {
           //          }.height(56).width('100%')
 
           Stack({ alignContent: Alignment.End }) {
-            this.settingItem(14, $r('app.media.ic_setting_help'), '常见问题')
-            this.settingSubTitle()
+            this.settingItem({settingId: 14, icon: $r('app.media.ic_setting_help'), title: '常见问题', showDivider: true})
+            this.settingSubTitle({text: ''})
           }.height(56).width('100%')
           .onClick(() => {
             this.settingNum = 14
@@ -363,8 +361,8 @@ export struct SettingTable {
           })
 
           Stack({ alignContent: Alignment.End }) {
-            this.settingItem(12, $r('app.media.ic_setting_secure'), '用户协议与隐私声明')
-            this.settingSubTitle()
+            this.settingItem({settingId: 12, icon: $r('app.media.ic_setting_secure'), title: '用户协议与隐私声明', showDivider: true})
+            this.settingSubTitle({text: ''})
           }.height(56).width('100%')
           .onClick(() => {
             this.settingNum = 12
@@ -375,8 +373,8 @@ export struct SettingTable {
           })
 
           Stack({ alignContent: Alignment.End }) {
-            this.settingItem(13, $r('app.media.ic_setting_about'), $r('app.string.about'), false)
-            this.settingSubTitle()
+            this.settingItem({settingId: 13, icon: $r('app.media.ic_setting_about'), title: $r('app.string.about'), showDivider: false})
+            this.settingSubTitle({text: ''})
           }.height(56).width('100%')
           .onClick(() => {
             this.settingNum = 13

@@ -13,7 +13,7 @@ export struct EventQuadrant {
   @StorageLink('isQuadrantHidden') isQuadrantHidden: boolean[] = []
   @StorageLink('showDate') showDate: number[] = []
   @StorageLink('folderId') folderId: number = 0
-  @StorageLink('eventsShowResource') eventsShowResource: ThingsResource[][] = [[]]
+  @StorageLink('eventsShowResource') eventsShowResource: ThingsResource[][] = [[], [], []]
   @State thisQuadrant: ThingsResource[][] = [[], [], []]
 
   @State isRefreshing: boolean = false

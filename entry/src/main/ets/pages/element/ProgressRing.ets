@@ -2,7 +2,7 @@ import { get_accent } from '../../control/AccentController';
 
 @Component
 export struct ProgressRing {
-  @State doneRate: number = 0
+  @Link doneRate: number;
   private accentColor: Resource
 
   aboutToAppear() {
@@ -38,6 +38,8 @@ export struct ProgressRing {
             duration: 200, // 动画时长
             curve: Curve.Linear, // 动画曲线
           })
+          .width('100%')
+          .height('100%')
 
       }
       .height('100%')

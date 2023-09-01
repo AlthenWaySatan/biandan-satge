@@ -22,15 +22,25 @@ export struct FourQuadrantPage {
   /**
    * 获取日期
    */
-  private getShowDate(): any {
+  private getShowDate() {
     if (this.todayDate[0] == this.showDate[0]) {
       if (this.todayDate[1] == this.showDate[1] && this.todayDate[2] == this.showDate[2])
-        return $r('app.string.Today');
+        return '今天';
       else
         return this.showDate[1] + '月' + this.showDate[2] + '日';
     }
     else
       return this.showDate[0] + '年' + this.showDate[1] + '月' + this.showDate[2] + '日';
+  }
+
+  @State showDateToSon: string = '今天'
+
+  private RefreshShowDate() {
+    this.showDateToSon = this.getShowDate();
+  }
+
+  aboutToAppear() {
+    this.RefreshShowDate();
   }
 
   @StorageLink('systemFolderResource') systemFolderResource: FolderResource[] = []
@@ -45,7 +55,7 @@ export struct FourQuadrantPage {
   /**
    * 获取当前待办单标题
    */
-  private getFolderTitle(): any {
+  private getFolderTitle() {
     if (this.folderId <= 0)
       return this.systemFolderResource[-this.folderId].title;
     else {
@@ -66,14 +76,14 @@ export struct FourQuadrantPage {
           //标题
           if (this.screenType == 'sm') {
             TitleTwo({
-              mainTitle: this.getShowDate(),
+              mainTitle: $showDateToSon,
               subTitle: this.getFolderTitle(),
               columnNum: 4,
               offsetNum: 0
             })
           } else if (this.screenType == 'md') {
             TitleTwo({
-              mainTitle: this.getShowDate(),
+              mainTitle: $showDateToSon,
               subTitle: this.getFolderTitle(),
               columnNum: 8,
               offsetNum: 1
@@ -81,7 +91,7 @@ export struct FourQuadrantPage {
           } else {
             TitleOne({
               showDate: $showDate,
-              mainTitle: this.getShowDate(),
+              mainTitle: $showDateToSon,
               columnNum: 8,
               offsetNum: 1
             })

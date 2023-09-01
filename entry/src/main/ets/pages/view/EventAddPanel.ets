@@ -1,4 +1,4 @@
-import prompt from '@ohos.promptAction'
+import prompt from '@ohos.prompt'
 import FolderResource from '../../model/FolderResourceContact';
 import { createEvent, editThisEvent } from '../../control/EventsController';
 import CreateResource from '../../model/CreateResourceContact';
@@ -51,10 +51,13 @@ export struct EventAddPanel {
   @StorageLink('showDate') @Watch('setToStart') showDate: number[] = []
   @StorageLink('folderId') @Watch('setToStart') folderId: number = null
 
+  @State addYearDay :string[] = this.thisEvent.cycleDateYear
+
   aboutToAppear() {
     this.accentColor = get_accent()
     this.translucentSaturationAccentColor = get_translucentSaturation_accent()
     this.setToStart()
+    // this.CODE_DISTURBANCE()
   }
 
   private youChangedCycle() {
@@ -64,6 +67,7 @@ export struct EventAddPanel {
   private CODE_DISTURBANCE() {
     this.isShowMore[3] = !this.isShowMore[3]
     this.isShowMore[3] = !this.isShowMore[3]
+    // this.addYearDay = this.thisEvent.cycleDateYear;
   }
 
   /**
@@ -176,7 +180,6 @@ export struct EventAddPanel {
       }
       .onTouch(() => this.changeFolder(this.systemFolderResource[1].id, this.systemFolderResource[1].classify, this.systemFolderResource[1].icon))
       .padding({ left: 12, right: 12 })
-
       Column().height(6).width('100%').backgroundColor($r('app.color.background'))
       ForEach(this.userFolderResource, (item: FolderResource) => {
         Column() {
@@ -213,8 +216,7 @@ export struct EventAddPanel {
         }
         .onTouch(() => this.changeFolder(item.id, item.classify, item.icon))
         .padding({ left: 12, right: 12 })
-      }, (item: FolderResource) => item.toString())
-
+      })
       Column() {
         Row() {
           Row() {
@@ -249,6 +251,7 @@ export struct EventAddPanel {
       })
       .padding({ left: 12, right: 12 })
     }
+    .width(240)
   }
 
   /**
@@ -314,14 +317,14 @@ export struct EventAddPanel {
     return [(dateTime.getFullYear()), (dateTime.getMonth() + 1), (dateTime.getDate())]
   }
 
-  @Builder listItem(icon: Resource, title: string | Resource, description: string | Resource, isShowMore: boolean, showDivider: boolean = true) {
+  @Builder listItem($$:{icon: Resource, title: string | Resource, description: string | Resource, isShowMore: boolean, showDivider: boolean}) {
     Column() {
       Row() {
         Row() {
-          Image(icon)
+          Image($$.icon)
             .width(24)
             .height(24)
-          Text(title)
+          Text($$.title)
             .fontWeight(FontWeight.Medium)
             .fontColor($r('app.color.text_level1'))
             .fontSize(16)
@@ -335,7 +338,7 @@ export struct EventAddPanel {
 
         Row() {
           Column() {
-            Text(description)
+            Text($$.description)
               .fontWeight(FontWeight.Medium)
               .fontColor($r('app.color.text_level2'))
               .fontSize(14)
@@ -351,7 +354,7 @@ export struct EventAddPanel {
             .margin({ left: 4 })
             .rotate({
               x: 0, y: 0, z: 1,
-              angle: isShowMore ? 0 : -90
+              angle: $$.isShowMore ? 0 : -90
             })
             .animation({
               duration: 200, // 动画时长
@@ -366,21 +369,21 @@ export struct EventAddPanel {
       .width('100%')
       .height(56)
 
-      if (showDivider) {
+      if ($$.showDivider) {
         Divider().width('100%').color($r('app.color.divider'))
       }
     }
   }
 
-  @Builder listItem_little(title: string | Resource, description: string | Resource, isShow: boolean, showDivider: boolean = true) {
+  @Builder listItem_little($$:{title: string | Resource, description: string | Resource, isShow: boolean, showDivider: boolean}) {
     Column() {
       Row() {
-        if (isShow)
+        if ($$.isShow)
         Row() {
           Column()
             .height(24)
             .width(24)
-          Text(title)
+          Text($$.title)
             .fontWeight(FontWeight.Medium)
             .fontColor($r('app.color.text_level2'))
             .fontSize(16)
@@ -392,10 +395,10 @@ export struct EventAddPanel {
         }
         .width('50%')
 
-        if (isShow)
+        if ($$.isShow)
         Row() {
           Column() {
-            Text(description)
+            Text($$.description)
               .fontWeight(FontWeight.Medium)
               .fontColor($r('app.color.text_level2'))
               .fontSize(14)
@@ -414,7 +417,7 @@ export struct EventAddPanel {
         .width('50%')
       }
       .width('100%')
-      .height(isShow ? 48 : 0)
+      .height($$.isShow ? 48 : 0)
       .animation({
         duration: 200, // 动画时长
         curve: Curve.EaseOut, // 动画曲线
@@ -422,7 +425,7 @@ export struct EventAddPanel {
         iterations: 1, // 播放次数
       })
 
-      if (showDivider && isShow) {
+      if ($$.showDivider && $$.isShow) {
         Column() {
           Divider().width('100%').color($r('app.color.divider'))
         }.padding({ left: 40 })
@@ -491,6 +494,7 @@ export struct EventAddPanel {
       }
       .padding({ left: 12, right: 12 })
     }
+    .width(240)
     .justifyContent(FlexAlign.Start)
   }
 
@@ -638,6 +642,7 @@ export struct EventAddPanel {
       }
       .padding({ left: 12, right: 12 })
     }
+    .width(240)
     .justifyContent(FlexAlign.Start)
   }
 
@@ -719,8 +724,13 @@ export struct EventAddPanel {
             }
             else if (index == 2)
               this.thisEvent.cycleDate.push(this.thisEvent.thisDate[2])
-            else if (index == 3)
-              this.thisEvent.cycleDateYear.push((this.thisEvent.thisDate[1] < 10 ? '0' : '') + this.thisEvent.thisDate[1] + '-' + (this.thisEvent.thisDate[2] < 10 ? '0' : '') + this.thisEvent.thisDate[2])
+            else if (index == 3) {
+              if(this.thisEvent.cycleDateYear.length == 0) {
+                this.thisEvent.cycleDateYear.push((this.thisEvent.thisDate[1] < 10 ? '0' : '') + this.thisEvent.thisDate[1] + '-' + (this.thisEvent.thisDate[2] < 10 ? '0' : '') + this.thisEvent.thisDate[2])
+                this.CODE_DISTURBANCE();
+                // this.addYearDay = this.thisEvent.cycleDateYear;
+              }
+            }
           })
           .width('30%')
           .height('100%')
@@ -735,25 +745,25 @@ export struct EventAddPanel {
   /**
    * 状态按钮
    */
-  @Builder toggleButton(text: string, value: number, width: number) {
-    Toggle({ type: ToggleType.Button, isOn: this.thisEvent.cycleDate.indexOf(value) != -1 }) {
-      Text(text)
+  @Builder toggleButton($$:{text: string, value: number, width: number}) {
+    Toggle({ type: ToggleType.Button, isOn: this.thisEvent.cycleDate.indexOf($$.value) != -1 }) {
+      Text($$.text)
         .fontSize(16)
         .fontWeight(FontWeight.Medium)
         .fontColor($r('app.color.text_level1'))
     }
     .height(40)
-    .width(width)
+    .width($$.width)
     .selectedColor(this.translucentSaturationAccentColor)
     .onChange((isOn: boolean) => {
       this.changedCycle = true
-      if (isOn && this.thisEvent.cycleDate.indexOf(value) == -1) {
-        console.info('add ' + value.toString())
-        this.thisEvent.cycleDate.push(value)
+      if (isOn && this.thisEvent.cycleDate.indexOf($$.value) == -1) {
+        console.info('add ' + $$.value.toString())
+        this.thisEvent.cycleDate.push($$.value)
       } else {
         if (this.thisEvent.cycleDate.length > 1) {
-          console.info('sub ' + value.toString())
-          this.thisEvent.cycleDate = this.thisEvent.cycleDate.filter(item => item != value)
+          console.info('sub ' + $$.value.toString())
+          this.thisEvent.cycleDate = this.thisEvent.cycleDate.filter(item => item != $$.value)
         } else {
           prompt.showToast({
             message: (Object)($r('app.string.dateCantBeEmpty')),
@@ -774,35 +784,36 @@ export struct EventAddPanel {
         Column({ space: 8 }) {
           if (this.FirstDayOfWeek == 1) {
             ForEach(this.weekResource, (item: string, index: number) => {
-              this.toggleButton(item, index, 80)
+              this.toggleButton({text: item, value: index, width: 80})
             })
           } else {
             ForEach(this.weekResource, (item: string, index: number) => {
               if (index > 0)
-                this.toggleButton(item, index, 80)
+                this.toggleButton({text: item, value: index, width: 80})
             })
-            this.toggleButton(this.weekResource[0], 0, 80)
+            this.toggleButton({text: this.weekResource[0], value: 0, width: 80})
           }
         }.padding(12)
       } else if (this.thisEvent.cycleUnit == 3) {
         Flex({ wrap: FlexWrap.Wrap }) {
           ForEach(this.monthResource, (item: string, index: number) => {
             Column() {
-              this.toggleButton(item, index + 1, 40)
+              this.toggleButton({text: item, value: index + 1, width: 40})
             }.padding(4)
           })
         }.width(16 + 48 * (this.screenType == 'sm' ? 4 : 7))
         .padding(8)
       }
     }
+    .width(240)
     .justifyContent(FlexAlign.Start)
   }
 
-  @Builder cycleDataYearMenu(isShow: Boolean) {
+  @Builder cycleDataYearMenu($$:{isShow: Boolean}) {
     Column() {
       Column() {
         Stack() {
-          if (isShow) {
+          if ($$.isShow) {
             Stack() {
               DatePicker({
                 selected: new Date(2020, this.tempDate[0] - 1, this.tempDate[1])
@@ -816,7 +827,7 @@ export struct EventAddPanel {
               Column() {
                 Scroll() {
                   Column({ space: 8 }) {
-                    ForEach(this.thisEvent.cycleDateYear, (item: string) => {
+                    ForEach(this.addYearDay, (item: string) => {
                       Button() {
                         Text(item)
                           .fontSize(16)
@@ -828,16 +839,18 @@ export struct EventAddPanel {
                       .backgroundColor(this.translucentSaturationAccentColor)
                       .onClick(() => {
                         this.changedCycle = true
-                        if (this.thisEvent.cycleDateYear.length > 1) {
-                          console.info('sub ' + item)
-                          this.thisEvent.cycleDateYear = this.thisEvent.cycleDateYear.filter(item2 => item2 != item)
+                        if (this.addYearDay.length > 1) {
+                          console.log('add year day sub ' + item)
+                          this.addYearDay = this.addYearDay.filter(item2 => item2 != item)
+                          this.thisEvent.cycleDateYear = this.addYearDay;
+                          console.log('add year day', this.thisEvent.cycleDateYear);
+                          // this.CODE_DISTURBANCE()
                         } else {
                           prompt.showToast({
                             message: (Object)($r('app.string.dateCantBeEmpty')),
                             duration: 500,
                           });
                         }
-                        this.CODE_DISTURBANCE()
                       })
                     })
                   }.padding(8)
@@ -864,16 +877,16 @@ export struct EventAddPanel {
             .onClick(() => {
               this.changedCycle = true
               var temp: string = (this.tempDate[0] < 10 ? '0' : '') + this.tempDate[0] + '-' + (this.tempDate[1] < 10 ? '0' : '') + this.tempDate[1]
-              console.info(temp)
               if (this.thisEvent.cycleDateYear.indexOf(temp) == -1)
                 this.thisEvent.cycleDateYear.push(temp)
-              this.CODE_DISTURBANCE()
+              console.log('add year day', this.thisEvent.cycleDateYear);
+              this.addYearDay = this.thisEvent.cycleDateYear;
             })
           }
         }.alignContent(Alignment.BottomEnd)
       }
-      .padding({ left: 40, top: isShow ? 12 : 0, right: 12, bottom: isShow ? 12 : 0 })
-      .height(isShow ? (this.screenType == 'lg' ? 160 : 200) : 0)
+      .padding({ left: 40, top: $$.isShow ? 12 : 0, right: 12, bottom: $$.isShow ? 12 : 0 })
+      .height($$.isShow ? (this.screenType == 'lg' ? 160 : 200) : 0)
       .width('100%')
       .animation({
         duration: 200, // 动画时长
@@ -882,7 +895,7 @@ export struct EventAddPanel {
         iterations: 1, // 播放次数
       })
 
-      if (isShow) {
+      if ($$.isShow) {
         Column() {
           Divider().width('100%').color($r('app.color.divider'))
         }.padding({ left: 40 })
@@ -907,6 +920,7 @@ export struct EventAddPanel {
       .padding(12)
       .height(this.screenType == 'lg' ? 160 : 200)
     }
+    .width(240)
     .justifyContent(FlexAlign.Start)
   }
 
@@ -1030,6 +1044,7 @@ export struct EventAddPanel {
       .padding(12)
       .height(this.screenType == 'lg' ? 160 : 200)
     }
+    .width(240)
     .justifyContent(FlexAlign.Start)
   }
 
@@ -1235,6 +1250,7 @@ export struct EventAddPanel {
                     this.thisEvent.cycleState == 0 ?
                   this.translucentSaturationAccentColor : $r('app.color.divider')
                 )
+                .height(40)
                 .borderRadius(20)
                 .bindMenu(this.DateMenu())
               }
@@ -1296,7 +1312,7 @@ export struct EventAddPanel {
 
                 Column() {
                   Column() {
-                    this.listItem($r('app.media.ic_new_cycle'), $r('app.string.cycle'), this.thisEvent.getCycleInfo(this.FirstDayOfWeek), this.isShowMore[0])
+                    this.listItem({icon: $r('app.media.ic_new_cycle'), title: $r('app.string.cycle'), description: this.thisEvent.getCycleInfo(this.FirstDayOfWeek), isShowMore: this.isShowMore[0], showDivider: true})
                   }.onClick(() => {
                     if (!this.isShowMore[0]) {
                       this.isShowMore = [true, false, false, false]
@@ -1307,44 +1323,44 @@ export struct EventAddPanel {
                   })
 
                   Column() {
-                    this.listItem_little($r('app.string.cycleState'), this.cycleStateRes[this.thisEvent.cycleState], this.isShowMore[0] && !this.thisEvent.cycleYearShow)
+                    this.listItem_little({title: $r('app.string.cycleState'), description: this.cycleStateRes[this.thisEvent.cycleState], isShow: this.isShowMore[0] && !this.thisEvent.cycleYearShow, showDivider: true})
                   }.bindMenu(this.cycleStateMenu())
 
                   Column() {
-                    this.listItem_little($r('app.string.cycleStartTime'), this.thisEvent.getDateInfoThis(this.thisEvent.cycleStartDate), this.isShowMore[0] && this.thisEvent.cycleState != 0 && !this.thisEvent.cycleYearShow)
+                    this.listItem_little({title: $r('app.string.cycleStartTime'), description: this.thisEvent.getDateInfoThis(this.thisEvent.cycleStartDate), isShow: this.isShowMore[0] && this.thisEvent.cycleState != 0 && !this.thisEvent.cycleYearShow, showDivider: true})
                   }.bindMenu(this.cycleStartTimeMenu())
 
                   Column() {
-                    this.listItem_little($r('app.string.cycleEndTime'), this.thisEvent.getDateInfoThis(this.thisEvent.cycleEndDate), this.isShowMore[0] && this.thisEvent.cycleState != 0 && !this.thisEvent.cycleYearShow)
+                    this.listItem_little({title: $r('app.string.cycleEndTime'), description: this.thisEvent.getDateInfoThis(this.thisEvent.cycleEndDate), isShow: this.isShowMore[0] && this.thisEvent.cycleState != 0 && !this.thisEvent.cycleYearShow, showDivider: true})
                   }.bindMenu(this.cycleEndTimeMenu())
 
                   Column() {
-                    this.listItem_little($r('app.string.cycleTime'), this.thisEvent.getUserCyclePeriod(), this.isShowMore[0] && this.thisEvent.cycleState == 1 && !this.thisEvent.cycleYearShow)
+                    this.listItem_little({title: $r('app.string.cycleTime'), description: this.thisEvent.getUserCyclePeriod(), isShow: this.isShowMore[0] && this.thisEvent.cycleState == 1 && !this.thisEvent.cycleYearShow, showDivider: true})
                   }.bindMenu(this.cyclePeriodMenu())
 
                   Column() {
-                    this.listItem_little($r('app.string.cycleSpecificTime'), this.thisEvent.getUserCycleData(this.FirstDayOfWeek), this.isShowMore[0] && this.thisEvent.cycleState == 1 && (this.thisEvent.cycleUnit == 2 || this.thisEvent.cycleUnit == 3))
+                    this.listItem_little({title: $r('app.string.cycleSpecificTime'), description: this.thisEvent.getUserCycleData(this.FirstDayOfWeek), isShow: this.isShowMore[0] && this.thisEvent.cycleState == 1 && (this.thisEvent.cycleUnit == 2 || this.thisEvent.cycleUnit == 3), showDivider: true})
                   }.bindMenu(this.cycleDataMenu())
 
                   Column() {
-                    this.listItem_little($r('app.string.cycleSpecificTime'), this.thisEvent.getUserCycleData(this.FirstDayOfWeek), this.isShowMore[0] && this.thisEvent.cycleState == 1 && this.thisEvent.cycleUnit == 4)
+                    this.listItem_little({title: $r('app.string.cycleSpecificTime'), description: this.thisEvent.getUserCycleData(this.FirstDayOfWeek), isShow: this.isShowMore[0] && this.thisEvent.cycleState == 1 && this.thisEvent.cycleUnit == 4, showDivider: true})
                   }.onClick(() => {
                     if (this.isShowMore[0] && this.thisEvent.cycleState == 1 && this.thisEvent.cycleUnit == 4)
                       this.thisEvent.cycleYearShow = !this.thisEvent.cycleYearShow
                   })
 
                   Column() {
-                    this.cycleDataYearMenu(this.isShowMore[0] && this.thisEvent.cycleYearShow)
+                    this.cycleDataYearMenu({isShow: this.isShowMore[0] && this.thisEvent.cycleYearShow})
                   }
 
                   Column() {
-                    this.listItem_little($r('app.string.timeLimit'), this.thisEvent.cycleDateLimit.toString() + ' 天', this.isShowMore[0] && this.thisEvent.cycleState != 0)
+                    this.listItem_little({title: $r('app.string.timeLimit'), description: this.thisEvent.cycleDateLimit.toString() + ' 天', isShow: this.isShowMore[0] && this.thisEvent.cycleState != 0, showDivider: true})
                   }.bindMenu(this.cycleLimitMenu())
                 }
 
                 Column() {
                   Column() {
-                    this.listItem($r('app.media.ic_new_effectiveTime'), $r('app.string.validTime'), this.thisEvent.getValidTimeInfo(this.DefaultTimeFormat == 0), this.isShowMore[1])
+                    this.listItem({icon:$r('app.media.ic_new_effectiveTime'), title:$r('app.string.validTime'), description: this.thisEvent.getValidTimeInfo(this.DefaultTimeFormat == 0), isShowMore: this.isShowMore[1], showDivider: true})
                   }.onClick(() => {
                     if (!this.isShowMore[1]) {
                       this.isShowMore = [false, true, false, false]
@@ -1354,17 +1370,17 @@ export struct EventAddPanel {
                   })
 
                   Column() {
-                    this.listItem_little($r('app.string.validStartTime'), this.getTimeInfo(this.thisEvent.validStartTime, false), this.isShowMore[1])
+                    this.listItem_little({title: $r('app.string.validStartTime'), description: this.getTimeInfo(this.thisEvent.validStartTime, false), isShow: this.isShowMore[1], showDivider: true})
                   }.bindMenu(this.validStartTimeMenu())
 
                   Column() {
-                    this.listItem_little($r('app.string.validEndTime'), this.getTimeInfo(this.thisEvent.validEndTime, this.thisEvent.cycleState == 0), this.isShowMore[1])
+                    this.listItem_little({title: $r('app.string.validEndTime'), description: this.getTimeInfo(this.thisEvent.validEndTime, this.thisEvent.cycleState == 0), isShow: this.isShowMore[1], showDivider: true})
                   }.bindMenu(this.validEndTimeMenu())
                 }
 
                 Column() {
                   Column() {
-                    this.listItem($r('app.media.ic_new_clock'), $r('app.string.clock'), this.thisEvent.getClockInfo(this.DefaultTimeFormat == 0), this.isShowMore[2])
+                    this.listItem({icon: $r('app.media.ic_new_clock'), title: $r('app.string.clock'), description: this.thisEvent.getClockInfo(this.DefaultTimeFormat == 0), isShowMore: this.isShowMore[2], showDivider: true})
                   }.onClick(() => {
                     if (!this.isShowMore[2]) {
                       this.isShowMore = [false, false, true, false]
@@ -1374,22 +1390,22 @@ export struct EventAddPanel {
                   })
 
                   Column() {
-                    this.listItem_little($r('app.string.clockState'), this.clockStateRes[this.thisEvent.clockState], this.isShowMore[2])
+                    this.listItem_little({title: $r('app.string.clockState'), description: this.clockStateRes[this.thisEvent.clockState], isShow: this.isShowMore[2], showDivider: true})
                   }.bindMenu(this.clockStateMenu())
 
                   Column() {
-                    this.listItem_little($r('app.string.leadTime'), '提前' + (this.thisEvent.clockTimeLong[0] > 0 ? this.thisEvent.clockTimeLong[0] + '时' : '') + this.thisEvent.clockTimeLong[1] + '分',
-                      this.isShowMore[2] && this.thisEvent.clockState == 1)
+                    this.listItem_little({title: $r('app.string.leadTime'), description: '提前' + (this.thisEvent.clockTimeLong[0] > 0 ? this.thisEvent.clockTimeLong[0] + '时' : '') + this.thisEvent.clockTimeLong[1] + '分',
+                      isShow: this.isShowMore[2] && this.thisEvent.clockState == 1, showDivider: true})
                   }.bindMenu(this.clockTimeLongMenu())
 
                   Column() {
-                    this.listItem_little($r('app.string.fixedTime'), this.getTimeInfo(this.thisEvent.clockTime), this.isShowMore[2] && this.thisEvent.clockState == 2)
+                    this.listItem_little({title: $r('app.string.fixedTime'), description: this.getTimeInfo(this.thisEvent.clockTime), isShow: this.isShowMore[2] && this.thisEvent.clockState == 2, showDivider: true})
                   }.bindMenu(this.clockTimeMenu())
                 }
 
                 Column() {
                   Column() {
-                    this.listItem($r('app.media.ic_new_number'), $r('app.string.times'), this.thisEvent.countNumber.toString() + ' 次', this.isShowMore[3], this.isShowMore[3])
+                    this.listItem({icon: $r('app.media.ic_new_number'), title: $r('app.string.times'), description: this.thisEvent.countNumber.toString() + ' 次', isShowMore: this.isShowMore[3], showDivider: this.isShowMore[3]})
                   }.bindMenu(this.countNumberMenu())
                 }
               }

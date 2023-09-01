@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     viewBox="0 0 24 24"
+     fill="none">
+    <defs>
+        <rect
+            id="path_0"
+            x="0"
+            y="0"
+            width="24"
+            height="24"/>
+    </defs>
+    <g
+        opacity="1"
+        transform="translate(0 0)  rotate(0 12 12)">
+        <mask
+            id="bg-mask-0"
+            fill="white">
+            <use xlink:href="#path_0"></use>
+        </mask>
+        <g mask="url(#bg-mask-0)">
+            <g
+                opacity="1"
+                transform="translate(1.5 1.5)  rotate(0 10.5 10.5)">
+                <g
+                    opacity="1"
+                    transform="translate(0 0)  rotate(0 10.5 10.5)">
+                    <g
+                        opacity="1"
+                        transform="translate(0 0)  rotate(0 10.5 10.5)">
+
+                    </g>
+                    <g
+                        opacity="1"
+                        transform="translate(0 0)  rotate(0 10.5 10.5)">
+                        <path
+                            id="路径 3"
+                            fill-rule="evenodd"
+                            fill="#000000"
+                            transform="translate(0 0)  rotate(0 10.5 10.5)"
+                            opacity="0.2"
+                            d="M0,10.5C0,16.3 4.7,21 10.5,21C16.3,21 21,16.3 21,10.5C21,4.7 16.3,0 10.5,0C4.7,0 0,4.7 0,10.5Z "/>
+                        <path
+                            id="路径 4"
+                            fill-rule="evenodd"
+                            fill="#000000"
+                            transform="translate(4.459747836632203 6.1282814967356)  rotate(0 6.7466934371898555 4.589394529405036)"
+                            opacity="0.25"
+                            d="M3.87,8.7L3.9,8.73C4.21,9.02 4.61,9.18 5.02,9.18C5.46,9.18 5.87,9 6.18,8.7L13.22,1.66L13.25,1.63C13.6,1.23 13.57,0.63 13.19,0.27C12.81,-0.1 12.21,-0.09 11.83,0.28L5.04,7.07L5.02,7.08L5.01,7.07L1.66,3.73L1.64,3.7C1.24,3.34 0.64,3.37 0.27,3.75C-0.1,4.14 -0.09,4.74 0.29,5.12L3.87,8.7Z "/>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

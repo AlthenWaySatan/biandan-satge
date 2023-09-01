@@ -3,10 +3,10 @@ import { CalendarDate } from '../element/CalendarDate';
 @Component
 export struct CalendarWeek {
   @StorageLink('showDate') showDate: number[] = [(new Date().getFullYear()), (new Date().getMonth() + 1), (new Date().getDate())]
-  @State startDate: number[] = []
+  @Link @Watch('StartDateRefresh') startDate: number[]
   @StorageLink('openCalendar') openCalendar: boolean = false
   @StorageLink('showSixLine') showSixLine: boolean = false
-  private isNeedClose: boolean
+  @Link isNeedClose: boolean
 
   /**
    * 获取下n天
@@ -21,37 +21,56 @@ export struct CalendarWeek {
     return [(dateTime.getFullYear()), (dateTime.getMonth() + 1), (dateTime.getDate())]
   }
 
+  @State isHidden: boolean = this.openCalendar && this.isNeedClose
+  @State date0: number[] = this.getNextNDay(this.startDate, 0)
+  @State date1: number[] = this.getNextNDay(this.startDate, 1)
+  @State date2: number[] = this.getNextNDay(this.startDate, 2)
+  @State date3: number[] = this.getNextNDay(this.startDate, 3)
+  @State date4: number[] = this.getNextNDay(this.startDate, 4)
+  @State date5: number[] = this.getNextNDay(this.startDate, 5)
+  @State date6: number[] = this.getNextNDay(this.startDate, 6)
+
+  private StartDateRefresh() {
+    this.date0 = this.getNextNDay(this.startDate, 0)
+    this.date1 = this.getNextNDay(this.startDate, 1)
+    this.date2 = this.getNextNDay(this.startDate, 2)
+    this.date3 = this.getNextNDay(this.startDate, 3)
+    this.date4 = this.getNextNDay(this.startDate, 4)
+    this.date5 = this.getNextNDay(this.startDate, 5)
+    this.date6 = this.getNextNDay(this.startDate, 6)
+  }
+
   build() {
     Column() {
       if (!this.openCalendar || !this.isNeedClose)
       Row() {
         CalendarDate({
-          date: this.getNextNDay(this.startDate, 0),
-          isHidden: this.openCalendar && this.isNeedClose
+          date: $date0,
+          isHidden: $isHidden
         })
         CalendarDate({
-          date: this.getNextNDay(this.startDate, 1),
-          isHidden: this.openCalendar && this.isNeedClose
+          date: $date1,
+          isHidden: $isHidden
         })
         CalendarDate({
-          date: this.getNextNDay(this.startDate, 2),
-          isHidden: this.openCalendar && this.isNeedClose
+          date: $date2,
+          isHidden: $isHidden
         })
         CalendarDate({
-          date: this.getNextNDay(this.startDate, 3),
-          isHidden: this.openCalendar && this.isNeedClose
+          date: $date3,
+          isHidden: $isHidden
         })
         CalendarDate({
-          date: this.getNextNDay(this.startDate, 4),
-          isHidden: this.openCalendar && this.isNeedClose
+          date: $date4,
+          isHidden: $isHidden
         })
         CalendarDate({
-          date: this.getNextNDay(this.startDate, 5),
-          isHidden: this.openCalendar && this.isNeedClose
+          date: $date5,
+          isHidden: $isHidden
         })
         CalendarDate({
-          date: this.getNextNDay(this.startDate, 6),
-          isHidden: this.openCalendar && this.isNeedClose
+          date: $date6,
+          isHidden: $isHidden
         })
       }
       .height('100%')

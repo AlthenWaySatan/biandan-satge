@@ -2,14 +2,14 @@ export default class FolderResource {
     id: number
     icon: Resource
     classify: string
-    title: Resource | string
+    title: string
     counter: number
 
     constructor(
         id: number,
         icon: Resource,
         classify: string,
-        title: Resource | string,
+        title: string,
         counter: number) {
         this.id = id
         this.icon = icon

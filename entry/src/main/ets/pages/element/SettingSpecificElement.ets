@@ -26,7 +26,7 @@ import { backUpPath } from '../../model/BackUpContact';
 import { get_accent, getAccentColor } from '../../control/AccentController';
 import { deleteAFolder } from '../../control/FolderController';
 import FolderResource from '../../model/FolderResourceContact';
-import prompt from '@ohos.promptAction'
+import prompt from '@ohos.prompt'
 
 PersistentStorage.PersistProp('BackUpSwitch', false)
 PersistentStorage.PersistProp('AutoBackUpSwitch', false)
@@ -131,11 +131,11 @@ export struct LocationBackUpPage {
     .margin({ bottom: 12 })
   }
 
-  @Builder settingItem(title: string | Resource) {
+  @Builder settingItem($$:{title: string | Resource}) {
     Stack() {
       Column() {
         Row() {
-          Text(title)
+          Text($$.title)
             .fontColor($r('app.color.text_level1'))
             .fontSize(16)
             .fontWeight(FontWeight.Medium)
@@ -149,7 +149,6 @@ export struct LocationBackUpPage {
     .height(56)
     .width('100%')
   }
-
   @Builder settingSubTitle() {
     Row() {
       Image($r('app.media.ic_arrow_right'))
@@ -161,18 +160,18 @@ export struct LocationBackUpPage {
     .justifyContent(FlexAlign.End)
   }
 
-  @Builder fileItem(filename: mediaLibrary.FileAsset, showDivider: boolean = true) {
+  @Builder fileItem($$:{filename: mediaLibrary.FileAsset, showDivider: boolean}) {
     Stack({ alignContent: Alignment.End }) {
       Stack() {
         Column() {
           Row() {
-            Text(this.getFileName(filename.title))
+            Text(this.getFileName($$.filename.title))
               .fontColor($r('app.color.text_level1'))
               .fontSize(14)
           }
           .height(48)
 
-          if (showDivider)
+          if ($$.showDivider)
           Column() {
             Divider().width('100%').color($r('app.color.divider'))
           }
@@ -189,7 +188,7 @@ export struct LocationBackUpPage {
             .height(24)
             .margin({ right: 6 })
             .onClick(() => {
-              this.importObject(filename)
+              this.importObject($$.filename)
             })
 
           Button({ type: ButtonType.Circle }) {
@@ -201,7 +200,7 @@ export struct LocationBackUpPage {
           .height(24)
           .width(24)
           .onClick(async () => {
-            await deleteFile(filename)
+            await deleteFile($$.filename)
             this.refreshFileList()
           })
         }
@@ -233,7 +232,7 @@ export struct LocationBackUpPage {
       Column() {
         Column() {
           Stack({ alignContent: Alignment.End }) {
-            this.settingItem('开启备份')
+            this.settingItem({ title: '开启备份' })
             if (this.showSwitch)
             Row() {
               Toggle({ type: ToggleType.Switch, isOn: this.BackUpSwitch })
@@ -279,7 +278,7 @@ export struct LocationBackUpPage {
         if (this.BackUpSwitch)
         Column() {
           Stack({ alignContent: Alignment.End }) {
-            this.settingItem('开启自动备份')
+            this.settingItem({ title: '开启自动备份' })
             if (this.showSwitch)
             Row() {
               Toggle({ type: ToggleType.Switch, isOn: this.AutoBackUpSwitch })
@@ -360,7 +359,7 @@ export struct LocationBackUpPage {
           } else {
             Column() {
               ForEach(this.fileList, (item: mediaLibrary.FileAsset, index: number) => {
-                this.fileItem(item, index < this.fileList.length - 1)
+                this.fileItem({filename: item, showDivider: index < this.fileList.length - 1})
               })
             }
           }
@@ -438,11 +437,11 @@ export struct TerminalsSyncPage {
     .margin({ bottom: 12 })
   }
 
-  @Builder settingItem(title: string | Resource) {
+  @Builder settingItem($$:{title: string | Resource}) {
     Stack() {
       Column() {
         Row() {
-          Text(title)
+          Text($$.title)
             .fontColor($r('app.color.text_level1'))
             .fontSize(16)
             .fontWeight(FontWeight.Medium)
@@ -468,14 +467,14 @@ export struct TerminalsSyncPage {
     }
   }
 
-  @Builder TerminalsItem(type: string, title: string | Resource, showDivider: boolean = true) {
+  @Builder TerminalsItem($$:{type: string, title: string | Resource, showDivider: boolean}) {
     Stack() {
       Column() {
         Row() {
-          Image(this.getIcon(type))
+          Image(this.getIcon($$.type))
             .height(24)
             .width(24)
-          Text(title)
+          Text($$.title)
             .fontColor($r('app.color.text_level1'))
             .fontSize(16)
             .fontWeight(FontWeight.Medium)
@@ -495,7 +494,7 @@ export struct TerminalsSyncPage {
         }
         .height(56)
 
-        if (showDivider) {
+        if ($$.showDivider) {
           Column() {
             Divider().width('100%').color($r('app.color.divider'))
           }.padding({ left: 40 })
@@ -528,7 +527,7 @@ export struct TerminalsSyncPage {
       Column() {
         Column() {
           Stack({ alignContent: Alignment.End }) {
-            this.settingItem('开启同步')
+            this.settingItem({ title: '开启同步' })
             if (this.showSwitch)
             Row() {
               Toggle({ type: ToggleType.Switch, isOn: this.TerminalsSyncSwitch })
@@ -575,7 +574,7 @@ export struct TerminalsSyncPage {
         if (this.TerminalsSyncSwitch)
         Column() {
           Stack({ alignContent: Alignment.End }) {
-            this.settingItem('自动同步数据到其他设备')
+            this.settingItem({ title: '自动同步数据到其他设备' })
             if (this.showSwitch)
             Row() {
               Toggle({ type: ToggleType.Switch, isOn: this.AutoTerminalsSyncSwitch })
@@ -643,7 +642,7 @@ export struct TerminalsSyncPage {
         if (this.TerminalsSyncSwitch)
         Column() {
           Stack({ alignContent: Alignment.End }) {
-            this.settingItem('已连接设备')
+            this.settingItem({ title: '已连接设备' })
             if (this.showSwitch)
             Row() {
               Button({ type: ButtonType.Circle }) {
@@ -673,7 +672,7 @@ export struct TerminalsSyncPage {
             Column() {
               ForEach(this.TerminalsList, (item: object, index: number) => {
                 if (JSON.stringify(this.localTerminals) != JSON.stringify(item))
-                  this.TerminalsItem(item['type'], item['name'], index < this.TerminalsList.length - 1)
+                  this.TerminalsItem({type: item['type'], title: item['name'], showDivider: index < this.TerminalsList.length - 1})
               })
             }
           }
@@ -715,6 +714,7 @@ export struct DefaultClockTimePage {
           })
           .useMilitaryTime(this.DefaultTimeFormat == 0)
           .width('80%')
+          .height(240)
       }
       .height(240)
       .Card()
@@ -770,6 +770,7 @@ export struct DefaultUrgentTimePage {
           })
           .useMilitaryTime(this.DefaultTimeFormat == 0)
           .width('80%')
+          .height(240)
       }
       .height(240)
       .Card()
@@ -792,7 +793,14 @@ export struct DefaultUrgentTimePage {
 @Component
 export struct AccentColorPage {
   @StorageLink('AccentColor') AccentColor: [number, string] = [0, '']
-  @StorageLink('accentColorArray') accentColorArray: [string, string][] = []
+  @StorageLink('accentColorArray') accentColorArray: [string, string][] = [
+    ['便单黄', ''],
+    ['宇宙蓝', '_blue'],
+    ['燃力红', '_red'],
+    ['宝石绿', '_green'],
+    ['魔法紫', '_purple'],
+    ['樱花粉', '_pink']
+  ]
   private outPut: () => {} = () => void {}
 
   @Styles Card() {

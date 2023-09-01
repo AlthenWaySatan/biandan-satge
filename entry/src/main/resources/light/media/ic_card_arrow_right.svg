@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     viewBox="0 0 24 24" fill="none">
+    <defs>
+        <rect id="path_0" x="0" y="0" width="24" height="24"/>
+    </defs>
+    <g opacity="1" transform="translate(0 0)  rotate(0 12 12)">
+        <mask id="bg-mask-0" fill="white">
+            <use xlink:href="#path_0"></use>
+        </mask>
+        <g mask="url(#bg-mask-0)">
+            <g opacity="1"
+               transform="translate(8.999999998714118 5.59342594)  rotate(0 3.3713203433344923 6.4065384299999995)">
+                <path id="_path-1" fill-rule="evenodd" style="fill:#000000"
+                      transform="translate(0 0)  rotate(0 3.3713203433344923 6.4065384299999995)" opacity="0.4"
+                      d="M6.23,7.64L6.27,7.6C6.91,6.91 6.9,5.84 6.23,5.17L1.28,0.22L1.25,0.19C1.11,0.07 0.95,0.01 0.78,0L0.73,0C0.54,0.01 0.36,0.08 0.22,0.22C-0.07,0.51 -0.07,0.99 0.22,1.28L4.82,5.88L4.85,5.91C5.11,6.2 5.1,6.65 4.82,6.94L0.22,11.53L0.19,11.57C-0.07,11.86 -0.06,12.31 0.22,12.59C0.36,12.73 0.54,12.81 0.73,12.81L0.77,12.81L0.82,12.81C0.99,12.79 1.15,12.72 1.28,12.59L6.23,7.64Z "/>
+            </g>
+        </g>
+    </g>
+</svg>

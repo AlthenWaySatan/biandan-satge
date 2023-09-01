@@ -1,8 +1,11 @@
 // import { ExportNewVersion_form } from '../../FormAbility/controller/formSyncController';
 import { ExportNewVersion } from '../control/TerminalsSyncController';
+import { publishNotification_test } from '../control/NotificationController';
 import { ImplTable } from '../dao/controller/InitAndTable';
 import { backupFile } from '../control/FileioController';
-import device from '@ohos.deviceInfo';
+import device from '@system.device';
+import featureAbility from '@ohos.ability.featureAbility'
+import window from '@ohos.window';
 import router from '@ohos.router'
 import mediaquery from '@ohos.mediaquery'
 
@@ -14,14 +17,14 @@ import { SettingPage } from './view/SettingPage';
 import { FolderAddPanel } from './view/FolderAddPanel'
 import { EventAddPanel } from './view/EventAddPanel'
 
-import { refreshResource, changeAllChoice, getResource } from '../control/EventsController';
+import { refreshResource, changeAllChoice } from '../control/EventsController';
 import { get_barResource } from '../control/AccentController';
 
 import BarResource from '../model/BarResourceContact';
 import EventResource from '../model/EventsResourceContact';
 import FolderResource from '../model/FolderResourceContact';
 
-PersistentStorage.PersistProp('IsFirstIn', true)
+PersistentStorage.PersistProp('IsFirstIn_', 0)
 PersistentStorage.PersistProp('AutoBackUpSwitch', false)
 PersistentStorage.PersistProp('AutoTerminalsSyncSwitch', false)
 
@@ -41,7 +44,7 @@ struct Index {
   portraitFuncMd = null;
   portraitFuncLg = null;
   portraitFuncDarkmode = null;
-  @StorageLink('screenType') screenType: string = 'sm'
+  @StorageLink('screenType') screenType: string = ''
 
   public onPortraitSm(mediaQueryResult) {
     if (mediaQueryResult.matches) {
@@ -63,6 +66,32 @@ struct Index {
       console.info('lg')
     }
   }
+
+  // public onPortraitDarkMode(mediaQueryResult) {
+  //   console.info('darkmode? ' + mediaQueryResult.matches)
+  //   window.getTopWindow((err, data) => {
+  //     var windowClass = data;
+  //     if (mediaQueryResult.matches) {
+  //       console.info('set darkmode dark');
+  //       windowClass.setSystemBarProperties({
+  //         statusBarColor: '#000000',
+  //         isStatusBarLightIcon: true,
+  //         navigationBarColor: '#000000',
+  //         isNavigationBarLightIcon: true
+  //       }, () => {
+  //       });
+  //     } else {
+  //       console.info('set darkmode light');
+  //       windowClass.setSystemBarProperties({
+  //         statusBarColor: '#F1F2F3',
+  //         isStatusBarLightIcon: false,
+  //         navigationBarColor: '#F1F2F3',
+  //         isNavigationBarLightIcon: false
+  //       }, () => {
+  //       });
+  //     }
+  //   });
+  // }
   /*-------------------------------------------------------------------------------------------------------------------*/
   @StorageLink('settingNum') settingNum: number = 0
 
@@ -71,12 +100,7 @@ struct Index {
    */
   /*-------------------------------------------------------------------------------------------------------------------*/
   @StorageLink('selectPos') selectPos: number = 0;
-  private barResource: BarResource[] = [
-    new BarResource($r('app.media.ic_todo_on'), $r('app.media.ic_todo_off'), $r('app.string.Todo'), 0),
-    new BarResource($r('app.media.ic_calendar_on'), $r('app.media.ic_calendar_off'), $r('app.string.Calendar'), 1),
-    new BarResource($r('app.media.ic_4quadrant_on'), $r('app.media.ic_4quadrant_off'), $r('app.string.Four_quadrant'), 2),
-    new BarResource($r('app.media.ic_setting_on'), $r('app.media.ic_setting_off'), $r('app.string.Setting'), 3)
-  ]
+  private barResource: BarResource[] = get_barResource()
 
   /**
    * 内容资源
@@ -84,10 +108,10 @@ struct Index {
   /*-------------------------------------------------------------------------------------------------------------------*/
 
   @StorageLink('systemFolderResource') systemFolderResource: FolderResource[] = [
-    new FolderResource(0, $r('app.media.ic_folder'), '', $r('app.string.AllTodo'), 0),
-    new FolderResource(-1, $r('app.media.ic_folder_filled'), '', $r('app.string.No_folder'), 0),
-    new FolderResource(-2, $r('app.media.ic_collect'), '', $r('app.string.My_favorite'), 0),
-    new FolderResource(-3, $r('app.media.ic_important'), '', $r('app.string.Important_things'), 0)
+    new FolderResource(0, $r('app.media.ic_folder'), '', '全部待办', 0),
+    new FolderResource(-1, $r('app.media.ic_folder_filled'), '', '未分类', 0),
+    new FolderResource(-2, $r('app.media.ic_collect'), '', '我的收藏', 0),
+    new FolderResource(-3, $r('app.media.ic_important'), '', '重要待办', 0)
   ]
   @StorageLink('userFolderResource') userFolderResource: FolderResource[] = []
 
@@ -112,7 +136,7 @@ struct Index {
   /**
    * 展示资源
    */
-  @StorageLink('eventsShowResource') eventsShowResource: EventResource[][] = [[]]
+  @StorageLink('eventsShowResource') eventsShowResource: EventResource[][] = [[], [], []]
 
   /**
    * 是否展示添加面板
@@ -133,10 +157,22 @@ struct Index {
 
   /*-------------------------------------------------------------------------------------------------------------------*/
 
+  @StorageLink('IsFirstIn_') IsFirstIn: number = 0;
+
   aboutToAppear() {
-    this.smListener = mediaquery.matchMediaSync('(width <= ' + 672 * 2 + ')');
-    this.mdListener = mediaquery.matchMediaSync('(width > ' + 672 * 2 + ') and (width <= ' + 1250 * 2 + ')');
-    this.lgListener = mediaquery.matchMediaSync('(width > ' + 1250 * 2 + ')');
+    var that = this;
+    device.getInfo({
+      success: function (data) {
+        console.info("Device information obtained successfully. Device screenDensity: %{private}d", data.screenDensity);
+        that.screenDensity = data.screenDensity;
+      },
+      fail: function (code) {
+        console.info("Failed to obtain device information. Error code: %{private}d", code);
+      },
+    });
+    this.smListener = mediaquery.matchMediaSync('(width <= ' + 672 * that.screenDensity + ')');
+    this.mdListener = mediaquery.matchMediaSync('(width > ' + 672 * that.screenDensity + ') and (width <= ' + 1250 * that.screenDensity + ')');
+    this.lgListener = mediaquery.matchMediaSync('(width > ' + 1250 * that.screenDensity + ')');
     this.darkmodeListener = mediaquery.matchMediaSync('screen and (dark-mode: true)');
     this.portraitFuncSm = this.onPortraitSm.bind(this)
     this.smListener.on('change', this.portraitFuncSm)
@@ -144,29 +180,30 @@ struct Index {
     this.mdListener.on('change', this.portraitFuncMd)
     this.portraitFuncLg = this.onPortraitLg.bind(this)
     this.lgListener.on('change', this.portraitFuncLg)
+    // this.portraitFuncDarkmode = this.onPortraitDarkMode.bind(this)
+    // this.darkmodeListener.on('change', this.portraitFuncDarkmode)
 
     this.barResource = get_barResource()
-
-    let showDate = AppStorage.Get<number[]>("showDate")
-    let folderId = AppStorage.Get<number>("folderId")
-    getResource(showDate[0], showDate[1], showDate[2], folderId);
 
     refreshResource();
 
     setTimeout(() => {
-      let IsFirstIn = AppStorage.Get<boolean>('IsFirstIn')
-      if (IsFirstIn) {
+      // let IsFirstIn = AppStorage.Get<number>('IsFirstIn_')
+      if (this.IsFirstIn < 1) {
         this.implTable.initTable()
-        // router.replaceUrl({
+        //        publishNotification_test()
+        // router.replace({
         //   url: 'pages/guide'
         // })
-      } else {
-        this.readyToShow = true
+        // 'IsFirstIn_'
+        this.IsFirstIn += 1;
       }
+      // else {
       this.readyToShow = true
+      // }
     }, 200)
   }
-//
+
   @StorageLink('AutoBackUpSwitch') AutoBackUpSwitch: boolean = false
   @StorageLink('AutoTerminalsSyncSwitch') AutoTerminalsSyncSwitch: boolean = false
 
@@ -179,25 +216,7 @@ struct Index {
   }
 
   build() {
-    // Row() {
-    //   Column() {
-    //     Text('2222')
-    //       .fontSize(50)
-    //       .fontWeight(FontWeight.Bold)
-    //   }
-    //   .width('100%')
-    // }
-    // .height('100%')
     Stack() {
-        // Row() {
-        //   Column() {
-        //     Text('2222' + this.readyToShow)
-        //       .fontSize(50)
-        //       .fontWeight(FontWeight.Bold)
-        //   }
-        //   .width('100%')
-        // }
-        // .height('100%')
       if (this.readyToShow) {
         Flex({
           direction: (this.screenType == 'lg' ? FlexDirection.Row : FlexDirection.Column),
@@ -263,6 +282,7 @@ struct Index {
         }.padding({ top: this.statusBarHeight / this.screenDensity })
       }
 
+
       if (this.showFolderAddPanel) {
         Column()
           .width('100%')
@@ -275,12 +295,26 @@ struct Index {
           FolderAddPanel()
         }.padding({ top: this.statusBarHeight / this.screenDensity })
       }
+
     }
     .width('100%')
     .height('100%')
   }
 
   onBackPress() {
+    //    await featureAbility.startAbility({
+    //      want: {
+    //        bundleName: BUNDLE,
+    //        abilityName: ABILITY,
+    //        deviceId: this.state.distributedDevice,
+    //        parameters: {
+    //          isFA: 'EXIT'
+    //        }
+    //      }
+    //    })
+    //    RdbModel.offDataChange()
+
+    //    app.terminate();
     if (this.showAddMore) {
       this.showAddMore = false
       return true
@@ -294,7 +328,7 @@ struct Index {
       return true
     }
     if (this.isEdit) {
-      // this.quitEdit()
+      this.quitEdit()
       return true
     }
     else {
