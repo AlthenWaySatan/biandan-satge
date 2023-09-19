@@ -1,6 +1,6 @@
 import featureAbility from '@ohos.ability.featureAbility';
-import router from '@ohos.router'
-import bundle from '@ohos.bundle';
+import router from '@ohos.router';
+import bundle from '@ohos.bundle.bundleManager';
 import { get_accent } from '../control/AccentController';
 
 @Entry
@@ -16,19 +16,15 @@ struct ProgressExample {
   @StorageLink('settingNum') settingNum: number = 0
 
   aboutToAppear() {
-    let bundleName = "cn.biandangroup.biandan";
     let bundleFlags = 0xFFFF0000;
-    let options = {
-      "userId": 0
-    };
-    bundle.getBundleInfo(bundleName, bundleFlags, options, (err, data) => {
+    bundle.getBundleInfoForSelf(bundleFlags, (err, data) => {
       if (err) {
         console.error('Operation failed. Cause: ' + JSON.stringify(err));
         return;
       }
       console.info('Operation successful. Data:' + JSON.stringify(data));
       this.versionName = data.versionName
-    })
+    });
   }
 
   aboutToDisappear() {

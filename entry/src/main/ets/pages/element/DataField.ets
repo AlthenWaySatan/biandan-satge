@@ -13,6 +13,10 @@ export struct DaraField {
     this.doneRate = getDoneRate()
   }
 
+  aboutToAppear() {
+    this.newRate();
+  }
+
   build() {
     GridContainer({ columns: this.columnNum, gutter: 12, margin: 12 }) {
       Row() {
