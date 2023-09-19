@@ -28,10 +28,10 @@ import { deleteAFolder } from '../../control/FolderController';
 import FolderResource from '../../model/FolderResourceContact';
 import prompt from '@ohos.prompt'
 
-PersistentStorage.PersistProp('BackUpSwitch', false)
-PersistentStorage.PersistProp('AutoBackUpSwitch', false)
-PersistentStorage.PersistProp('TerminalsSyncSwitch', false)
-PersistentStorage.PersistProp('AutoTerminalsSyncSwitch', false)
+PersistentStorage.PersistProp('BackUpSwitch', 0)
+PersistentStorage.PersistProp('AutoBackUpSwitch', 0)
+PersistentStorage.PersistProp('TerminalsSyncSwitch', 0)
+PersistentStorage.PersistProp('AutoTerminalsSyncSwitch', 0)
 PersistentStorage.PersistProp('DefaultTimeFormat', 0)
 PersistentStorage.PersistProp('AccentColor0', 0)
 PersistentStorage.PersistProp('AccentColor1', '')
@@ -43,8 +43,8 @@ PersistentStorage.PersistProp('DefineCycleLength', 90)
 
 @Component
 export struct LocationBackUpPage {
-  @StorageLink('BackUpSwitch') BackUpSwitch: boolean = false
-  @StorageLink('AutoBackUpSwitch') AutoBackUpSwitch: boolean = false
+  @StorageLink('BackUpSwitch') BackUpSwitch: number = 0
+  @StorageLink('AutoBackUpSwitch') AutoBackUpSwitch: number = 0
   private accentColor: Resource
   @State fileList: mediaLibrary.FileAsset[] = []
   @State showSwitch: boolean = true
@@ -63,7 +63,7 @@ export struct LocationBackUpPage {
     if (this.BackUpSwitch) {
       getPermission_WRITE_MEDIA().then((value: boolean) => {
         if (!value) {
-          this.BackUpSwitch = false
+          this.BackUpSwitch = 0
           this.CODE_DISTURBANCE()
         }
       })
@@ -238,16 +238,16 @@ export struct LocationBackUpPage {
             this.settingItem({ title: '开启备份' })
             if (this.showSwitch)
             Row() {
-              Toggle({ type: ToggleType.Switch, isOn: this.BackUpSwitch })
+              Toggle({ type: ToggleType.Switch, isOn: this.BackUpSwitch == 1 })
                 .height(24)
                 .selectedColor(this.accentColor)
                 .onChange(async (isOn: boolean) => {
                   if (await this.openBackUp(isOn ? true : false))
-                    this.BackUpSwitch = true
+                    this.BackUpSwitch = 1
                   else
-                    this.BackUpSwitch = false
+                    this.BackUpSwitch = 0
                   if (!this.BackUpSwitch)
-                    this.AutoBackUpSwitch = false
+                    this.AutoBackUpSwitch = 0
                   this.refreshFileList()
                   this.CODE_DISTURBANCE();
                 })
@@ -284,11 +284,11 @@ export struct LocationBackUpPage {
             this.settingItem({ title: '开启自动备份' })
             if (this.showSwitch)
             Row() {
-              Toggle({ type: ToggleType.Switch, isOn: this.AutoBackUpSwitch })
+              Toggle({ type: ToggleType.Switch, isOn: this.AutoBackUpSwitch == 1 })
                 .height(24)
                 .selectedColor(this.accentColor)
                 .onChange(async (isOn: boolean) => {
-                  this.AutoBackUpSwitch = isOn ? true : false
+                  this.AutoBackUpSwitch = isOn ? 1 : 0
                   this.CODE_DISTURBANCE();
                 })
             }
@@ -379,8 +379,8 @@ export struct LocationBackUpPage {
 
 @Component
 export struct TerminalsSyncPage {
-  @StorageLink('TerminalsSyncSwitch') @Watch('setListener') TerminalsSyncSwitch: boolean = false
-  @StorageLink('AutoTerminalsSyncSwitch') AutoTerminalsSyncSwitch: boolean = false
+  @StorageLink('TerminalsSyncSwitch') @Watch('setListener') TerminalsSyncSwitch: number = 0
+  @StorageLink('AutoTerminalsSyncSwitch') AutoTerminalsSyncSwitch: number = 0
   private accentColor: Resource
   @State showSwitch: boolean = true
   @State TerminalsList: object[] = []
@@ -397,7 +397,7 @@ export struct TerminalsSyncPage {
     if (this.TerminalsSyncSwitch) {
       getPermission_DISTRIBUTED_DATASYNC().then((value: boolean) => {
         if (!value) {
-          this.TerminalsSyncSwitch = false
+          this.TerminalsSyncSwitch = 0
           this.CODE_DISTURBANCE()
         }
       })
@@ -533,16 +533,16 @@ export struct TerminalsSyncPage {
             this.settingItem({ title: '开启同步' })
             if (this.showSwitch)
             Row() {
-              Toggle({ type: ToggleType.Switch, isOn: this.TerminalsSyncSwitch })
+              Toggle({ type: ToggleType.Switch, isOn: this.TerminalsSyncSwitch == 1 })
                 .height(24)
                 .selectedColor(this.accentColor)
                 .onChange(async (isOn: boolean) => {
                   if (await this.openTerminalsSync(isOn ? true : false))
-                    this.TerminalsSyncSwitch = true
+                    this.TerminalsSyncSwitch = 1
                   else
-                    this.TerminalsSyncSwitch = false
+                    this.TerminalsSyncSwitch = 0
                   if (!this.TerminalsSyncSwitch)
-                    this.AutoTerminalsSyncSwitch = false
+                    this.AutoTerminalsSyncSwitch = 0
                   clearTerminalsList();
                   this.refreshTerminalsList()
                   this.CODE_DISTURBANCE();
@@ -580,11 +580,11 @@ export struct TerminalsSyncPage {
             this.settingItem({ title: '自动同步数据到其他设备' })
             if (this.showSwitch)
             Row() {
-              Toggle({ type: ToggleType.Switch, isOn: this.AutoTerminalsSyncSwitch })
+              Toggle({ type: ToggleType.Switch, isOn: this.AutoTerminalsSyncSwitch == 1 })
                 .height(24)
                 .selectedColor(this.accentColor)
                 .onChange(async (isOn: boolean) => {
-                  this.AutoTerminalsSyncSwitch = isOn ? true : false
+                  this.AutoTerminalsSyncSwitch = isOn ? 1 : 0
                   this.CODE_DISTURBANCE();
                 })
             }

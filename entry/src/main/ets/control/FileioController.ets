@@ -7,8 +7,8 @@ import featureAbility from '@ohos.ability.featureAbility';
 import common from '@ohos.app.ability.common';
 import abilityAccessCtrl, { Permissions } from '@ohos.abilityAccessCtrl';
 
-PersistentStorage.PersistProp('BackUpSwitch', false)
-PersistentStorage.PersistProp('AutoBackUpSwitch', false)
+PersistentStorage.PersistProp('BackUpSwitch', 0)
+PersistentStorage.PersistProp('AutoBackUpSwitch', 0)
 
 /**
  * 查询权限
@@ -23,8 +23,8 @@ export async function getPermission_WRITE_MEDIA(): Promise<boolean> {
   console.log("====>requestData====> " + authResults0 + ' ,' + authResults1);
   let ret: boolean = ((authResults0 == 0) && (authResults1 == 0))
   if (!ret) {
-    AppStorage.Set('BackUpSwitch', false)
-    AppStorage.Set('AutoBackUpSwitch', false)
+    AppStorage.Set('BackUpSwitch', 0)
+    AppStorage.Set('AutoBackUpSwitch', 0)
   }
   return ret
 }
@@ -33,7 +33,7 @@ export async function getPermission_WRITE_MEDIA(): Promise<boolean> {
  * 获取媒体资源
  */
 export async function getMediaLibrary(): Promise<any> {
-  let BackUpSwitch: boolean = AppStorage.Get<boolean>('BackUpSwitch')
+  let BackUpSwitch: number = AppStorage.Get<number>('BackUpSwitch')
   if (!BackUpSwitch) return []
 
   let ret = []
@@ -70,7 +70,7 @@ function getTimeDate(): string {
 }
 
 async function deleteRedundancyFile() {
-  let BackUpSwitch: boolean = AppStorage.Get<boolean>('BackUpSwitch')
+  let BackUpSwitch: number = AppStorage.Get<number>('BackUpSwitch')
   if (!BackUpSwitch) return []
 
 }

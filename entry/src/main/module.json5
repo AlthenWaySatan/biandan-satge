@@ -32,6 +32,32 @@
           }
         ]
       }
+    ],
+    "requestPermissions": [
+      {
+        "reason": "$string:reason_vibrate",
+        "name": "ohos.permission.VIBRATE"
+      },
+      {
+        "reason": "$string:reason_datasync",
+        "name": "ohos.permission.DISTRIBUTED_DATASYNC"
+      },
+      {
+        "reason": "$string:reason_datasync",
+        "name": "ohos.permission.GET_DISTRIBUTED_DEVICE_INFO"
+      },
+      {
+        "reason": "$string:reason_backup",
+        "name": "ohos.permission.READ_MEDIA"
+      },
+      {
+        "reason": "$string:reason_backup",
+        "name": "ohos.permission.WRITE_MEDIA"
+      },
+      {
+        "reason": "$string:reason_remind",
+        "name": "ohos.permission.PUBLISH_AGENT_REMINDER"
+      }
     ]
   }
 }

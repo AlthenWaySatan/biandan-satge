@@ -3,8 +3,8 @@ import common from '@ohos.app.ability.common';
 import deviceInfo from '@ohos.deviceInfo';
 import abilityAccessCtrl, { Permissions } from '@ohos.abilityAccessCtrl';
 
-PersistentStorage.PersistProp('TerminalsSyncSwitch', false)
-PersistentStorage.PersistProp('AutoTerminalsSyncSwitch', false)
+PersistentStorage.PersistProp('TerminalsSyncSwitch', 0)
+PersistentStorage.PersistProp('AutoTerminalsSyncSwitch', 0)
 PersistentStorage.PersistProp('LocalVersionNumber', 0)
 PersistentStorage.PersistProp('LocalDevicesCode', '')
 
@@ -19,8 +19,8 @@ export async function getPermission_DISTRIBUTED_DATASYNC(): Promise<boolean> {
   console.log("====>requestData====> " + authResults0 + ' ,');
   let ret: boolean = ((authResults0 == 0))
   if (!ret) {
-    AppStorage.Set('TerminalsSyncSwitch', false)
-    AppStorage.Set('AutoTerminalsSyncSwitch', false)
+    AppStorage.Set('TerminalsSyncSwitch', 0)
+    AppStorage.Set('AutoTerminalsSyncSwitch', 0)
   }
   return ret
 }
@@ -73,7 +73,7 @@ export async function CloseSyncListener_devices() {
  * 清空数据库
  */
 export async function clearTerminalsList() {
-  let TerminalsSyncSwitch = AppStorage.Get<boolean>('TerminalsSyncSwitch')
+  let TerminalsSyncSwitch = AppStorage.Get<number>('TerminalsSyncSwitch')
   if (!TerminalsSyncSwitch) return;
   const kvStore = await getKVStore()
   kvStore.put(Device_Key, '')
@@ -110,7 +110,7 @@ export function getLocalTerminals(): object {
  * 获取组网内设备信息
  */
 export async function getTerminalsList(): Promise<object[]> {
-  let TerminalsSyncSwitch = AppStorage.Get<boolean>('TerminalsSyncSwitch')
+  let TerminalsSyncSwitch = AppStorage.Get<number>('TerminalsSyncSwitch')
   if (!TerminalsSyncSwitch)
     return []
   const kvStore = await getKVStore()

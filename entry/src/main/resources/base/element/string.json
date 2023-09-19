@@ -37,6 +37,22 @@
       "value": "便单"
     },
     {
+      "name": "reason_vibrate",
+      "value": "开启震动，优化交互体验"
+    },
+    {
+      "name": "reason_datasync",
+      "value": "同步设备间待办事项信息"
+    },
+    {
+      "name": "reason_backup",
+      "value": "数据备份"
+    },
+    {
+      "name": "reason_remind",
+      "value": "事项提醒"
+    },
+    {
       "name": "DataAbility_desc",
       "value": "hap sample empty provider"
     },

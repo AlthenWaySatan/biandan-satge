@@ -25,8 +25,8 @@ import EventResource from '../model/EventsResourceContact';
 import FolderResource from '../model/FolderResourceContact';
 
 PersistentStorage.PersistProp('IsFirstIn_', 0)
-PersistentStorage.PersistProp('AutoBackUpSwitch', false)
-PersistentStorage.PersistProp('AutoTerminalsSyncSwitch', false)
+PersistentStorage.PersistProp('AutoBackUpSwitch', 0)
+PersistentStorage.PersistProp('AutoTerminalsSyncSwitch', 0)
 
 @Entry
 @Component
