@@ -1,6 +1,7 @@
 import BarResource from '../model/BarResourceContact';
 
-PersistentStorage.PersistProp('AccentColor', [0, ''])
+PersistentStorage.PersistProp('AccentColor0', 0)
+PersistentStorage.PersistProp('AccentColor1', '')
 
 export function getAccentColor(accent: string): Resource {
   switch (accent) {
@@ -20,9 +21,9 @@ export function getAccentColor(accent: string): Resource {
 }
 
 export function get_accent(): Resource {
-  let AccentColor:[number, string] = AppStorage.Get<[number, string]>("AccentColor");
+  let AccentColor1:string = AppStorage.Get<string>("AccentColor1");
 //  console.info('get accent ' + AccentColor[1])
-  switch (AccentColor[1]) {
+  switch (AccentColor1) {
     case '_blue':
       return $r('app.color.accent_blue');
     case '_red':
@@ -39,8 +40,8 @@ export function get_accent(): Resource {
 }
 
 export function get_translucentSaturation_accent(): Resource {
-  let AccentColor:[number, string] = AppStorage.Get<[number, string]>("AccentColor");
-  switch (AccentColor[1]) {
+  let AccentColor1:string = AppStorage.Get<string>("AccentColor1");
+  switch (AccentColor1) {
     case '_blue':
       return $r('app.color.translucentSaturation_accent_blue');
     case '_red':
@@ -57,8 +58,8 @@ export function get_translucentSaturation_accent(): Resource {
 }
 
 export function get_allChoose_on_Marking(): Resource {
-  let AccentColor:[number, string] = AppStorage.Get<[number, string]>("AccentColor");
-  switch (AccentColor[1]) {
+  let AccentColor1:string = AppStorage.Get<string>("AccentColor1");
+  switch (AccentColor1) {
     case '_blue':
       return $r('app.media.ic_choose_allChoose_on_Marking_blue');
     case '_red':
@@ -75,8 +76,8 @@ export function get_allChoose_on_Marking(): Resource {
 }
 
 export function get_collect_on_Marking(): Resource {
-  let AccentColor:[number, string] = AppStorage.Get<[number, string]>("AccentColor");
-  switch (AccentColor[1]) {
+  let AccentColor1:string = AppStorage.Get<string>("AccentColor1");
+  switch (AccentColor1) {
     case '_blue':
       return $r('app.media.ic_choose_collect_on_Marking_blue');
     case '_red':
@@ -93,8 +94,8 @@ export function get_collect_on_Marking(): Resource {
 }
 
 export function get_add_Marking(): Resource {
-  let AccentColor:[number, string] = AppStorage.Get<[number, string]>("AccentColor");
-  switch (AccentColor[1]) {
+  let AccentColor1:string = AppStorage.Get<string>("AccentColor1");
+  switch (AccentColor1) {
     case '_blue':
       return $r('app.media.ic_add_Marking_blue');
     case '_red':
@@ -111,8 +112,8 @@ export function get_add_Marking(): Resource {
 }
 
 export function get_barResource(): BarResource[] {
-  let AccentColor:[number, string] = AppStorage.Get<[number, string]>("AccentColor");
-  switch (AccentColor[1]) {
+  let AccentColor1:string = AppStorage.Get<string>("AccentColor1");
+  switch (AccentColor1) {
     case '_blue':
       return [
         new BarResource($r('app.media.ic_todo_on_blue'), $r('app.media.ic_todo_off'), $r('app.string.Todo'), 0),

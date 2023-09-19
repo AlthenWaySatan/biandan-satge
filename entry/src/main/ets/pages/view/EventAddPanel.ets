@@ -7,16 +7,20 @@ import { getFolderClassify, getFolderIcon } from '../../control/FolderController
 
 PersistentStorage.PersistProp('FirstDayOfWeek', 0)
 PersistentStorage.PersistProp('DefaultTimeFormat', 0)
-PersistentStorage.PersistProp('DefaultClockTime', [10, 30])
-PersistentStorage.PersistProp('DefaultUrgentTime', [22, 0])
+PersistentStorage.PersistProp('DefaultClockTime0', 10)
+PersistentStorage.PersistProp('DefaultClockTime1', 30)
+PersistentStorage.PersistProp('DefaultUrgentTime0', 22)
+PersistentStorage.PersistProp('DefaultUrgentTime1', 0)
 PersistentStorage.PersistProp('DefineCycleLength', 90)
 
 @Component
 export struct EventAddPanel {
   @StorageLink('FirstDayOfWeek') FirstDayOfWeek: number = 0
   @StorageLink('DefaultTimeFormat') DefaultTimeFormat: number = 0
-  @StorageLink('DefaultClockTime') DefaultClockTime: [number, number] = [10, 30]
-  @StorageLink('DefaultUrgentTime') DefaultUrgentTime: [number, number] = [22, 0]
+  @StorageLink('DefaultClockTime0') DefaultClockTime0: number = 10
+  @StorageLink('DefaultClockTime1') DefaultClockTime1: number = 30
+  @StorageLink('DefaultUrgentTime0') DefaultUrgentTime0: number = 22
+  @StorageLink('DefaultUrgentTime1') DefaultUrgentTime1: number = 0
   @StorageLink('showEventAddPanel') @Watch('setToStart') showEventAddPanel: boolean = false
   @StorageLink('systemFolderResource') systemFolderResource: FolderResource[] = []
   @StorageLink('userFolderResource') userFolderResource: FolderResource[] = []
@@ -116,8 +120,8 @@ export struct EventAddPanel {
         if (this.isQuadrantImportant)
           this.thisEvent.isImportant = true
         if (this.isQuadrantUrgent) {
-          this.thisEvent.validEndTime[3] = this.DefaultUrgentTime[0],
-          this.thisEvent.validEndTime[4] = this.DefaultUrgentTime[1]
+          this.thisEvent.validEndTime[3] = this.DefaultUrgentTime0,
+          this.thisEvent.validEndTime[4] = this.DefaultUrgentTime1
         }
       }
     }
@@ -481,7 +485,7 @@ export struct EventAddPanel {
             .onTouch(() => {
               this.thisEvent.clockState = index
               if (index == 2) {
-                this.thisEvent.clockTime = [this.thisEvent.thisDate[0], this.thisEvent.thisDate[1], this.thisEvent.thisDate[2], this.DefaultClockTime[0], this.DefaultClockTime[1]]
+                this.thisEvent.clockTime = [this.thisEvent.thisDate[0], this.thisEvent.thisDate[1], this.thisEvent.thisDate[2], this.DefaultClockTime0, this.DefaultClockTime1]
               }
             })
 

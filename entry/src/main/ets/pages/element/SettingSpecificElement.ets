@@ -33,9 +33,12 @@ PersistentStorage.PersistProp('AutoBackUpSwitch', false)
 PersistentStorage.PersistProp('TerminalsSyncSwitch', false)
 PersistentStorage.PersistProp('AutoTerminalsSyncSwitch', false)
 PersistentStorage.PersistProp('DefaultTimeFormat', 0)
-PersistentStorage.PersistProp('AccentColor', [0, ''])
-PersistentStorage.PersistProp('DefaultClockTime', [10, 30])
-PersistentStorage.PersistProp('DefaultUrgentTime', [22, 0])
+PersistentStorage.PersistProp('AccentColor0', 0)
+PersistentStorage.PersistProp('AccentColor1', '')
+PersistentStorage.PersistProp('DefaultClockTime0', 10)
+PersistentStorage.PersistProp('DefaultClockTime1', 30)
+PersistentStorage.PersistProp('DefaultUrgentTime0', 22)
+PersistentStorage.PersistProp('DefaultUrgentTime1', 0)
 PersistentStorage.PersistProp('DefineCycleLength', 90)
 
 @Component
@@ -688,8 +691,9 @@ export struct TerminalsSyncPage {
 @Component
 export struct DefaultClockTimePage {
   @StorageLink('DefaultTimeFormat') DefaultTimeFormat: number = 0
-  @StorageLink('DefaultClockTime') DefaultClockTime: [number, number] = [10, 30]
-  private tempTime: [number, number] = this.DefaultClockTime
+  @StorageLink('DefaultClockTime0') DefaultClockTime0: number = 10
+  @StorageLink('DefaultClockTime1') DefaultClockTime1: number = 30
+  private tempTime: [number, number] = [this.DefaultClockTime0, this.DefaultClockTime1]
   private outPut: () => void = () => {
   }
   private accentColor: Resource
@@ -708,7 +712,7 @@ export struct DefaultClockTimePage {
   build() {
     Column() {
       Column() {
-        TimePicker({ selected: new Date(2023, 3, 11, this.DefaultClockTime[0], this.DefaultClockTime[1]) })
+        TimePicker({ selected: new Date(2023, 3, 11, this.DefaultClockTime0, this.DefaultClockTime1) })
           .onChange((value: TimePickerResult) => {
             this.tempTime = [value.hour, value.minute]
           })
@@ -725,7 +729,8 @@ export struct DefaultClockTimePage {
           .fontColor(this.accentColor)
           .width('100%')
           .onClick(() => {
-            this.DefaultClockTime = this.tempTime
+            this.DefaultClockTime0 = this.tempTime[0]
+            this.DefaultClockTime1 = this.tempTime[1]
             this.outPut()
           })
       }
@@ -737,8 +742,9 @@ export struct DefaultClockTimePage {
 @Component
 export struct DefaultUrgentTimePage {
   @StorageLink('DefaultTimeFormat') DefaultTimeFormat: number = 0
-  @StorageLink('DefaultUrgentTime') DefaultUrgentTime: [number, number] = [22, 0]
-  private tempTime: [number, number] = this.DefaultUrgentTime
+  @StorageLink('DefaultUrgentTime0') DefaultUrgentTime0: number = 22
+  @StorageLink('DefaultUrgentTime1') DefaultUrgentTime1: number = 0
+  private tempTime: [number, number] = [this.DefaultUrgentTime0, this.DefaultUrgentTime1]
   private outPut: () => void = () => {
   }
   private accentColor: Resource
@@ -757,7 +763,7 @@ export struct DefaultUrgentTimePage {
   build() {
     Column() {
       Column() {
-        TimePicker({ selected: new Date(2023, 3, 11, this.DefaultUrgentTime[0], this.DefaultUrgentTime[1]) })
+        TimePicker({ selected: new Date(2023, 3, 11, this.DefaultUrgentTime0, this.DefaultUrgentTime1) })
           .onChange((value: TimePickerResult) => {
             while (value.hour == 23 && value.minute == 59) {
               value.minute = 58;
@@ -781,7 +787,8 @@ export struct DefaultUrgentTimePage {
           .fontColor(this.accentColor)
           .width('100%')
           .onClick(() => {
-            this.DefaultUrgentTime = this.tempTime
+            this.DefaultUrgentTime0 = this.tempTime[0]
+            this.DefaultUrgentTime1 = this.tempTime[1]
             this.outPut()
           })
       }
@@ -792,7 +799,8 @@ export struct DefaultUrgentTimePage {
 
 @Component
 export struct AccentColorPage {
-  @StorageLink('AccentColor') AccentColor: [number, string] = [0, '']
+  @StorageLink('AccentColor0') AccentColor0: number = 0;
+  @StorageLink('AccentColor1') AccentColor1: string = '';
   @StorageLink('accentColorArray') accentColorArray: [string, string][] = [
     ['便单黄', ''],
     ['宇宙蓝', '_blue'],
@@ -838,12 +846,13 @@ export struct AccentColorPage {
 
               Column() {
                 Radio({ value: item[1], group: 'AccentColorGroup' })
-                  .checked(item[1] == this.AccentColor[1])
+                  .checked(item[1] == this.AccentColor1)
                   .height(20)
                   .width(20)
                   .onChange((isChecked: boolean) => {
                     if (isChecked) {
-                      this.AccentColor = [index, item[1]]
+                      this.AccentColor0 = index;
+                      this.AccentColor1 = item[1];
                       prompt.showToast({
                         message: (Object)($r('app.string.restartToTakeEffect')),
                         duration: 500,
@@ -854,8 +863,9 @@ export struct AccentColorPage {
               .width(24)
             }
             .onClick(() => {
-              if (item[1] != this.AccentColor[1]) {
-                this.AccentColor = [index, item[1]]
+              if (item[1] != this.AccentColor1) {
+                this.AccentColor0 = index
+                this.AccentColor1 = item[1]
                 prompt.showToast({
                   message: (Object)($r('app.string.restartToTakeEffect')),
                   duration: 500,

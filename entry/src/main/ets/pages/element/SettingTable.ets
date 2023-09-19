@@ -4,9 +4,12 @@ import { get_accent, get_translucentSaturation_accent } from '../../control/Acce
 
 PersistentStorage.PersistProp('FirstDayOfWeek', 0)
 PersistentStorage.PersistProp('DefaultTimeFormat', 0)
-PersistentStorage.PersistProp('AccentColor', [0, ''])
-PersistentStorage.PersistProp('DefaultClockTime', [10, 30])
-PersistentStorage.PersistProp('DefaultUrgentTime', [22, 0])
+PersistentStorage.PersistProp('AccentColor0', 0)
+PersistentStorage.PersistProp('AccentColor1', '')
+PersistentStorage.PersistProp('DefaultClockTime0', 10)
+PersistentStorage.PersistProp('DefaultClockTime1', 30)
+PersistentStorage.PersistProp('DefaultUrgentTime0', 22)
+PersistentStorage.PersistProp('DefaultUrgentTime1', 0)
 PersistentStorage.PersistProp('DefineCycleLength', 90)
 PersistentStorage.PersistProp('IsCloudBackup', false)
 PersistentStorage.PersistProp('IsCalendarSync', false)
@@ -18,9 +21,12 @@ export struct SettingTable {
   @StorageLink('settingTitle') settingTitle: string | Resource = '返回'
   @StorageLink('FirstDayOfWeek') FirstDayOfWeek: number = 0
   @StorageLink('DefaultTimeFormat') DefaultTimeFormat: number = 0
-  @StorageLink('AccentColor') AccentColor: [number, string] = [0, '']
-  @StorageLink('DefaultClockTime') DefaultClockTime: [number, number] = [10, 30]
-  @StorageLink('DefaultUrgentTime') DefaultUrgentTime: [number, number] = [22, 0]
+  @StorageLink('AccentColor0') AccentColor0: number = 0
+  @StorageLink('AccentColor1') AccentColo1r: string = ''
+  @StorageLink('DefaultClockTime0') DefaultClockTime0: number = 10
+  @StorageLink('DefaultClockTime1') DefaultClockTime1: number = 30
+  @StorageLink('DefaultUrgentTime0') DefaultUrgentTime0: number = 22
+  @StorageLink('DefaultUrgentTime1') DefaultUrgentTime1: number = 0
   @StorageLink('DefineCycleLength') DefineCycleLength: number = 90 //默认重复时间长度
   @StorageLink('accentColorArray') accentColorArray: [string, string][] = [
     ['便单黄', ''],
@@ -273,7 +279,7 @@ export struct SettingTable {
         Column() {
           Stack({ alignContent: Alignment.End }) {
             this.settingItem({settingId: 6, icon: $r('app.media.ic_setting_maincolor'), title: $r('app.string.accentColor'), showDivider: false})
-            this.settingSubTitle({text: this.accentColorArray[this.AccentColor[0]][0]})
+            this.settingSubTitle({text: this.accentColorArray[this.AccentColor0][0]})
           }.height(56).width('100%')
           .onClick(() => {
             this.settingNum = 6
@@ -296,7 +302,7 @@ export struct SettingTable {
 
           Stack({ alignContent: Alignment.End }) {
             this.settingItem({settingId: 8, icon: $r('app.media.ic_setting_clock'), title: $r('app.string.defaultClockTime'), showDivider: true})
-            this.settingSubTitle({text: this.getTimeInfo(this.DefaultClockTime, this.DefaultTimeFormat == 0)})
+            this.settingSubTitle({text: this.getTimeInfo([this.DefaultClockTime0, this.DefaultClockTime1], this.DefaultTimeFormat == 0)})
           }.height(56).width('100%')
           .onClick(() => {
             this.settingNum = 8
@@ -306,7 +312,7 @@ export struct SettingTable {
 
           Stack({ alignContent: Alignment.End }) {
             this.settingItem({settingId: 15, icon: $r('app.media.ic_new_effectiveTime'), title: $r('app.string.defaultUrgentTime'), showDivider: true})
-            this.settingSubTitle({text: this.getTimeInfo(this.DefaultUrgentTime, this.DefaultTimeFormat == 0)})
+            this.settingSubTitle({text: this.getTimeInfo([this.DefaultUrgentTime0, this.DefaultUrgentTime1], this.DefaultTimeFormat == 0)})
           }.height(56).width('100%')
           .onClick(() => {
             this.settingNum = 15

@@ -118,11 +118,12 @@ struct ProgressExample {
           .onClick(() => {
             this.showFolderAddPanel = false
           })
+
+        Column() {
+          FolderAddPanel()
+        }.padding({ top: this.statusBarHeightVp })
       }
 
-      Column() {
-        FolderAddPanel()
-      }.padding({ top: this.statusBarHeightVp })
     }
     .height('100%')
     .width('100%')
