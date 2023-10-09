@@ -6,9 +6,9 @@
         "type": "HarmonyOS",
         "material": {
           "certpath": "C:\\Users\\Althen\\.ohos\\config\\auto_debug_biandan_Stage_cn.biandangroup.biandan_350086000111093226.cer",
-          "storePassword": "0000001B81196EEACBEF93DE68051FBB02CF282174A38DF2B8C0771AF23AFA4FD70620F3E443BE44210EF3",
+          "storePassword": "0000001B7857FAECDA7117407E1B14699AB518092F67D8D3FA3191B1DB8DF51EC11B32C6495AB7C9E6D3B6",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001BD9AEDB8929A3092A761260BCE6B87378059A232B632FEE344FE0E98C4701241FE4AEB9F21DAA71",
+          "keyPassword": "0000001B47C86DE0202CB730E2CFA6EB873AAD7CCA3D15C80B5988BB94A71B129BE98C3DC280ED2EC9DB42",
           "profile": "C:\\Users\\Althen\\.ohos\\config\\auto_debug_biandan_Stage_cn.biandangroup.biandan_350086000111093226.p7b",
           "signAlg": "SHA256withECDSA",
           "storeFile": "C:\\Users\\Althen\\.ohos\\config\\auto_debug_biandan_Stage_cn.biandangroup.biandan_350086000111093226.p12"

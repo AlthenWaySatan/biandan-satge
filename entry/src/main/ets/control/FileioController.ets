@@ -1,11 +1,18 @@
 import { Backup } from '../dao/controller/InitAndTable';
-import { backUpPath, backUpPathEx } from '../model/BackUpContact';
+import { backUpPath } from '../model/BackUpContact';
 import mediaLibrary from '@ohos.multimedia.mediaLibrary';
 import util from '@ohos.util';
 import fileio from '@ohos.file.fs';
-import featureAbility from '@ohos.ability.featureAbility';
 import common from '@ohos.app.ability.common';
 import abilityAccessCtrl, { Permissions } from '@ohos.abilityAccessCtrl';
+import document from '@ohos.document';
+
+const filesFetchOptions = {
+  selections: mediaLibrary.FileKey.RELATIVE_PATH + ' = ? AND ' +
+  mediaLibrary.FileKey.DISPLAY_NAME + ' LIKE ?',
+  selectionArgs: [backUpPath, "%.png"],
+  order: mediaLibrary.FileKey.DATE_ADDED + " DESC"
+};
 
 PersistentStorage.PersistProp('BackUpSwitch', 0)
 PersistentStorage.PersistProp('AutoBackUpSwitch', 0)
@@ -32,11 +39,30 @@ export async function getPermission_WRITE_MEDIA(): Promise<boolean> {
 /**
  * 获取媒体资源
  */
-export async function getMediaLibrary(): Promise<any> {
-  let BackUpSwitch: number = AppStorage.Get<number>('BackUpSwitch')
+export async function getMediaLibrary(): Promise<mediaLibrary.FileAsset[]> {
+  let BackUpSwitch: boolean = AppStorage.Get<boolean>('BackUpSwitch')
   if (!BackUpSwitch) return []
 
-  let ret = []
+  var context: Context = getContext(this) as common.Context;
+  let media = mediaLibrary.getMediaLibrary(context);
+  console.log('filesFetchOptions = ' + JSON.stringify(filesFetchOptions))
+  let fetchFileResult = await media.getFileAssets(filesFetchOptions)
+  console.log('fetchFileResult = ' + JSON.stringify(fetchFileResult) + ' ,number: ' + fetchFileResult.getCount()
+    .toString())
+  let ret: mediaLibrary.FileAsset[] = []
+  let count: number = 0
+  if (fetchFileResult.getCount() > 0)
+    for (let i = await fetchFileResult.getFirstObject();!fetchFileResult.isAfterLast(); i = await fetchFileResult.getNextObject()) {
+      if (!await i.isTrash()) {
+        if (++count <= 10) {
+          ret.push(i)
+        } else {
+          break
+        }
+      }
+    }
+  fetchFileResult.close()
+  console.log(JSON.stringify(ret))
   return ret
 }
 
@@ -45,7 +71,7 @@ export async function getMediaLibrary(): Promise<any> {
  */
 export async function openMediaAndSelect(): Promise<string> {
   let types = ['image/png'];
-  let ret: string = '';
+  let ret: string = await document.choose(types);
   return ret;
 }
 
@@ -57,7 +83,13 @@ export async function readFile(data: mediaLibrary.FileAsset): Promise<string> {
   let fd = await data.open('rw')
   console.log('open successfully: ' + fd)
   let file = fileio.fdopenStreamSync(fd, "r+")
-  let readString = ''
+  let buffer = new ArrayBuffer(data.size);
+  let readLen = await file.read(buffer)
+  let bufferUint8 = new Uint8Array(buffer.slice(0, readLen))
+  let textDecoder = new util.TextDecoder("utf-8", { ignoreBOM: true });
+  let readString = textDecoder.decode(bufferUint8, { stream: false });
+  console.log("IO Read:" + JSON.stringify(readString));
+  data.close(fd)
   return readString
 }
 
@@ -70,9 +102,26 @@ function getTimeDate(): string {
 }
 
 async function deleteRedundancyFile() {
-  let BackUpSwitch: number = AppStorage.Get<number>('BackUpSwitch')
+  let BackUpSwitch: boolean = AppStorage.Get<boolean>('BackUpSwitch')
   if (!BackUpSwitch) return []
 
+  var context: Context = getContext(this) as common.Context;
+  let media = mediaLibrary.getMediaLibrary(context);
+  console.log('filesFetchOptions = ' + JSON.stringify(filesFetchOptions))
+  let fetchFileResult = await media.getFileAssets(filesFetchOptions)
+  console.log('fetchFileResult = ' + JSON.stringify(fetchFileResult) + ' ,number: ' + fetchFileResult.getCount()
+    .toString())
+  let count: number = 0
+  if (fetchFileResult.getCount() > 0)
+    for (let i = await fetchFileResult.getFirstObject();!fetchFileResult.isAfterLast(); i = await fetchFileResult.getNextObject()) {
+      if (!await i.isTrash()) {
+        if (count < 10) {
+          ++count
+        } else {
+          deleteFile(i)
+        }
+      }
+    }
 }
 
 /**
@@ -81,7 +130,16 @@ async function deleteRedundancyFile() {
  */
 export async function writeFile(data: string) {
   let fileName = getTimeDate()
-
+  var context: Context = getContext(this) as common.Context;
+  let media = mediaLibrary.getMediaLibrary(context);
+  let mediaType = mediaLibrary.MediaType.FILE;
+  console.info('ready to createAsset , parameters :  mediaType = ' + mediaType + ', fileName = ' + fileName + ', backUpPath = ' + backUpPath);
+  let fileAsset = await media.createAsset(mediaType, fileName, backUpPath)
+  console.info('createAsset successfully, message = ' + JSON.stringify(fileAsset));
+  let fd = await fileAsset.open('rw')
+  console.log('open successfully: ' + fd)
+  fileio.writeSync(fd, data)
+  fileAsset.close(fd)
 }
 
 const backUpImpl: Backup = new Backup()
@@ -91,7 +149,18 @@ const backUpImpl: Backup = new Backup()
  * @param data 文件内容
  */
 export async function importFile(data: mediaLibrary.FileAsset): Promise<[boolean, string]> {
-  return null;
+  let value = await getPermission_WRITE_MEDIA()
+  if (value) {
+    console.log('import: ' + JSON.stringify(data));
+    let obj: string = await readFile(data)
+    let ret = JSON.parse(obj)
+    console.log('import value: ' + JSON.stringify(ret));
+    return new Promise((resolve) => {
+      backUpImpl.importData(ret, (flag: boolean, reason: string) => {
+        resolve([flag, reason])
+      })
+    })
+  }
 }
 
 /**
