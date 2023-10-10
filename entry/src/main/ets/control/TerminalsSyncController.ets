@@ -8,8 +8,8 @@ import abilityAccessCtrl, { Permissions } from '@ohos.abilityAccessCtrl';
 import common from '@ohos.app.ability.common';
 
 
-PersistentStorage.PersistProp('TerminalsSyncSwitch', false)
-PersistentStorage.PersistProp('AutoTerminalsSyncSwitch', false)
+PersistentStorage.PersistProp('TerminalsSyncSwitch', 0)
+PersistentStorage.PersistProp('AutoTerminalsSyncSwitch', 0)
 PersistentStorage.PersistProp('LocalVersionNumber', 0)
 
 const Version_Key: string = 'version'
@@ -26,8 +26,8 @@ export async function getPermission_DISTRIBUTED_DATASYNC(): Promise<boolean> {
   console.log("====>requestData====> " + authResults0 + ' ,');
   let ret: boolean = ((authResults0 == 0))
   if (!ret) {
-    AppStorage.Set('TerminalsSyncSwitch', false)
-    AppStorage.Set('AutoTerminalsSyncSwitch', false)
+    AppStorage.Set('TerminalsSyncSwitch', 0)
+    AppStorage.Set('AutoTerminalsSyncSwitch', 0)
   }
   return ret
 }
@@ -73,7 +73,7 @@ async function getBackupObject(): Promise<object> {
 export async function OpenSyncListener() {
   const kvStore = await getKVStore()
   kvStore.on('dataChange', distributedData.SubscribeType.SUBSCRIBE_TYPE_ALL, function (data) {
-    let TerminalsSyncSwitch = AppStorage.Get<boolean>('TerminalsSyncSwitch')
+    let TerminalsSyncSwitch = AppStorage.Get<number>('TerminalsSyncSwitch')
     if (!TerminalsSyncSwitch) return;
     let newVersion: number = AppStorage.Get<number>('LocalVersionNumber')
     kvStore.get(Version_Key, function (err, SyncVersion) {
@@ -173,7 +173,7 @@ export async function ExportNewVersion(showPrompt: boolean = false) {
  * 从数据库导入数据新版本
  */
 async function ImportNewVersion(): Promise<[boolean, number, string]> {
-  let TerminalsSyncSwitch = AppStorage.Get<boolean>('TerminalsSyncSwitch')
+  let TerminalsSyncSwitch = AppStorage.Get<number>('TerminalsSyncSwitch')
   if (!TerminalsSyncSwitch)
     return [false, 0, '']
 
@@ -224,7 +224,7 @@ export function UpdateVersionNumber(newVersionNumber: number = new Date().getTim
  * @param showFail 是否展示失败提醒
  */
 export async function getNewAndImportData(showFail: boolean = true) {
-  let TerminalsSyncSwitch = AppStorage.Get<boolean>('TerminalsSyncSwitch')
+  let TerminalsSyncSwitch = AppStorage.Get<number>('TerminalsSyncSwitch')
   if (!TerminalsSyncSwitch) return;
   let ret: [boolean, number, string] = await ImportNewVersion()
   if (ret[0]) {

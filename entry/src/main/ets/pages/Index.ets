@@ -204,13 +204,13 @@ struct Index {
     }, 200)
   }
 
-  @StorageLink('AutoBackUpSwitch') AutoBackUpSwitch: boolean = false
-  @StorageLink('AutoTerminalsSyncSwitch') AutoTerminalsSyncSwitch: boolean = false
+  @StorageLink('AutoBackUpSwitch') AutoBackUpSwitch: number = 0
+  @StorageLink('AutoTerminalsSyncSwitch') AutoTerminalsSyncSwitch: number = 0
 
   async onPageHide() {
-    if (this.AutoBackUpSwitch)
+    if (this.AutoBackUpSwitch != 0)
       await backupFile()
-    if (this.AutoTerminalsSyncSwitch)
+    if (this.AutoTerminalsSyncSwitch != 0)
       await ExportNewVersion()
     // await ExportNewVersion_form()
   }

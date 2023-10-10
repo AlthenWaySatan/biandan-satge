@@ -5,7 +5,7 @@ import { get_accent } from '../../control/AccentController';
 import vibrator from '@ohos.vibrator';
 import { get_translucentSaturation_accent, get_add_Marking } from '../../control/AccentController';
 
-PersistentStorage.PersistProp('TerminalsSyncSwitch', false)
+PersistentStorage.PersistProp('TerminalsSyncSwitch', 0)
 
 @Component
 export struct AddEventButton {

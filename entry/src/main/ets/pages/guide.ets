@@ -2,15 +2,15 @@ import device from '@system.device';
 import window from '@ohos.window';
 import router from '@ohos.router';
 
-PersistentStorage.PersistProp('IsFirstIn', true)
-PersistentStorage.PersistProp('IsAgreed', false)
+PersistentStorage.PersistProp('IsFirstIn', 1)
+PersistentStorage.PersistProp('IsAgreed', 0)
 
 @Entry
 @Component
 struct guide {
   @State statusBarHeight: number = 0
   @State screenDensity: number = 2
-  @StorageLink('IsAgreed') IsAgreed: boolean = false
+  @StorageLink('IsAgreed') IsAgreed: number = 0
 
   aboutToAppear() {
     // window.getTopWindow((err, data) => {
@@ -38,7 +38,7 @@ struct guide {
   }
 
   private endGuide() {
-    AppStorage.Set('IsFirstIn', false)
+    AppStorage.Set('IsFirstIn', 0)
     router.replace({
       url: 'pages/Index',
     })
@@ -126,11 +126,11 @@ struct guide {
           .layoutWeight(1)
 
           Row() {
-            Toggle({ type: ToggleType.Checkbox, isOn: this.IsAgreed })
+            Toggle({ type: ToggleType.Checkbox, isOn: this.IsAgreed != 0 })
               .size({ width: 16, height: 16 })
               .selectedColor($r('app.color.accent'))
               .onChange((isOn: boolean) => {
-                this.IsAgreed = isOn ? true : false
+                this.IsAgreed = isOn ? 1 : 0
                 console.info('Component status:' + this.IsAgreed)
               })
             Row() {
