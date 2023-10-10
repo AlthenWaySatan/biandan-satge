@@ -141,30 +141,59 @@ struct ProgressExample {
               Column(){
                   this.listItem2({title: $r('app.string.ourWebsite'), subTitle: 'www.biandangroup.cn', showDivider: true})
                 }.onClick(() => {
-                featureAbility.startAbility({
-                  want: {
-                    action: 'ohos.want.action.viewData',
-                    entities: ['entity.system.browsable'],
-                    uri: 'https://www.biandangroup.cn' }
+                // featureAbility.startAbility({
+                //   want: {
+                //     action: 'ohos.want.action.viewData',
+                //     entities: ['entity.system.browsable'],
+                //     uri: 'https://www.biandangroup.cn' }
+                // });
+                let want = {
+                  action: 'ohos.want.action.viewData',
+                  entities: ['entity.system.browsable'],
+                  uri: 'https://www.biandangroup.cn'
+                };
+                // let context: Context = getContext(this) as common.Context;
+                let context = getContext(this) as any
+                context.startAbility(want, (error) => {
+                    console.log('error.code = ' + error.code)
                 });
               })
               Column(){
                   this.listItem2({title: $r('app.string.contactUs'), subTitle: 'althenwaysatan@outlook.com', showDivider: true})
                 }.onClick(() => {
-                featureAbility.startAbility({
-                  want: {
-                    action: 'ohos.want.action.sendSms',
-                    uri: 'mailto:althenwaysatan@outlook.com'
-                  }
+                // featureAbility.startAbility({
+                //   want: {
+                //     action: 'ohos.want.action.sendSms',
+                //     uri: 'mailto:althenwaysatan@outlook.com'
+                //   }
+                // });
+                let want = {
+                  action: 'ohos.want.action.sendSms',
+                  uri: 'mailto:althenwaysatan@outlook.com'
+                };
+                // let context: Context = getContext(this) as common.Context;
+                let context = getContext(this) as any
+                context.startAbility(want, (error) => {
+                  console.log('error.code = ' + error.code)
                 });
               })
               Column(){
                   this.listItem2({title: "QQ交流群", subTitle: '798942683', showDivider: true})
                 }.onClick(() => {
-                featureAbility.startAbility({
-                  want: {
-                    bundleName: 'com.tencent.mobileqq',
-                    uri: 'http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=9N6Fe8pZEnGiJP9MAzC_Bu6NiH_Z1acU&authKey=dLi9PtvnwUK%2FzJD%2BdboFLbPVR8q9oHlRZk9%2Fd6evNjsLyn7KiTkoNKkbQalQvwzP&noverify=0&group_code=798942683' }
+                // featureAbility.startAbility({
+                //   want: {
+                //     bundleName: 'com.tencent.mobileqq',
+                //     uri: 'http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=9N6Fe8pZEnGiJP9MAzC_Bu6NiH_Z1acU&authKey=dLi9PtvnwUK%2FzJD%2BdboFLbPVR8q9oHlRZk9%2Fd6evNjsLyn7KiTkoNKkbQalQvwzP&noverify=0&group_code=798942683' }
+                // });
+
+                let want = {
+                  bundleName: 'com.tencent.mobileqq',
+                  uri: 'http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=9N6Fe8pZEnGiJP9MAzC_Bu6NiH_Z1acU&authKey=dLi9PtvnwUK%2FzJD%2BdboFLbPVR8q9oHlRZk9%2Fd6evNjsLyn7KiTkoNKkbQalQvwzP&noverify=0&group_code=798942683'
+                };
+                // let context: Context = getContext(this) as common.Context;
+                let context = getContext(this) as any
+                context.startAbility(want, (error) => {
+                  console.log('error.code = ' + error.code)
                 });
               })
               // Column() {
