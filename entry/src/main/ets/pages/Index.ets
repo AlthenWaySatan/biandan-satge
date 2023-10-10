@@ -191,12 +191,12 @@ struct Index {
       // let IsFirstIn = AppStorage.Get<number>('IsFirstIn_')
       if (this.IsFirstIn < 1) {
         this.implTable.initTable()
-        //        publishNotification_test()
-        // router.replace({
-        //   url: 'pages/guide'
-        // })
-        // 'IsFirstIn_'
         this.IsFirstIn += 1;
+        //        publishNotification_test()
+        router.replace({
+          url: 'pages/guide'
+        })
+        // 'IsFirstIn_'
       }
       // else {
       this.readyToShow = true

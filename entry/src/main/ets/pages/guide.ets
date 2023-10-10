@@ -40,7 +40,7 @@ struct guide {
   private endGuide() {
     AppStorage.Set('IsFirstIn', false)
     router.replace({
-      url: 'pages/index',
+      url: 'pages/Index',
     })
   }
 
