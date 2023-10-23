@@ -118,8 +118,9 @@ export async function getTerminalsList(): Promise<object[]> {
   return new Promise((resolve) => {
     kvStore.get(Device_Key, function (err, DeviceList) {
       console.log("get success Device_Key: " + DeviceList);
+      // console.log("get success Device_Key: typeof " + typeof (DeviceList) + " " + Object.prototype.toString.call(DeviceList));
       console.log("get error: " + err);
-      let deviceList: object[] = (DeviceList == undefined) ? [] : JSON.parse(DeviceList)
+      let deviceList: object[] = (DeviceList == undefined || DeviceList == "") ? [] : JSON.parse(DeviceList)
       if (!deviceList.some(item => JSON.stringify(item) === JSON.stringify(thisDevice))) {
         deviceList.push(thisDevice)
         DeviceList = JSON.stringify(deviceList)

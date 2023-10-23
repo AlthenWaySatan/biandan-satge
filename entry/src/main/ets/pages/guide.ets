@@ -68,6 +68,8 @@ struct guide {
             .borderRadius(30)
         } else {
           Image($$.img)
+            .height('100%')
+            .width('100%')
         }
       }
       .justifyContent(FlexAlign.Center)
