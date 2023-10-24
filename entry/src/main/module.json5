@@ -62,7 +62,7 @@
     "extensionAbilities": [
       {
         "name": "EntryFormAbility",
-        "srcEntry": "./ets/entryformability/EntryFormAbility.ts",
+        "srcEntry": "./ets/entryformability/EntryFormAbility.ets",
         "label": "$string:EntryFormAbility_label",
         "description": "$string:EntryFormAbility_desc",
         "type": "form",

@@ -1,4 +1,5 @@
 import { CalendarDate } from '../element/CalendarDate';
+import { getNextNDay } from '../../control/CalendarControl';
 
 @Component
 export struct CalendarWeek {
@@ -15,29 +16,24 @@ export struct CalendarWeek {
    * @param day 日
    * @param n 之后的n天数
    */
-  private getNextNDay(date: number[], n: number): number[] {
-    var dateTime = new Date(date[0], date[1] - 1, date[2]);
-    dateTime = new Date(dateTime.setDate(dateTime.getDate() + n));
-    return [(dateTime.getFullYear()), (dateTime.getMonth() + 1), (dateTime.getDate())]
-  }
 
   @State isHidden: boolean = this.openCalendar && this.isNeedClose
-  @State date0: number[] = this.getNextNDay(this.startDate, 0)
-  @State date1: number[] = this.getNextNDay(this.startDate, 1)
-  @State date2: number[] = this.getNextNDay(this.startDate, 2)
-  @State date3: number[] = this.getNextNDay(this.startDate, 3)
-  @State date4: number[] = this.getNextNDay(this.startDate, 4)
-  @State date5: number[] = this.getNextNDay(this.startDate, 5)
-  @State date6: number[] = this.getNextNDay(this.startDate, 6)
+  @State date0: number[] = getNextNDay(this.startDate, 0)
+  @State date1: number[] = getNextNDay(this.startDate, 1)
+  @State date2: number[] = getNextNDay(this.startDate, 2)
+  @State date3: number[] = getNextNDay(this.startDate, 3)
+  @State date4: number[] = getNextNDay(this.startDate, 4)
+  @State date5: number[] = getNextNDay(this.startDate, 5)
+  @State date6: number[] = getNextNDay(this.startDate, 6)
 
   private StartDateRefresh() {
-    this.date0 = this.getNextNDay(this.startDate, 0)
-    this.date1 = this.getNextNDay(this.startDate, 1)
-    this.date2 = this.getNextNDay(this.startDate, 2)
-    this.date3 = this.getNextNDay(this.startDate, 3)
-    this.date4 = this.getNextNDay(this.startDate, 4)
-    this.date5 = this.getNextNDay(this.startDate, 5)
-    this.date6 = this.getNextNDay(this.startDate, 6)
+    this.date0 = getNextNDay(this.startDate, 0)
+    this.date1 = getNextNDay(this.startDate, 1)
+    this.date2 = getNextNDay(this.startDate, 2)
+    this.date3 = getNextNDay(this.startDate, 3)
+    this.date4 = getNextNDay(this.startDate, 4)
+    this.date5 = getNextNDay(this.startDate, 5)
+    this.date6 = getNextNDay(this.startDate, 6)
   }
 
   build() {

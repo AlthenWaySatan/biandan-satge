@@ -3,6 +3,8 @@ import { getResource } from '../../control/EventsController';
 import { EventsTable } from '../element/EventsTable';
 import { AddEventButton } from '../element/AddEventButton';
 import { ToolBar } from '../element/ToolBar';
+import { getStartDate, getNextNDay, getNextNMonth} from '../../control/CalendarControl';
+
 
 PersistentStorage.PersistProp('FirstDayOfWeek', 0)
 
@@ -18,47 +20,18 @@ export struct CalendarMonth {
   @StorageLink('showSixLine') showSixLine: boolean = false
   @StorageLink('FirstDayOfWeek') FirstDayOfWeek: number = 0
 
-  private getStartDate(date: number[]): number[] {
-    var dateTime = new Date(date[0], date[1] - 1, 1);
-    if (this.FirstDayOfWeek == 0)
-      dateTime = new Date(dateTime.setDate(dateTime.getDate() - (dateTime.getDay() + 6) % 7));
-    else
-      dateTime = new Date(dateTime.setDate(dateTime.getDate() - dateTime.getDay()));
-    return [(dateTime.getFullYear()), (dateTime.getMonth() + 1), (dateTime.getDate())]
-  }
-
-  /**
-   * 获取下n天
-   */
-  private getNextNDay(date: number[], n: number): number[] {
-    var dateTime = new Date(date[0], date[1] - 1, date[2]);
-    dateTime = new Date(dateTime.setDate(dateTime.getDate() + n));
-    return [(dateTime.getFullYear()), (dateTime.getMonth() + 1), (dateTime.getDate())]
-  }
-  /**
-   * 获取上/下个月
-   */
-  private getNextNMonth(date: number[], n: number): number[] {
-    var dateTime = new Date(date[0], date[1] - 1, date[2]);
-    dateTime = new Date(dateTime.setMonth(dateTime.getMonth() + n));
-    if (dateTime.getMonth() == (date[1] + n + 11) % 12)
-      return [(dateTime.getFullYear()), (dateTime.getMonth() + 1), (dateTime.getDate())]
-    else
-      return [date[0], (date[1] + n + 11) % 12 + 1, 1]
-  }
-
   private changeShowDate(value: number) {
     if (this.openCalendar)
-      this.showDate = this.getNextNDay(this.showDate, 7 * value)
+      this.showDate = getNextNDay(this.showDate, 7 * value)
     else
-      this.showDate = this.getNextNMonth(this.showDate, value)
+      this.showDate = getNextNMonth(this.showDate, value)
     console.log('1-2.事件内容：??? next -> ', this.showDate);
     getResource(this.showDate[0], this.showDate[1], this.showDate[2], this.folderId);
   }
 
   private checkNeedClose(startDate: number[]): boolean {
     for (let i = 0;i < 7; i++) {
-      let temp: number[] = this.getNextNDay(startDate, i)
+      let temp: number[] = getNextNDay(startDate, i)
       if (temp[1] == this.showDate[1] && temp[2] == this.showDate[2])
         return false
     }
@@ -84,34 +57,34 @@ export struct CalendarMonth {
     .layoutWeight(1)
   }
 
-  @State startDate0:number[] = this.getStartDate(this.showDate);
-  @State startDate7:number[] = this.getNextNDay(this.getStartDate(this.showDate), 7);
-  @State startDate14:number[] = this.getNextNDay(this.getStartDate(this.showDate), 14);
-  @State startDate21:number[] = this.getNextNDay(this.getStartDate(this.showDate), 21);
-  @State startDate28:number[] = this.getNextNDay(this.getStartDate(this.showDate), 28);
-  @State startDate35:number[] = this.getNextNDay(this.getStartDate(this.showDate), 35);
+  @State startDate0:number[] = getStartDate(this.showDate);
+  @State startDate7:number[] = getNextNDay(getStartDate(this.showDate), 7);
+  @State startDate14:number[] = getNextNDay(getStartDate(this.showDate), 14);
+  @State startDate21:number[] = getNextNDay(getStartDate(this.showDate), 21);
+  @State startDate28:number[] = getNextNDay(getStartDate(this.showDate), 28);
+  @State startDate35:number[] = getNextNDay(getStartDate(this.showDate), 35);
 
-  @State isNeedClose0: boolean = this.checkNeedClose(this.getStartDate(this.showDate));
-  @State isNeedClose7: boolean = this.checkNeedClose(this.getNextNDay(this.getStartDate(this.showDate), 7));
-  @State isNeedClose14: boolean = this.checkNeedClose(this.getNextNDay(this.getStartDate(this.showDate), 14));
-  @State isNeedClose21: boolean = this.checkNeedClose(this.getNextNDay(this.getStartDate(this.showDate), 21));
-  @State isNeedClose28: boolean = this.checkNeedClose(this.getNextNDay(this.getStartDate(this.showDate), 28));
-  @State isNeedClose35: boolean = this.checkNeedClose(this.getNextNDay(this.getStartDate(this.showDate), 35));
+  @State isNeedClose0: boolean = this.checkNeedClose(getStartDate(this.showDate));
+  @State isNeedClose7: boolean = this.checkNeedClose(getNextNDay(getStartDate(this.showDate), 7));
+  @State isNeedClose14: boolean = this.checkNeedClose(getNextNDay(getStartDate(this.showDate), 14));
+  @State isNeedClose21: boolean = this.checkNeedClose(getNextNDay(getStartDate(this.showDate), 21));
+  @State isNeedClose28: boolean = this.checkNeedClose(getNextNDay(getStartDate(this.showDate), 28));
+  @State isNeedClose35: boolean = this.checkNeedClose(getNextNDay(getStartDate(this.showDate), 35));
 
   private RefreshResource() {
-    this.startDate0 = this.getStartDate(this.showDate);
-    this.startDate7 = this.getNextNDay(this.getStartDate(this.showDate), 7);
-    this.startDate14 = this.getNextNDay(this.getStartDate(this.showDate), 14);
-    this.startDate21 = this.getNextNDay(this.getStartDate(this.showDate), 21);
-    this.startDate28 = this.getNextNDay(this.getStartDate(this.showDate), 28);
-    this.startDate35 = this.getNextNDay(this.getStartDate(this.showDate), 35);
+    this.startDate0 = getStartDate(this.showDate);
+    this.startDate7 = getNextNDay(getStartDate(this.showDate), 7);
+    this.startDate14 = getNextNDay(getStartDate(this.showDate), 14);
+    this.startDate21 = getNextNDay(getStartDate(this.showDate), 21);
+    this.startDate28 = getNextNDay(getStartDate(this.showDate), 28);
+    this.startDate35 = getNextNDay(getStartDate(this.showDate), 35);
 
-    this.isNeedClose0 = this.checkNeedClose(this.getStartDate(this.showDate));
-    this.isNeedClose7 = this.checkNeedClose(this.getNextNDay(this.getStartDate(this.showDate), 7));
-    this.isNeedClose14 = this.checkNeedClose(this.getNextNDay(this.getStartDate(this.showDate), 14));
-    this.isNeedClose21 = this.checkNeedClose(this.getNextNDay(this.getStartDate(this.showDate), 21));
-    this.isNeedClose28 = this.checkNeedClose(this.getNextNDay(this.getStartDate(this.showDate), 28));
-    this.isNeedClose35 = this.checkNeedClose(this.getNextNDay(this.getStartDate(this.showDate), 35));
+    this.isNeedClose0 = this.checkNeedClose(getStartDate(this.showDate));
+    this.isNeedClose7 = this.checkNeedClose(getNextNDay(getStartDate(this.showDate), 7));
+    this.isNeedClose14 = this.checkNeedClose(getNextNDay(getStartDate(this.showDate), 14));
+    this.isNeedClose21 = this.checkNeedClose(getNextNDay(getStartDate(this.showDate), 21));
+    this.isNeedClose28 = this.checkNeedClose(getNextNDay(getStartDate(this.showDate), 28));
+    this.isNeedClose35 = this.checkNeedClose(getNextNDay(getStartDate(this.showDate), 35));
   }
 
   build() {
@@ -165,7 +138,7 @@ export struct CalendarMonth {
               isNeedClose: $isNeedClose28
             })
 
-            if (this.showSixLine = (this.getNextNDay(this.getStartDate(this.showDate), 35)[1] == this.showDate[1])) {
+            if (this.showSixLine = (getNextNDay(getStartDate(this.showDate), 35)[1] == this.showDate[1])) {
               CalendarWeek({
                 startDate: $startDate35,
                 isNeedClose: $isNeedClose35

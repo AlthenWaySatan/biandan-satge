@@ -79,33 +79,34 @@ struct CalendarCard {
 
   }
 
-  private getDateTextColor(date: number, month: number) {
-    if (date == this.thisDate && month == this.thisMonth)
+  private getDateTextColor(date: number, month: number, year: number) {
+    if (date == this.thisDate && month == this.thisMonth && year == this.thisYear)
       return $r('app.color.foreground')
-    if (date == new Date().getDate() && month == new Date().getMonth() + 1)
+    if (date == new Date().getDate() && month == new Date().getMonth() + 1 && year == new Date().getFullYear())
       return this.accentColor;
-    if (month == new Date().getMonth() + 1)
+    if (month == this.thisMonth && year == this.thisYear)
       return $r('app.color.text_level1')
     return $r('app.color.text_level2')
   }
 
-  private getPointColor(date: number, month: number) {
-    if (date == this.thisDate && month == this.thisMonth)
+  private getPointColor(date: number, month: number, year: number) {
+    if (date == this.thisDate && month == this.thisMonth && year == this.thisYear)
       return $r('app.color.foreground')
     return this.accentColor;
   }
 
-  private thisDate = 28;
-  private thisMonth = 10;
+  @LocalStorageProp('thisYear') thisYear:number = 2023
+  @LocalStorageProp('thisDate') thisDate:number = 28;
+  @LocalStorageProp('thisMonth') thisMonth:number = 10;
 
-  private Date = "10月28日";
-  private Month = "2023年10月";
-  private Folder = "全部代办";
-  private accentColor = $r('app.color.accent')
-  private events = [
+  @LocalStorageProp('Month') Month:string = "----年--月";
+  @LocalStorageProp('Date') Date:string = "--月--日";
+  @LocalStorageProp('Folder') Folder:string = "全部代办";
+  @LocalStorageProp('accentColor') accentColor:Resource = $r('app.color.accent')
+  @LocalStorageProp('events') events:Event[] = [
     {
-      Title: "Text Text",
-      Time: "Time Time 123 123",
+      Title: "----",
+      Time: "--:-----:--",
       isWarning: true,
       isHighlight: true,
       stateResource: $r('app.media.ic_todo_wait_black'),
@@ -116,8 +117,8 @@ struct CalendarCard {
       eventId: 0
     },
     {
-      Title: "Text Text",
-      Time: "Time Time 123 123",
+      Title: "----",
+      Time: "--:-----:--",
       isWarning: true,
       isHighlight: true,
       stateResource: $r('app.media.ic_todo_wait_black'),
@@ -128,8 +129,8 @@ struct CalendarCard {
       eventId: 0
     },
     {
-      Title: "Text Text",
-      Time: "Time Time 123 123",
+      Title: "----",
+      Time: "--:-----:--",
       isWarning: true,
       isHighlight: true,
       stateResource: $r('app.media.ic_todo_wait_black'),
@@ -140,8 +141,8 @@ struct CalendarCard {
       eventId: 0
     },
     {
-      Title: "Text Text",
-      Time: "Time Time 123 123",
+      Title: "----",
+      Time: "--:-----:--",
       isWarning: true,
       isHighlight: true,
       stateResource: $r('app.media.ic_todo_wait_black'),
@@ -152,8 +153,8 @@ struct CalendarCard {
       eventId: 0
     },
     {
-      Title: "Text Text",
-      Time: "Time Time 123 123",
+      Title: "----",
+      Time: "--:-----:--",
       isWarning: true,
       isHighlight: true,
       stateResource: $r('app.media.ic_todo_wait_black'),
@@ -165,41 +166,48 @@ struct CalendarCard {
     }
   ]
 
-  private dates = [
+  @LocalStorageProp('dates') dates:CalendarDate[][] = [
     [
       {
         date: 1,
         month: 10,
+        year: 2023,
         haveEvent: false
       },
       {
         date: 2,
         month: 10,
+        year: 2023,
         haveEvent: false
       },
       {
         date: 3,
         month: 10,
+        year: 2023,
         haveEvent: false
       },
       {
         date: 4,
         month: 10,
+        year: 2023,
         haveEvent: false
       },
       {
         date: 5,
         month: 10,
+        year: 2023,
         haveEvent: false
       },
       {
         date: 6,
         month: 10,
+        year: 2023,
         haveEvent: false
       },
       {
         date: 7,
         month: 10,
+        year: 2023,
         haveEvent: false
       }
     ],
@@ -207,36 +215,43 @@ struct CalendarCard {
       {
         date: 8,
         month: 10,
+        year: 2023,
         haveEvent: true
       },
       {
         date: 9,
         month: 10,
+        year: 2023,
         haveEvent: true
       },
       {
         date: 10,
         month: 10,
+        year: 2023,
         haveEvent: true
       },
       {
         date: 11,
         month: 10,
+        year: 2023,
         haveEvent: true
       },
       {
         date: 12,
         month: 10,
+        year: 2023,
         haveEvent: true
       },
       {
         date: 13,
         month: 10,
+        year: 2023,
         haveEvent: true
       },
       {
         date: 14,
         month: 10,
+        year: 2023,
         haveEvent: true
       }
     ],
@@ -244,36 +259,43 @@ struct CalendarCard {
       {
         date: 15,
         month: 10,
+        year: 2023,
         haveEvent: true
       },
       {
         date: 16,
         month: 10,
+        year: 2023,
         haveEvent: true
       },
       {
         date: 17,
         month: 10,
+        year: 2023,
         haveEvent: true
       },
       {
         date: 18,
         month: 10,
+        year: 2023,
         haveEvent: true
       },
       {
         date: 19,
         month: 10,
+        year: 2023,
         haveEvent: true
       },
       {
         date: 20,
         month: 10,
+        year: 2023,
         haveEvent: true
       },
       {
         date: 21,
         month: 10,
+        year: 2023,
         haveEvent: true
       }
     ],
@@ -281,36 +303,43 @@ struct CalendarCard {
       {
         date: 22,
         month: 10,
+        year: 2023,
         haveEvent: true
       },
       {
         date: 23,
         month: 10,
+        year: 2023,
         haveEvent: true
       },
       {
         date: 24,
         month: 10,
+        year: 2023,
         haveEvent: true
       },
       {
         date: 25,
         month: 10,
+        year: 2023,
         haveEvent: true
       },
       {
         date: 26,
         month: 10,
+        year: 2023,
         haveEvent: true
       },
       {
         date: 27,
         month: 10,
+        year: 2023,
         haveEvent: true
       },
       {
         date: 28,
         month: 10,
+        year: 2023,
         haveEvent: true
       }
     ],
@@ -318,48 +347,57 @@ struct CalendarCard {
       {
         date: 29,
         month: 10,
+        year: 2023,
         haveEvent: true
       },
       {
         date: 30,
         month: 10,
+        year: 2023,
         haveEvent: true
       },
       {
         date: 31,
         month: 10,
+        year: 2023,
         haveEvent: true
       },
       {
         date: 1,
         month: 11,
+        year: 2023,
         haveEvent: true
       },
       {
         date: 2,
         month: 11,
+        year: 2023,
         haveEvent: true
       },
       {
         date: 3,
         month: 11,
+        year: 2023,
         haveEvent: true
       },
       {
         date: 4,
         month: 11,
+        year: 2023,
         haveEvent: true
       }
     ]
   ]
 
-  readonly dateHeader = ['日', '一', '二', '三', '四', '五', '六']
+  @LocalStorageProp('dateHeader') dateHeader:string[] = ['日', '一', '二', '三', '四', '五', '六']
 
-  private doneNum = 3
-  private allNum = 5
-  private doneRate = 0.6
+  @LocalStorageProp('doneNum') doneNum:number = 0
+  @LocalStorageProp('allNum') allNum:number = 0
+  @LocalStorageProp('doneRate') doneRate:number = 0
 
-  private doneStr = "3/5"
+  @LocalStorageProp('pageNum') pageNum:number = 0;
+
+  @LocalStorageProp('doneStr') doneStr:string = "0/0"
 
   build() {
     Row() {
@@ -537,7 +575,7 @@ struct CalendarCard {
                     Text(item.date.toString())
                       .fontSize(10)
                       .fontWeight(FontWeight.Medium)
-                      .fontColor(this.getDateTextColor(item.date, item.month))
+                      .fontColor(this.getDateTextColor(item.date, item.month, item.year))
                       .textOverflow({overflow :TextOverflow.Clip})
                       .maxLines(1)
                     if (item.haveEvent)
@@ -545,7 +583,7 @@ struct CalendarCard {
                       .width(4)
                       .height(4)
                       .borderRadius(2)
-                      .backgroundColor(this.getPointColor(item.date, item.month))
+                      .backgroundColor(this.getPointColor(item.date, item.month, item.year))
                       .offset({x: 0, y: 7})
                   }
                   .height('100%')
@@ -584,4 +622,24 @@ struct CalendarCard {
       });
     })
   }
+}
+
+interface Event {
+  Title: string,
+  Time: string,
+  isWarning: boolean,
+  isHighlight: boolean,
+  stateResource: Resource,
+  isClock: boolean,
+  isPath: boolean,
+  isDone: boolean,
+  State: number,
+  eventId: number
+}
+
+interface CalendarDate {
+  date: number,
+  month: number,
+  year: number,
+  haveEvent: boolean
 }

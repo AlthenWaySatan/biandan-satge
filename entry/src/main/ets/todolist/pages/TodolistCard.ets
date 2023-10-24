@@ -67,16 +67,16 @@ struct TodolistCard {
 
   }
 
-  private widthLength = 2;
-  private listLength = 5;
+  @LocalStorageProp('widthLength') widthLength:number = 2;
+  @LocalStorageProp('listLength') listLength:number = 5;
 
-  private Date = "10月28日";
-  private Folder = "全部代办";
-  private accentColor = $r('app.color.accent')
-  private events = [
+  @LocalStorageProp('Date') Date:string = "--月--日";
+  @LocalStorageProp('Folder') Folder:string = "全部代办";
+  @LocalStorageProp('accentColor') accentColor:Resource = $r('app.color.accent')
+  @LocalStorageProp('events') events:Event[] = [
     {
-      Title: "Text Text",
-      Time: "Time Time 123 123",
+      Title: "----",
+      Time: "--:-----:--",
       isWarning: true,
       isHighlight: true,
       stateResource: $r('app.media.ic_todo_wait_black'),
@@ -87,8 +87,8 @@ struct TodolistCard {
       eventId: 0
     },
     {
-      Title: "Text Text",
-      Time: "Time Time 123 123",
+      Title: "----",
+      Time: "--:-----:--",
       isWarning: true,
       isHighlight: true,
       stateResource: $r('app.media.ic_todo_wait_black'),
@@ -99,8 +99,8 @@ struct TodolistCard {
       eventId: 0
     },
     {
-      Title: "Text Text",
-      Time: "Time Time 123 123",
+      Title: "----",
+      Time: "--:-----:--",
       isWarning: true,
       isHighlight: true,
       stateResource: $r('app.media.ic_todo_wait_black'),
@@ -111,8 +111,8 @@ struct TodolistCard {
       eventId: 0
     },
     {
-      Title: "Text Text",
-      Time: "Time Time 123 123",
+      Title: "----",
+      Time: "--:-----:--",
       isWarning: true,
       isHighlight: true,
       stateResource: $r('app.media.ic_todo_wait_black'),
@@ -123,8 +123,8 @@ struct TodolistCard {
       eventId: 0
     },
     {
-      Title: "Text Text",
-      Time: "Time Time 123 123",
+      Title: "----",
+      Time: "--:-----:--",
       isWarning: true,
       isHighlight: true,
       stateResource: $r('app.media.ic_todo_wait_black'),
@@ -136,11 +136,13 @@ struct TodolistCard {
     }
   ]
 
-  private doneNum = 3
-  private allNum = 5
-  private doneRate = 0.6
+  @LocalStorageProp('doneNum') doneNum:number = 0
+  @LocalStorageProp('allNum') allNum:number = 0
+  @LocalStorageProp('doneRate') doneRate:number = 0
 
-  private doneStr = "3/5"
+  @LocalStorageProp('pageNum') pageNum:number = 0;
+
+  @LocalStorageProp('doneStr') doneStr:string = "0/0"
 
   build() {
     Column() {
@@ -278,4 +280,17 @@ struct TodolistCard {
       });
     })
   }
+}
+
+interface Event {
+  Title: string,
+  Time: string,
+  isWarning: boolean,
+  isHighlight: boolean,
+  stateResource: Resource,
+  isClock: boolean,
+  isPath: boolean,
+  isDone: boolean,
+  State: number,
+  eventId: number
 }
