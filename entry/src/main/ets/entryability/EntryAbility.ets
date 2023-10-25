@@ -1,10 +1,42 @@
 import UIAbility from '@ohos.app.ability.UIAbility';
 import hilog from '@ohos.hilog';
 import window from '@ohos.window';
+import Want from '@ohos.app.ability.Want';
+// import { getResource } from '../control/EventsController';
+
+function getFormFolder(want: Want) {
+  let showDate = AppStorage.Get<number[]>("showDate")
+  let folderId = AppStorage.Get<number>("folderId")
+  // getResource(showDate[0], showDate[1], showDate[2], folderId);
+}
 
 export default class EntryAbility extends UIAbility {
   onCreate(want, launchParam) {
+    AppStorage.SetOrCreate("showDate", [(new Date().getFullYear()), (new Date().getMonth() + 1), (new Date().getDate())])
+    AppStorage.SetOrCreate("folderId", 0)
+
     hilog.info(0x0000, 'testTag', '%{public}s', 'Ability onCreate');
+    if (want.parameters.params !== undefined) {
+      let params = JSON.parse(want.parameters.params);
+      console.info("onCreate router targetPage:" + JSON.stringify(params));
+      if (params.message == 'addEvent') {
+        AppStorage.SetOrCreate("showEventAddPanel", true)
+        if (params.year != null)
+          AppStorage.SetOrCreate("showDate", [params.year, params.month, params.day])
+        getFormFolder(want)
+      }
+      else if (params.message == 'todoList' || params.message == 'recommend') {
+        getFormFolder(want)
+      } else if (params.message == 'calendar') {
+        AppStorage.SetOrCreate("showDate", [params.year, params.month, params.day])
+        getFormFolder(want)
+        AppStorage.SetOrCreate("selectPos", 1)
+      } else if (params.message == 'fourQuadrants') {
+        getFormFolder(want)
+        AppStorage.SetOrCreate("selectPos", 2)
+      }
+    }
+
   }
 
   onDestroy() {

@@ -41,27 +41,51 @@ struct RecommendCard {
   }
 
   private completeEvent(eventId: number, state: number) {
-    if (state == 2) {
-      // SubCompTime(eventId);
-    } else {
-      // AddCompTime(eventId);
-    }
+    postCardAction(this, {
+      'action': 'message',
+      'params': {
+        'type': "clickEvent",
+        'eventId': eventId,
+        'state': state
+      }
+    });
   }
 
   private nextPage() {
-
-  }
+  postCardAction(this, {
+    'action': 'message',
+    'params': {
+      'type': "nextPage"
+    }
+  });
+}
 
   private lastPage() {
-
+    postCardAction(this, {
+      'action': 'message',
+      'params': {
+        'type': "lastPage"
+      }
+    });
   }
 
   private addEvent() {
-
+    postCardAction(this, {
+      "action": 'router',
+      "abilityName": 'EntryAbility',
+      "params": {
+        "message": 'addEvent'
+      }
+    });
   }
 
   private refreshInfo() {
-
+    postCardAction(this, {
+      'action': 'message',
+      'params': {
+        'type': "refresh"
+      }
+    });
   }
 
   @LocalStorageProp('Date') Date:string = "--月--日";
@@ -287,7 +311,7 @@ struct RecommendCard {
         "action": this.ACTION_TYPE,
         "abilityName": this.ABILITY_NAME,
         "params": {
-          "message": this.MESSAGE
+          "message": "recommend"
         }
       });
     })

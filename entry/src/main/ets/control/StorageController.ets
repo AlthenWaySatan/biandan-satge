@@ -74,11 +74,11 @@ export async function hasStorage(name:string, key: string): Promise<boolean> {
  * 删除轻量级数据库
  * @param name
  */
-export function deleteStorage(name:string) {
+export function deleteStorage(name:string, key: string) {
     let context: Context = getContext(this) as common.Context;
-    data_preferences.deletePreferences(context, name).catch(err => {
-        console.info("Delete startup key failed with err: " + err)
-    }).then(() => {
-        console.info("Deleted startup key successfully.")
+    data_preferences.getPreferences(context, name).then((preferences) => {
+        preferences.delete(key).then(() => {
+            console.log('myFormAbility 删除（' + name + ',' + key + '):');
+        })
     })
 }

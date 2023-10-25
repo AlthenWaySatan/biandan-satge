@@ -2,8 +2,10 @@ import formInfo from '@ohos.app.form.formInfo';
 import formBindingData from '@ohos.app.form.formBindingData';
 import FormExtensionAbility from '@ohos.app.form.FormExtensionAbility';
 import formProvider from '@ohos.app.form.formProvider';
-import { UpdateForm } from '../control/FormController'
+import { changeDate, changeMonth, changePage, clickEvent, refreshForm, UpdateForm } from '../control/FormController'
 import { setStorage, getStorage, hasStorage, deleteStorage } from '../control/StorageController'
+
+
 
 export interface FormInfo {
   formId: string,
@@ -43,6 +45,7 @@ export default class EntryFormAbility extends FormExtensionAbility {
   }
 
   onUpdateForm(formId) {
+    refreshForm(formId);
     // Called to notify the form provider to update a specified form.
   }
 
@@ -51,10 +54,39 @@ export default class EntryFormAbility extends FormExtensionAbility {
   }
 
   onFormEvent(formId, message) {
+    console.info(`FormAbility onEvent, formId = ${formId}, message: ${JSON.stringify(message)}`);
+    let obj = JSON.parse(message);
+    switch (obj.type) {
+      case "refresh":
+        refreshForm(formId);
+        break;
+      case "clickEvent":
+        clickEvent(formId, obj.eventId, obj.state)
+        break;
+      case "lastPage":
+        changePage(formId, -1);
+        break;
+      case "nextPage":
+        changePage(formId, 1);
+        break;
+      case "changePage":
+        changePage(formId, 1);
+        break;
+      case "changeDate":
+        changeDate(formId, obj.date);
+        break;
+      case "lastMonth":
+        changeMonth(formId, -1);
+        break;
+      case "nextMonth":
+        changeMonth(formId, 1);
+        break;
+    }
     // Called when a specified message event defined by the form provider is triggered.
   }
 
   onRemoveForm(formId) {
+    deleteStorage("thisFormInfo", formId);
     // Called to notify the form provider that a specified form has been destroyed.
   }
 

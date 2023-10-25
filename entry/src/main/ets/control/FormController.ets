@@ -320,10 +320,10 @@ export async function changeFolder(formId: string, formFolder: number) {
  * @param formId
  * @param formPage 页码的变化幅度
  */
-export async function changePage(formId: string, formPage: number) {
+export async function changePage(formId: string, d_formPage: number) {
   let thisFormInfo: FormInfo = JSON.parse(await getStorage("thisFormInfo", formId));
   console.log('changePage thisFormInfo' + JSON.stringify(thisFormInfo))
-  getFormObject(thisFormInfo.formName, thisFormInfo.formDimension, thisFormInfo.formDate, thisFormInfo.formFolder, thisFormInfo.formPage + formPage).then((obj:formData) => {
+  getFormObject(thisFormInfo.formName, thisFormInfo.formDimension, thisFormInfo.formDate, thisFormInfo.formFolder, thisFormInfo.formPage + d_formPage).then((obj:formData) => {
     console.log('changePage ', formId, JSON.stringify(obj));
     thisFormInfo.formPage = obj.pageNumber;
     // Called to return a FormBindingData object.
@@ -341,7 +341,7 @@ export async function changePage(formId: string, formPage: number) {
  * @param formId
  * @param eventId
  */
-export async function ClickEvent(formId: string, eventId: number, state: number) {
+export async function clickEvent(formId: string, eventId: number, state: number) {
   if (state == 2) {
     SubCompTime(eventId);
   } else {
@@ -349,4 +349,17 @@ export async function ClickEvent(formId: string, eventId: number, state: number)
   }
   UpdateForm(formId);
   refreshAllForm(formId);
+}
+
+/**
+ * 切换月份
+ * @param formId
+ * @param d_Month
+ */
+export async function changeMonth(formId: string, d_Month: number) {
+  let thisFormInfo: FormInfo = JSON.parse(await getStorage("thisFormInfo", formId));
+  console.log('changeFolder thisFormInfo' + JSON.stringify(thisFormInfo))
+  thisFormInfo.formDate = getNextNMonth(thisFormInfo.formDate, d_Month)
+  setStorage("thisFormInfo", formId, JSON.stringify(thisFormInfo));
+  UpdateForm(formId);
 }

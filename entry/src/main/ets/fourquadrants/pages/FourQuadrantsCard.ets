@@ -39,32 +39,43 @@ struct FourQuadrantsCard {
     return $r('app.color.text_level1')
   }
 
-  private getDescriptionColor(isPath: boolean, State: number): Resource {
-    if (State == 2)
-      return $r('app.color.text_level2')
-    if (isPath)
-      return $r('app.color.warning')
-    return $r('app.color.text_level2')
-  }
-
   private completeEvent(eventId: number, state: number) {
-    if (state == 2) {
-      // SubCompTime(eventId);
-    } else {
-      // AddCompTime(eventId);
-    }
+    postCardAction(this, {
+      'action': 'message',
+      'params': {
+        'type': "clickEvent",
+        'eventId': eventId,
+        'state': state
+      }
+    });
   }
 
   private changePage() {
-
+    postCardAction(this, {
+      'action': 'message',
+      'params': {
+        'type': "changePage"
+      }
+    });
   }
 
   private addEvent() {
-
+    postCardAction(this, {
+      "action": 'router',
+      "abilityName": 'EntryAbility',
+      "params": {
+        "message": 'addEvent'
+      }
+    });
   }
 
   private refreshInfo() {
-
+    postCardAction(this, {
+      'action': 'message',
+      'params': {
+        'type': "refresh"
+      }
+    });
   }
 
   @LocalStorageProp('Date') Date:string = "--月--日";
@@ -546,7 +557,7 @@ struct FourQuadrantsCard {
         "action": this.ACTION_TYPE,
         "abilityName": this.ABILITY_NAME,
         "params": {
-          "message": this.MESSAGE
+          "message": "fourQuadrants"
         }
       });
     })
