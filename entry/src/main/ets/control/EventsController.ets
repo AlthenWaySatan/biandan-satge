@@ -14,11 +14,12 @@ import EventResource from '../model/EventsResourceContact';
 import CreateResource from '../model/CreateResourceContact';
 import { getFolderClassify, addFolderCounter } from './FolderController';
 import prompt from '@ohos.prompt'
+import common from '@ohos.app.ability.common';
 
 PersistentStorage.PersistProp('eventsShowResource', [[], [], []])
 
-const showTaskImpl: ShowTaskInterface = new ShowTaskImpl();
-const taskImpl: TaskInterface = new TaskImpl();
+const showTaskImpl: ShowTaskInterface = new ShowTaskImpl(getContext(this) as common.Context);
+const taskImpl: TaskInterface = new TaskImpl(getContext(this) as common.Context);
 
 function getDateTime(yearNum: number, monthNum: number, dayNum: number): number[] {
   let date: number[] = [yearNum, monthNum, dayNum]
@@ -170,6 +171,31 @@ export async function getResource(yearNum: number, monthNum: number, dayNum: num
   AppStorage.Set<EventResource[][]>("eventsShowResource", eventsShowResource)
 }
 
+/**
+ * 获取资源文件
+ * @param yearNum 查询的时间-年
+ * @param monthNum 查询的时间-月
+ * @param dayNum 查询的时间-日
+ * @param folderId 查询的待办单号
+ */
+export async function getFormResource(yearNum: number, monthNum: number, dayNum: number, folderId: number): Promise<[number, number, EventResource[][]]>{
+
+  let obj = await getEventResource([yearNum, monthNum, dayNum], folderId)
+
+  let doneNum = obj[0]
+  let todoNum = obj[1]
+  let eventsShowResource = [[], [], []]
+
+  for (let i = 0;i < obj[2].length; i++)
+    eventsShowResource[0].push(eventInfoToEventResource(obj[2][i]))
+  for (let i = 0;i < obj[3].length; i++)
+    eventsShowResource[1].push(eventInfoToEventResource(obj[3][i]))
+  for (let i = 0;i < obj[4].length; i++)
+    eventsShowResource[2].push(eventInfoToEventResource(obj[4][i]))
+
+  return [doneNum, todoNum, eventsShowResource];
+}
+
 export async function refreshResource() {
 
   await getNewAndImportData(false)
@@ -246,8 +272,24 @@ export async function getResource_little(yearNum: number, monthNum: number, dayN
       resolve([doneNum, todoNum, eventsShowResource])
     })
   })
+}
 
+/**
+ * 获取是否有事项
+ */
+export async function getFormResource_little(yearNum: number, monthNum: number, dayNum: number, folderId: number): Promise<boolean> {
 
+  let dateTime: number[] = getDateTime(yearNum, monthNum, dayNum)
+  var todoNum = 0;
+
+  return new Promise((resolve) => {
+    showTaskImpl.queryDisplayTaskContext(new Date(dateTime[0], dateTime[1] - 1, dateTime[2], dateTime[3], dateTime[4]), folderId, (
+      finishedCount: number, notFinishedCount: number, TodoArray: EventInfo[], PassArray: EventInfo[], DoneArray: EventInfo[]
+    ) => {
+      todoNum = notFinishedCount
+      resolve(todoNum > 0)
+    })
+  })
 }
 
 /**

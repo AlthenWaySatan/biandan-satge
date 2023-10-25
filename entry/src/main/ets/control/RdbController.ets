@@ -1,8 +1,9 @@
 import { EventInfo } from '../model/EventInfo';
 import { ShowTaskImpl } from '../dao/controller/ShowTaskImpl';
 import { ShowTaskInterface } from '../dao/controller/Interface/ShowTaskInterface';
+import common from '@ohos.app.ability.common';
 
-export const showTaskImpl: ShowTaskInterface = new ShowTaskImpl();
+export const showTaskImpl: ShowTaskInterface = new ShowTaskImpl(getContext(this) as common.Context);
 
 export async function getEventResource(date: number[], folderId: number): Promise<[number, number, EventInfo[], EventInfo[], EventInfo[]]> {
     if (isNaN(folderId)) folderId = 0

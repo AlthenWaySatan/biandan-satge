@@ -14,7 +14,7 @@ export class EventRdb {
     this.sqlCreateTable = sqlCreateTable;
   }
 
-  getRdbStore(callback) {
+  getRdbStore(context: Context, callback) {
     if (!callback || typeof callback == "undefined" || callback == undefined) {
       Logger.error("EventRdb", "getRdbStore() has no callback!");
       return;
@@ -24,7 +24,7 @@ export class EventRdb {
       callback();
       return;
     }
-    let context: Context = getContext(this) as common.Context;
+    // let context: Context = getContext(this) as common.Context;
     data_rdb.getRdbStore(context, RdbCommon.STORE_CONFIG, (err, rdb) => {
       if (err) {
         Logger.error("EventRdb", "gerRdbStore() failed, err: " + err);

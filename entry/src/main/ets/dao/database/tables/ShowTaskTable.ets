@@ -8,14 +8,14 @@ export default class ShowTaskTable {
     private showTaskTable = new EventRdb(RdbCommon.SHOW_TASK_TABLE.tableName,
     RdbCommon.SHOW_TASK_TABLE.sqlCreate);
 
-    constructor(callback: Function=() => {
+    constructor(context, callback: Function=() => {
     }) {
-        this.showTaskTable.getRdbStore(callback);
+        this.showTaskTable.getRdbStore(context, callback);
     }
 
-    getRdbStore(callback: Function=() => {
+    getRdbStore(context, callback: Function=() => {
     }) {
-        this.showTaskTable.getRdbStore(callback);
+        this.showTaskTable.getRdbStore(context, callback);
     }
 
     insertData(showTaskData: ShowTaskData, callback: Function) {

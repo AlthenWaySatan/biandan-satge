@@ -8,12 +8,13 @@ import { ShowTaskImpl } from "./ShowTaskImpl";
 import { ShowTaskInterface } from "./Interface/ShowTaskInterface";
 import { TaskData } from "../../model/TaskData";
 import { TaskInterface } from "./Interface/TaskInterface";
+import common from '@ohos.app.ability.common';
 
 export default class TaskImpl implements TaskInterface {
-    private showTaskImpl: ShowTaskInterface = new ShowTaskImpl();
+    private showTaskImpl: ShowTaskInterface = new ShowTaskImpl(getContext(this) as common.Context);
 
-    constructor() {
-        initTable.taskTable.getRdbStore();
+    constructor(context) {
+        initTable.taskTable.getRdbStore(context);
     }
 
     /**

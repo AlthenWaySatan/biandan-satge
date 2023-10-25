@@ -16,8 +16,8 @@ export class ShowTaskImpl implements ShowTaskInterface {
 //    private showTaskTable = new ShowTaskTable();
 //    private taskTable = new TaskTable();
 
-    constructor() {
-        initTable.showTaskTable.getRdbStore();
+    constructor(context) {
+        initTable.showTaskTable.getRdbStore(context);
     }
 
     /**

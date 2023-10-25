@@ -3,19 +3,20 @@ import { FavoritesData } from "../../../model/FavoritesData";
 import { RdbCommon } from "../../../model/RdbCommon";
 import data_rdb from "@ohos.data.rdb";
 import { EventRdb } from "../EventRdb";
+import common from '@ohos.app.ability.common';
 
 export default class FavoritesTable {
   private favoritesTable = new EventRdb(RdbCommon.FAVORITES_TABLE.tableName,
   RdbCommon.FAVORITES_TABLE.sqlCreate);
 
-  constructor(callback: Function=() => {
+  constructor(context, callback: Function=() => {
   }) {
-    this.favoritesTable.getRdbStore(callback);
+    this.favoritesTable.getRdbStore(context, callback);
   }
 
-  getRdbStore(callback: Function=() => {
+  getRdbStore(context, callback: Function=() => {
   }) {
-    this.favoritesTable.getRdbStore(callback);
+    this.favoritesTable.getRdbStore(context, callback);
   }
 
   insertData(favoritesData: {}, callback: Function) {

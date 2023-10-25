@@ -15,11 +15,12 @@ import { FavoritesImpl } from './FavoritesImpl';
 import FavoritesTable from '../database/tables/FavoritesTable';
 import TaskImpl from './TaskImpl';
 import TaskTable from '../database/tables/TaskTable';
+import common from '@ohos.app.ability.common';
 
 class InitTable {
-    public favoritesTable = new FavoritesTable();
-    public taskTable = new TaskTable();
-    public showTaskTable = new ShowTaskTable();
+    public favoritesTable = new FavoritesTable(getContext(this) as common.Context);
+    public taskTable = new TaskTable(getContext(this) as common.Context);
+    public showTaskTable = new ShowTaskTable(getContext(this) as common.Context);
 
     constructor() {
     }
@@ -28,7 +29,7 @@ class InitTable {
 export const initTable = new InitTable();
 
 export class ImplTable {
-    private favoritesImpl: FavoritesInterface = new FavoritesImpl();
+    private favoritesImpl: FavoritesInterface = new FavoritesImpl(getContext(this) as common.Context);
     private newFavoritesData: FavoritesData = new FavoritesData(0, "默认", "white");
 
     constructor() {

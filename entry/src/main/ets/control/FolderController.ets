@@ -8,9 +8,10 @@ import { FavoritesInterface } from '../dao/controller/Interface/FavoritesInterfa
 import FolderResource from '../model/FolderResourceContact';
 import EventResource from '../model/EventsResourceContact';
 import prompt from '@ohos.prompt'
+import common from '@ohos.app.ability.common';
 
-const favoritesTaskImpl: FavoritesInterface = new FavoritesImpl();
-const taskImpl: TaskInterface = new TaskImpl();
+const favoritesTaskImpl: FavoritesInterface = new FavoritesImpl(getContext(this) as common.Context);
+const taskImpl: TaskInterface = new TaskImpl(getContext(this) as common.Context);
 
 /**
  * 获取待办单
@@ -66,6 +67,21 @@ export function getFolderResource() {
  */
 export function getFolderTitle(): string | Resource {
   let folderId = AppStorage.Get<number>("folderId")
+  let systemFolderResource = AppStorage.Get<FolderResource[]>("systemFolderResource");
+  let userFolderResource = AppStorage.Get<FolderResource[]>("userFolderResource");
+
+  if (folderId <= 0)
+    return systemFolderResource[-folderId].title;
+  else {
+    let id = userFolderResource.findIndex((item) => item.id == folderId)
+    return userFolderResource[id].title;
+  }
+}
+
+/**
+ * 获取待办单标题
+ */
+export function getFormFolderTitle(folderId: number): string | Resource {
   let systemFolderResource = AppStorage.Get<FolderResource[]>("systemFolderResource");
   let userFolderResource = AppStorage.Get<FolderResource[]>("userFolderResource");
 

@@ -5,12 +5,13 @@ import { TaskInterface } from './Interface/TaskInterface';
 import { RdbCommon } from "../../model/RdbCommon";
 import { FavoritesData } from "../../model/FavoritesData";
 import { FavoritesInterface } from "./Interface/FavoritesInterface";
+import common from '@ohos.app.ability.common';
 
 export class FavoritesImpl implements FavoritesInterface {
-  private taskImpl: TaskInterface = new TaskImpl();
+  private taskImpl: TaskInterface = new TaskImpl(getContext(this) as common.Context);
 
-  constructor() {
-    initTable.favoritesTable.getRdbStore();
+  constructor(context) {
+    initTable.favoritesTable.getRdbStore(context);
   }
 
   /**

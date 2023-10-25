@@ -184,7 +184,7 @@ async function cancelAllNotification() {
   })
 }
 
-const showTaskImpl: ShowTaskInterface = new ShowTaskImpl()
+const showTaskImpl: ShowTaskInterface = new ShowTaskImpl(getContext(this) as common.Context)
 
 export async function AddNotification(id1: number) {
   console.log("[Reminder] Add Notification id1: " + id1);

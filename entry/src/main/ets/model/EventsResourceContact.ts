@@ -110,6 +110,15 @@ export default class EventResource {
         return ret
     }
 
+    public checkUrgent(showDate: number[]): boolean {
+        return (this.validEndTime[0] == showDate[0]) && (this.validEndTime[1] == showDate[1]) && (this.validEndTime[2] == showDate[2]) &&
+        (this.validEndTime[3] != 23 || this.validEndTime[4] != 59)
+    }
+
+    public checkQuadrant(isImportant: boolean, isUrgent: boolean, showDate: number[]): boolean {
+        return this.isImportant == isImportant && this.checkUrgent(showDate) == isUrgent
+    }
+
     /**
      * 获取前方状态⚪的类型和颜色
      * @param State 状态分类

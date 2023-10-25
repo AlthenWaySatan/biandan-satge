@@ -7,14 +7,14 @@ import { TaskData } from "../../../model/TaskData";
 export default class TaskTable {
   private taskTable = new EventRdb(RdbCommon.TASK_TABLE.tableName, RdbCommon.TASK_TABLE.sqlCreate);
 
-  constructor(callback: Function=() => {
+  constructor(context, callback: Function=() => {
   }) {
-    this.taskTable.getRdbStore(callback);
+    this.taskTable.getRdbStore(context, callback);
   }
 
-  getRdbStore(callback: Function=() => {
+  getRdbStore(context, callback: Function=() => {
   }) {
-    this.taskTable.getRdbStore(callback);
+    this.taskTable.getRdbStore(context, callback);
   }
 
   insertData(taskData: TaskData, callback: Function) {

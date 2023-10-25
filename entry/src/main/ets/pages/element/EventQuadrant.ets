@@ -64,17 +64,18 @@ export struct EventQuadrant {
       return $r('app.color.text_level2')
   }
 
-  private checkUrgent(event: ThingsResource): boolean {
-    return (event.validEndTime[0] == this.showDate[0]) && (event.validEndTime[1] == this.showDate[1]) && (event.validEndTime[2] == this.showDate[2]) &&
-    (event.validEndTime[3] != 23 || event.validEndTime[4] != 59)
-  }
+  // private checkUrgent(event: ThingsResource): boolean {
+  //   return (event.validEndTime[0] == this.showDate[0]) && (event.validEndTime[1] == this.showDate[1]) && (event.validEndTime[2] == this.showDate[2]) &&
+  //   (event.validEndTime[3] != 23 || event.validEndTime[4] != 59)
+  // }
 
   private getNewResource(): ThingsResource[][] {
     this.thisQuadrant = [[], [], []]
     //    getResource(this.showDate[0], this.showDate[1], this.showDate[2], this.folderId);
     for (let i = 0;i < 3; i++) {
       for (let j = 0;j < this.eventsShowResource[i].length; j++)
-        if (this.eventsShowResource[i][j].isImportant == this.isImportant && this.checkUrgent(this.eventsShowResource[i][j]) == this.isUrgent)
+        if(this.eventsShowResource[i][j].checkQuadrant(this.isImportant, this.isUrgent, this.showDate))
+        // if (this.eventsShowResource[i][j].isImportant == this.isImportant && this.checkUrgent(this.eventsShowResource[i][j]) == this.isUrgent)
           this.thisQuadrant[i].push(this.eventsShowResource[i][j])
     }
     return this.thisQuadrant
