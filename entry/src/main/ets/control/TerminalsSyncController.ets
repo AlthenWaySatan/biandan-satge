@@ -17,9 +17,8 @@ const Data_Key: string = 'data'
 const Length_Key: string = 'length'
 const MaxLength: number = 400000;
 
-export async function getPermission_DISTRIBUTED_DATASYNC(): Promise<boolean> {
+export async function getPermission_DISTRIBUTED_DATASYNC(context: Context): Promise<boolean> {
   let array: Array<Permissions> = ['ohos.permission.DISTRIBUTED_DATASYNC'];
-  var context: Context = getContext(this) as common.Context;
   let atManager = abilityAccessCtrl.createAtManager();
   let PermissionRequestResult = await atManager.requestPermissionsFromUser(context, array);
   let authResults0 = PermissionRequestResult.authResults[0];
@@ -32,8 +31,7 @@ export async function getPermission_DISTRIBUTED_DATASYNC(): Promise<boolean> {
   return ret
 }
 
-async function getKVStore(): Promise<any> {
-  var context: Context = getContext(this) as common.Context;
+async function getKVStore(context: Context): Promise<any> {
   const kvManagerConfig = {
     context: context,
     bundleName: 'cn.biandangroup.biandanas'
@@ -59,19 +57,19 @@ const backUpImpl: Backup = new Backup()
 /**
  * 以promise形式获取备份信息
  */
-async function getBackupObject(): Promise<object> {
+async function getBackupObject(context: Context): Promise<object> {
   return new Promise((resolve) => {
     backUpImpl.exportData((obj: object) => {
       resolve(obj)
-    })
+    }, context)
   })
 }
 
 /**
  * 打开数据库监听
  */
-export async function OpenSyncListener() {
-  const kvStore = await getKVStore()
+export async function OpenSyncListener(context: Context) {
+  const kvStore = await getKVStore(context)
   kvStore.on('dataChange', distributedData.SubscribeType.SUBSCRIBE_TYPE_ALL, function (data) {
     let TerminalsSyncSwitch = AppStorage.Get<number>('TerminalsSyncSwitch')
     if (!TerminalsSyncSwitch) return;
@@ -97,8 +95,8 @@ export async function OpenSyncListener() {
             value: $r('app.string.confirm'),
             fontColor: get_accent(),
             action: () => {
-              getNewAndImportData()
-              refreshResource()
+              getNewAndImportData(context)
+              refreshResource(context)
             }
           },
           cancel: () => {
@@ -117,8 +115,8 @@ export async function OpenSyncListener() {
 /**
  * 关闭数据库监听
  */
-export async function CloseSyncListener() {
-  const kvStore = await getKVStore()
+export async function CloseSyncListener(context: Context) {
+  const kvStore = await getKVStore(context)
   kvStore.off('dataChange', distributedData.SubscribeType.SUBSCRIBE_TYPE_ALL, function (data) {
     console.log("[Sync] dataChange callback call data: " + JSON.stringify(data));
   });
@@ -128,10 +126,10 @@ export async function CloseSyncListener() {
  * 导出数据新版本到数据库
  * @param showPrompt 是否前台导出
  */
-export async function ExportNewVersion(showPrompt: boolean = false) {
-  const kvStore = await getKVStore()
+export async function ExportNewVersion(context: Context, showPrompt: boolean = false) {
+  const kvStore = await getKVStore(context)
 
-  let data: object = await getBackupObject()
+  let data: object = await getBackupObject(context)
   let str: string = JSON.stringify(data)
   console.log('[Sync] backup value: ' + str);
 
@@ -172,12 +170,12 @@ export async function ExportNewVersion(showPrompt: boolean = false) {
 /**
  * 从数据库导入数据新版本
  */
-async function ImportNewVersion(): Promise<[boolean, number, string]> {
+async function ImportNewVersion(context: Context): Promise<[boolean, number, string]> {
   let TerminalsSyncSwitch = AppStorage.Get<number>('TerminalsSyncSwitch')
   if (!TerminalsSyncSwitch)
     return [false, 0, '']
 
-  const kvStore = await getKVStore()
+  const kvStore = await getKVStore(context)
 
   let newVersion: number = AppStorage.Get<number>('LocalVersionNumber')
 
@@ -200,7 +198,7 @@ async function ImportNewVersion(): Promise<[boolean, number, string]> {
         console.log('[Sync] import value: ' + JSON.stringify(ret));
         backUpImpl.importData(ret, (flag: boolean, reason: string) => {
           resolve([flag, SyncVersion, reason])
-        })
+        }, context)
       } else {
         resolve([false, SyncVersion, '未接收到新数据'])
       }
@@ -223,13 +221,13 @@ export function UpdateVersionNumber(newVersionNumber: number = new Date().getTim
  * 获取新的数据并导入
  * @param showFail 是否展示失败提醒
  */
-export async function getNewAndImportData(showFail: boolean = true) {
+export async function getNewAndImportData(context: Context, showFail: boolean = true) {
   let TerminalsSyncSwitch = AppStorage.Get<number>('TerminalsSyncSwitch')
   if (!TerminalsSyncSwitch) return;
-  let ret: [boolean, number, string] = await ImportNewVersion()
+  let ret: [boolean, number, string] = await ImportNewVersion(context)
   if (ret[0]) {
     UpdateVersionNumber(ret[1])
-    await RebuildNotification()
+    await RebuildNotification(context)
     prompt.showToast({
       message:  '接收数据成功',
       duration: 1000,

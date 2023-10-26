@@ -13,9 +13,8 @@ import common from '@ohos.app.ability.common';
 /**
  * 检查是否获取权限
  */
-async function getPermission_PUBLISH_AGENT_REMINDER(): Promise<boolean> {
+async function getPermission_PUBLISH_AGENT_REMINDER(context: Context): Promise<boolean> {
   let array: Array<Permissions> = ['ohos.permission.PUBLISH_AGENT_REMINDER'];
-  var context: Context = getContext(this) as common.Context;
   let atManager = abilityAccessCtrl.createAtManager();
   let PermissionRequestResult = await atManager.requestPermissionsFromUser(context, array);
   let authResults0 = PermissionRequestResult.authResults[0];
@@ -29,8 +28,7 @@ async function getPermission_PUBLISH_AGENT_REMINDER(): Promise<boolean> {
  * @param EventId
  * @param ReminderId
  */
-async function setStorage(EventId: number, ReminderId: number) {
-  var context: Context = getContext(this) as common.Context;
+async function setStorage(EventId: number, ReminderId: number, context: Context) {
   let filePath = context.filesDir
   console.log('[Reminder] 设置（' + 'Reminder' + ',' + EventId + '):' + ReminderId);
   let storage = await data_storage.getPreferences(context, filePath + '/' + 'Reminder')
@@ -42,8 +40,7 @@ async function setStorage(EventId: number, ReminderId: number) {
  * 轻量级数据库查询数据
  * @param EventId
  */
-async function getStorage(EventId: number): Promise<number> {
-  var context: Context = getContext(this) as common.Context;
+async function getStorage(EventId: number, context: Context): Promise<number> {
   let filePath = context.filesDir
   let storage = await data_storage.getPreferences(context, filePath + '/' + 'Reminder')
   var value = Number(storage.get(EventId.toString(), "string"))
@@ -54,8 +51,7 @@ async function getStorage(EventId: number): Promise<number> {
 /**
  * 轻量级数据库清空数据
  */
-async function clearStorage() {
-  var context: Context = getContext(this) as common.Context;
+async function clearStorage(context: Context) {
   let filePath = await context.filesDir
   let storage = await data_storage.getPreferences(context, filePath + '/' + 'Reminder')
   await storage.clear()
@@ -143,7 +139,7 @@ PersistentStorage.PersistProp('DefaultTimeFormat', 0)
 async function publishNotification(eventId: number, title: string,
                                    StartTimeDate: number[], ValidStartTime: number[],
                                    EndTimeDate: number[], ValidEndTime: number[],
-                                   publishTime: number[]) {
+                                   publishTime: number[], context: Context) {
   console.log('[Reminder] Add Notification eventId: ' + eventId +
   ' ,title: ' + title +
   ' ,StartTimeDate: ' + StartTimeDate +
@@ -156,9 +152,9 @@ async function publishNotification(eventId: number, title: string,
   let DefaultTimeFormat: number = AppStorage.Get<number>("DefaultTimeFormat")
   let validTime: string = getValidTimeInfo(validStartTime, validEndTime, [publishTime[0], publishTime[1], publishTime[2]], DefaultTimeFormat == 0)
   let timer = await getReminderRequest(eventId, title, validTime, publishTime)
-  if (await getPermission_PUBLISH_AGENT_REMINDER()) {
+  if (await getPermission_PUBLISH_AGENT_REMINDER(context)) {
     let reminderId = await reminderAgent.publishReminder(timer)
-    setStorage(eventId, reminderId)
+    setStorage(eventId, reminderId, context)
   }
 }
 
@@ -166,8 +162,8 @@ async function publishNotification(eventId: number, title: string,
  * 取消通知
  * @param id
  */
-async function cancelNotification(eventId: number) {
-  let id = await getStorage(eventId)
+async function cancelNotification(eventId: number, context: Context) {
+  let id = await getStorage(eventId, context)
   await reminderAgent.cancelReminder(id)
   console.log("[Reminder] cancelReminder promise: " + id);
 }
@@ -175,8 +171,8 @@ async function cancelNotification(eventId: number) {
 /**
  * 取消所有通知
  */
-async function cancelAllNotification() {
-  clearStorage()
+async function cancelAllNotification(context: Context) {
+  clearStorage(context)
   reminderAgent.cancelAllReminders().then(() => {
     console.log("[Reminder] cancelAllNotification Successfully")
   }).catch((err) => {
@@ -184,10 +180,9 @@ async function cancelAllNotification() {
   })
 }
 
-const showTaskImpl: ShowTaskInterface = new ShowTaskImpl(getContext(this) as common.Context)
-
-export async function AddNotification(id1: number) {
+export async function AddNotification(id1: number, context: Context) {
   console.log("[Reminder] Add Notification id1: " + id1);
+  const showTaskImpl: ShowTaskInterface = new ShowTaskImpl()
   showTaskImpl.queryRemindById1(id1, async (taskTitle: string, showTaskData: ShowTaskData[]) => {
     console.log("[Reminder] taskTitle: " + taskTitle + ' ,showTaskData: ' + showTaskData.length);
     if (showTaskData.length > 0) {
@@ -209,31 +204,33 @@ export async function AddNotification(id1: number) {
         ' ,EndTimeDate: ' + endTimeDate +
         ' ,ValidEndTime: ' + validEndTime +
         ' ,publishTime: ' + publishTime)
-        publishNotification(id2, title, startTimeDate, validStartTime, endTimeDate, validEndTime, publishTime)
+        publishNotification(id2, title, startTimeDate, validStartTime, endTimeDate, validEndTime, publishTime, context)
       }
     }
-  })
+  }, context)
 }
 
-export async function DeleteNotification(id1: number) {
+export async function DeleteNotification(id1: number, context: Context) {
+  const showTaskImpl: ShowTaskInterface = new ShowTaskImpl()
   await showTaskImpl.queryRemindById1(id1, async (taskTitle: string, showTaskData: ShowTaskData[]) => {
     if (showTaskData.length > 0) {
       for (let i = 0;i < showTaskData.length; i++) {
         let id2: number = showTaskData[i].id2
-        await cancelNotification(id2)
+        await cancelNotification(id2, context)
       }
     }
-  })
+  }, context)
 }
 
-export async function DeleteOneNotification(EventId: number) {
+export async function DeleteOneNotification(EventId: number, context: Context) {
   console.log("[Reminder] Delete One Notification: " + EventId);
-  cancelNotification(EventId)
+  cancelNotification(EventId, context)
 }
 
-export async function RebuildNotification() {
+export async function RebuildNotification(context: Context) {
   console.log("[Reminder] Rebuild Notification");
-  cancelAllNotification()
+  cancelAllNotification(context)
+  const showTaskImpl: ShowTaskInterface = new ShowTaskImpl()
   showTaskImpl.queryRemindAll((data: Array<[string, Array<ShowTaskData>]>) => {
     if (data.length > 0) {
       for (let i = 0;i < data.length; i++) {
@@ -249,11 +246,11 @@ export async function RebuildNotification() {
           let validEndTime: number[] = showTaskData[j].getValidEndTime()
           let publishTime: number[] = showTaskData[j].getRemindDateTime()
           publishTime[1]++;
-          publishNotification(id2, title, startTimeDate, validStartTime, endTimeDate, validEndTime, publishTime)
+          publishNotification(id2, title, startTimeDate, validStartTime, endTimeDate, validEndTime, publishTime, context)
         }
       }
     }
-  })
+  }, context)
   //  let id2: number
   //  let title: string
   //  let startTimeDate: number[]
@@ -264,7 +261,7 @@ export async function RebuildNotification() {
   //  publishNotification(id2, title, startTimeDate, validStartTime, endTimeDate, validEndTime, publishTime)
 }
 
-export async function publishNotification_test() {
+export async function publishNotification_test(context: Context) {
   console.log("[Reminder] test");
   let id: number = new Date().getTime()
   let title: string = '待办事项提醒'
@@ -275,7 +272,7 @@ export async function publishNotification_test() {
   //  let date: Date = new Date(2023, 3, 30, 16, 7)
   var timer = await getReminderRequest(id, title, text, dateNumber)
 
-  if (await getPermission_PUBLISH_AGENT_REMINDER())
+  if (await getPermission_PUBLISH_AGENT_REMINDER(context))
     reminderAgent.publishReminder(timer).then((reminderId) => {
       console.log("[Reminder] promise, reminderId = " + reminderId);
     }).catch((err) => {

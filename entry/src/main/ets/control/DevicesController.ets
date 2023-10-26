@@ -10,9 +10,8 @@ PersistentStorage.PersistProp('LocalDevicesCode', '')
 
 const Device_Key: string = 'device'
 
-export async function getPermission_DISTRIBUTED_DATASYNC(): Promise<boolean> {
+export async function getPermission_DISTRIBUTED_DATASYNC(context: Context): Promise<boolean> {
   let array: Array<Permissions> = ['ohos.permission.DISTRIBUTED_DATASYNC'];
-  var context: Context = getContext(this) as common.Context;
   let atManager = abilityAccessCtrl.createAtManager();
   let PermissionRequestResult = await atManager.requestPermissionsFromUser(context, array);
   let authResults0 = PermissionRequestResult.authResults[0];
@@ -25,8 +24,7 @@ export async function getPermission_DISTRIBUTED_DATASYNC(): Promise<boolean> {
   return ret
 }
 
-async function getKVStore(): Promise<any> {
-  var context: Context = getContext(this) as common.Context;
+async function getKVStore(context: Context): Promise<any> {
   const kvManagerConfig = {
     context: context,
     bundleName: 'cn.biandangroup.biandanas'
@@ -51,8 +49,8 @@ async function getKVStore(): Promise<any> {
  * 打开数据库监听
  * @param callback 回调函数
  */
-export async function OpenSyncListener_devices(callback: Function) {
-  const kvStore = await getKVStore()
+export async function OpenSyncListener_devices(callback: Function, context: Context) {
+  const kvStore = await getKVStore(context)
   kvStore.on('dataChange', distributedData.SubscribeType.SUBSCRIBE_TYPE_ALL, function (data) {
     callback()
     console.log("[Sync] dataChange callback call data: " + JSON.stringify(data));
@@ -62,8 +60,8 @@ export async function OpenSyncListener_devices(callback: Function) {
 /**
  * 关闭数据库监听
  */
-export async function CloseSyncListener_devices() {
-  const kvStore = await getKVStore()
+export async function CloseSyncListener_devices(context: Context) {
+  const kvStore = await getKVStore(context)
   kvStore.off('dataChange', distributedData.SubscribeType.SUBSCRIBE_TYPE_ALL, function (data) {
     console.log("[Sync] dataChange callback call data: " + JSON.stringify(data));
   });
@@ -72,10 +70,10 @@ export async function CloseSyncListener_devices() {
 /**
  * 清空数据库
  */
-export async function clearTerminalsList() {
+export async function clearTerminalsList(context: Context) {
   let TerminalsSyncSwitch = AppStorage.Get<number>('TerminalsSyncSwitch')
   if (!TerminalsSyncSwitch) return;
-  const kvStore = await getKVStore()
+  const kvStore = await getKVStore(context)
   kvStore.put(Device_Key, '')
 }
 
@@ -109,11 +107,11 @@ export function getLocalTerminals(): object {
 /**
  * 获取组网内设备信息
  */
-export async function getTerminalsList(): Promise<object[]> {
+export async function getTerminalsList(context: Context): Promise<object[]> {
   let TerminalsSyncSwitch = AppStorage.Get<number>('TerminalsSyncSwitch')
   if (!TerminalsSyncSwitch)
     return []
-  const kvStore = await getKVStore()
+  const kvStore = await getKVStore(context)
   let thisDevice = getLocalTerminals()
   return new Promise((resolve) => {
     kvStore.get(Device_Key, function (err, DeviceList) {

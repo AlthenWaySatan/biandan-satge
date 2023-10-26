@@ -23,6 +23,8 @@ import { get_barResource } from '../control/AccentController';
 import BarResource from '../model/BarResourceContact';
 import EventResource from '../model/EventsResourceContact';
 import FolderResource from '../model/FolderResourceContact';
+import common from '@ohos.app.ability.common';
+import { refreshAllForm } from '../control/FormController';
 
 PersistentStorage.PersistProp('IsFirstIn_', 0)
 PersistentStorage.PersistProp('AutoBackUpSwitch', 0)
@@ -31,7 +33,7 @@ PersistentStorage.PersistProp('AutoTerminalsSyncSwitch', 0)
 @Entry
 @Component
 struct Index {
-  private implTable: ImplTable = new ImplTable()
+  // private implTable: ImplTable = new ImplTable()
   /**
    * 媒体监听器
    */
@@ -185,12 +187,14 @@ struct Index {
 
     this.barResource = get_barResource()
 
-    refreshResource();
+    let context: Context = getContext(this) as common.Context
+    refreshResource(context);
 
     setTimeout(() => {
       // let IsFirstIn = AppStorage.Get<number>('IsFirstIn_')
       if (this.IsFirstIn < 1) {
-        this.implTable.initTable()
+        let implTable: ImplTable = new ImplTable()
+        implTable.initTable(context)
         this.IsFirstIn += 1;
         //        publishNotification_test()
         router.replace({
@@ -208,10 +212,11 @@ struct Index {
   @StorageLink('AutoTerminalsSyncSwitch') AutoTerminalsSyncSwitch: number = 0
 
   async onPageHide() {
+    let context: Context = getContext(this) as common.Context
     if (this.AutoBackUpSwitch != 0)
-      await backupFile()
+      await backupFile(context)
     if (this.AutoTerminalsSyncSwitch != 0)
-      await ExportNewVersion()
+      await ExportNewVersion(context)
     // await ExportNewVersion_form()
   }
 
@@ -332,6 +337,8 @@ struct Index {
       return true
     }
     else {
+      // let context: Context = getContext(this) as common.Context
+      // refreshAllForm(context);
       return false
     }
   }

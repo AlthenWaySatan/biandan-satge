@@ -3,6 +3,7 @@ import FolderResource from '../../model/FolderResourceContact';
 import ThingsResource from '../../model/EventsResourceContact';
 import { getResource } from '../../control/EventsController';
 import { get_accent } from '../../control/AccentController';
+import common from '@ohos.app.ability.common';
 
 @Component
 export struct TitleTwo {
@@ -60,7 +61,8 @@ export struct TitleTwo {
   private changeFolder(NewFolder: number): void {
     this.folderId = NewFolder
     this.subTitle = this.getFolderTitle()
-    getResource(this.showDate[0], this.showDate[1], this.showDate[2], this.folderId)
+    let context: Context = getContext(this) as common.Context
+    getResource(this.showDate[0], this.showDate[1], this.showDate[2], this.folderId, context)
     console.info('Click: ' + NewFolder.toString())
   }
 
@@ -203,7 +205,8 @@ export struct TitleTwo {
             .onTouch(() => {
               this.showDate = [(new Date().getFullYear()), (new Date().getMonth() + 1), (new Date().getDate())]
               this.mainTitle = this.getShowDate();
-              getResource(this.showDate[0], this.showDate[1], this.showDate[2], this.folderId);
+              let context: Context = getContext(this) as common.Context
+              getResource(this.showDate[0], this.showDate[1], this.showDate[2], this.folderId, context);
             })
             .fontColor(this.accentColor)
             .backgroundColor('#00000000')
@@ -220,7 +223,8 @@ export struct TitleTwo {
             .onTouch(() => {
               this.showDate = this.changeDate
               this.mainTitle = this.getShowDate();
-              getResource(this.showDate[0], this.showDate[1], this.showDate[2], this.folderId);
+              let context: Context = getContext(this) as common.Context
+              getResource(this.showDate[0], this.showDate[1], this.showDate[2], this.folderId, context);
             })
             .fontColor(this.accentColor)
             .backgroundColor('#00000000')
@@ -341,7 +345,8 @@ export struct TitleOne {
             .onTouch(() => {
               this.showDate = [(new Date().getFullYear()), (new Date().getMonth() + 1), (new Date().getDate())]
               this.mainTitle = this.getShowDate();
-              getResource(this.showDate[0], this.showDate[1], this.showDate[2], this.folderId);
+              let context: Context = getContext(this) as common.Context
+              getResource(this.showDate[0], this.showDate[1], this.showDate[2], this.folderId, context);
             })
             .fontColor(this.accentColor)
             .backgroundColor('#00000000')
@@ -358,7 +363,8 @@ export struct TitleOne {
             .onTouch(() => {
               this.showDate = this.changeDate
               this.mainTitle = this.getShowDate();
-              getResource(this.showDate[0], this.showDate[1], this.showDate[2], this.folderId);
+              let context: Context = getContext(this) as common.Context
+              getResource(this.showDate[0], this.showDate[1], this.showDate[2], this.folderId, context);
             })
             .fontColor(this.accentColor)
             .backgroundColor('#00000000')

@@ -23,7 +23,7 @@ struct RecommendCard {
    */
   private getTitleColor(State: number): Resource {
     if (State == 2)
-       return $r('app.color.text_level2')
+       return $r('app.color.text_level3')
     if (this.event.isPath)
       return $r('app.color.warning')
     return $r('app.color.text_level1')
@@ -34,10 +34,10 @@ struct RecommendCard {
    */
   private getDescriptionColor(): Resource {
     if (this.event.State == 2)
-      return $r('app.color.text_level2')
+      return $r('app.color.text_level3')
     if (this.event.isPath)
       return $r('app.color.warning')
-    return $r('app.color.text_level2')
+    return $r('app.color.text_level3')
   }
 
   private completeEvent(eventId: number, state: number) {
@@ -91,6 +91,8 @@ struct RecommendCard {
   @LocalStorageProp('Date') Date:string = "--月--日";
   @LocalStorageProp('Folder') Folder:string = "全部代办";
   @LocalStorageProp('accentColor') accentColor:Resource = $r('app.color.accent')
+
+  @LocalStorageProp('showEvent') showEvent: boolean = true;
 
   @LocalStorageProp('event') event:Event = {
     Title: "----",
@@ -189,7 +191,7 @@ struct RecommendCard {
         .height('100%')
         .aspectRatio(1)
       }
-      .margin(3)
+      .margin(6)
       .width('100%')
       .height(0)
       .flexGrow(1)
@@ -200,106 +202,107 @@ struct RecommendCard {
           .borderRadius(12)
           .backgroundColor(this.accentColor)
           .opacity(0.2)
-        Row(){
-          Column() {
-            Image(this.event.stateResource)
-              .width('100%')
-              .height('100%')
-          }
-          .width(24)
-          .height(24)
-          .onClick(() => {
-            this.completeEvent(this.event.eventId, this.event.State)
-          })
-          Column() {
-            Row() {
-              Text(this.event.Title)
-              .fontSize(14)
-              .fontWeight(FontWeight.Medium)
-              .fontColor(this.getTitleColor(this.event.State))
-              .textOverflow({overflow :TextOverflow.Clip})
-              .maxLines(1)
-                .decoration({
-                  type: this.event.State == 2 ? TextDecorationType.LineThrough : TextDecorationType.None,
-                  color: $r('app.color.icon_level2')
-                })
+        if(this.showEvent)
+          Row(){
+            Column() {
+              Image(this.event.stateResource)
+                .width('100%')
+                .height('100%')
             }
-            .width('100%')
-            .height(16)
-            // .backgroundColor(Color.Red);
-            Row() {
-              if(this.event.isWarning)
-                Image($r('app.media.ic_target_warning'))
-                  .height(12)
-                  .width(12)
-                  .margin({right: 4})
-                  .flexBasis('auto')
-              if(this.event.isHighlight)
-                Image($r('app.media.ic_target_highlights'))
-                  .height(12)
-                  .width(12)
-                  .margin({right: 4})
-                  .flexBasis('auto')
-              if(this.event.isClock)
-                Image($r('app.media.ic_target_clock'))
-                  .height(12)
-                  .width(12)
-                  .margin({right: 4})
-                  .flexBasis('auto')
+            .width(24)
+            .height(24)
+            .onClick(() => {
+              this.completeEvent(this.event.eventId, this.event.State)
+            })
+            Column() {
               Row() {
+                Text(this.event.Title)
+                .fontSize(14)
+                .fontWeight(FontWeight.Medium)
+                .fontColor(this.getTitleColor(this.event.State))
+                .textOverflow({overflow :TextOverflow.Clip})
+                .maxLines(1)
+                  .decoration({
+                    type: this.event.State == 2 ? TextDecorationType.LineThrough : TextDecorationType.None,
+                    color: $r('app.color.icon_level2')
+                  })
+              }
+              .width('100%')
+              .height(16)
+              // .backgroundColor(Color.Red);
+              Row() {
+                if(this.event.isWarning)
+                  Image($r('app.media.ic_target_warning'))
+                    .height(12)
+                    .width(12)
+                    .margin({right: 4})
+                    .flexBasis('auto')
+                if(this.event.isHighlight)
+                  Image($r('app.media.ic_target_highlights'))
+                    .height(12)
+                    .width(12)
+                    .margin({right: 4})
+                    .flexBasis('auto')
+                if(this.event.isClock)
+                  Image($r('app.media.ic_target_clock'))
+                    .height(12)
+                    .width(12)
+                    .margin({right: 4})
+                    .flexBasis('auto')
                 Row() {
-                  Text(this.event.Time)
-                    .fontSize(12)
-                    .fontWeight(FontWeight.Medium)
-                    .fontColor(this.getDescriptionColor())
-                    .textOverflow({overflow :TextOverflow.Clip})
-                    .maxLines(1)
+                  Row() {
+                    Text(this.event.Time)
+                      .fontSize(12)
+                      .fontWeight(FontWeight.Medium)
+                      .fontColor(this.getDescriptionColor())
+                      .textOverflow({overflow :TextOverflow.Clip})
+                      .maxLines(1)
+                  }
+                  .height('100%')
+                  .width('100%')
                 }
                 .height('100%')
-                .width('100%')
+                .width(0)
+                .flexGrow(1)
               }
-              .height('100%')
-              .width(0)
-              .flexGrow(1)
+              .width('100%')
+              .height(14)
+              // .backgroundColor(Color.Green);
             }
-            .width('100%')
-            .height(14)
-            // .backgroundColor(Color.Green);
+            .margin({left: 3})
+            .padding({top: 3, bottom: 3, right: 3})
+            .width(0)
+            .height('100%')
+            .flexGrow(1)
+            // .backgroundColor($r('app.color.accent_pink'))
+            .borderRadius(9)
+            Column(){
+              Image($r('app.media.ic_card_arrow_left'))
+                .height(14)
+                .width(14)
+                .flexBasis('auto')
+                .onClick(() => {
+                  this.lastPage();
+                })
+              Blank()
+                .width(0)
+                .flexGrow(1)
+              Image($r('app.media.ic_card_arrow_right'))
+                .height(14)
+                .width(14)
+                .flexBasis('auto')
+                .onClick(() => {
+                  this.nextPage();
+                })
+            }
+            .padding({top: 2, bottom: 2})
+            .height('100%')
+            .width(14)
           }
-          .margin({left: 3})
-          .padding({top: 3, bottom: 3, right: 3})
-          .width(0)
+          .width('100%')
           .height('100%')
-          .flexGrow(1)
-          // .backgroundColor($r('app.color.accent_pink'))
-          .borderRadius(9)
-          Column(){
-            Image($r('app.media.ic_card_arrow_left'))
-              .height(14)
-              .width(14)
-              .flexBasis('auto')
-              .onClick(() => {
-                this.lastPage();
-              })
-            Blank()
-              .width(0)
-              .flexGrow(1)
-            Image($r('app.media.ic_card_arrow_right'))
-              .height(14)
-              .width(14)
-              .flexBasis('auto')
-              .onClick(() => {
-                this.nextPage();
-              })
-          }
-          .padding({top: 2, bottom: 2})
-          .height('100%')
-          .width(14)
-        }
-        .width('100%')
-        .height('100%')
-        .borderRadius(12)
-        .padding(3)
+          .borderRadius(12)
+          .padding(3)
       }
       .width('100%')
       .height(42)

@@ -2,6 +2,7 @@ import FolderResource from '../../model/FolderResourceContact';
 import ThingsResource from '../../model/EventsResourceContact';
 import { getResource } from '../../control/EventsController';
 import { get_accent } from '../../control/AccentController';
+import common from '@ohos.app.ability.common';
 
 @Component
 export struct FolderList {
@@ -22,7 +23,8 @@ export struct FolderList {
 
   private changeFolder(NewFolder: number): void {
     this.folderId = NewFolder
-    getResource(this.showDate[0], this.showDate[1], this.showDate[2], this.folderId);
+    let context: Context = getContext(this) as common.Context
+    getResource(this.showDate[0], this.showDate[1], this.showDate[2], this.folderId, context);
   }
 
   build() {

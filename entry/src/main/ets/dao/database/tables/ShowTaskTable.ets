@@ -5,22 +5,13 @@ import { EventRdb } from '../EventRdb';
 import { ShowTaskData } from '../../../model/ShowTaskData';
 
 export default class ShowTaskTable {
-    private showTaskTable = new EventRdb(RdbCommon.SHOW_TASK_TABLE.tableName,
-    RdbCommon.SHOW_TASK_TABLE.sqlCreate);
 
-    constructor(context, callback: Function=() => {
-    }) {
-        this.showTaskTable.getRdbStore(context, callback);
-    }
+    constructor() {}
 
-    getRdbStore(context, callback: Function=() => {
-    }) {
-        this.showTaskTable.getRdbStore(context, callback);
-    }
-
-    insertData(showTaskData: ShowTaskData, callback: Function) {
+    insertData(context: Context, showTaskData: ShowTaskData, callback: Function) {
         const valueBucket = generateBucket(showTaskData);
-        this.showTaskTable.insertData(valueBucket, (ret) => {
+        const showTaskTable = new EventRdb(RdbCommon.SHOW_TASK_TABLE.tableName, RdbCommon.SHOW_TASK_TABLE.sqlCreate);
+        showTaskTable.insertData(context, valueBucket, (ret) => {
             if (ret < 0 || ret == null || typeof ret == "undefined") {
                 Logger.error("ShowTaskTable", "Insert showTaskData failed:" + JSON.stringify(valueBucket));
                 callback(ret, false, "创建失败！");
@@ -32,7 +23,7 @@ export default class ShowTaskTable {
         //    Logger.info("ShowTaskTable", "Insert showTaskData :" + JSON.stringify(valueBucket) + "finished.");
     }
 
-    deleteDate(showTaskId2: number, callback: Function, taskId1?) {
+    deleteDate(context: Context, showTaskId2: number, callback: Function, taskId1?) {
         Logger.info("ShowTaskTable", "delete showTaskData start");
         let predicates = new data_rdb.RdbPredicates(RdbCommon.SHOW_TASK_TABLE.tableName);
         if (!taskId1 || typeof taskId1 == "undefined" || taskId1 == undefined) {
@@ -40,22 +31,25 @@ export default class ShowTaskTable {
         } else {
             predicates.equalTo('id1', taskId1);
         }
-        this.showTaskTable.deleteData(predicates, callback);
+        const showTaskTable = new EventRdb(RdbCommon.SHOW_TASK_TABLE.tableName, RdbCommon.SHOW_TASK_TABLE.sqlCreate);
+        showTaskTable.deleteData(context, predicates, callback);
     }
 
-    update(showTaskData: ShowTaskData): Promise<any> {
+    update(context: Context, showTaskData: ShowTaskData): Promise<any> {
         const valueBucket = generateBucket(showTaskData);
         let predicates = new data_rdb.RdbPredicates(RdbCommon.SHOW_TASK_TABLE.tableName);
         predicates.equalTo("id2", showTaskData.id2);
-        let promise = this.showTaskTable.updateData(valueBucket, predicates);
+        const showTaskTable = new EventRdb(RdbCommon.SHOW_TASK_TABLE.tableName, RdbCommon.SHOW_TASK_TABLE.sqlCreate);
+        let promise = showTaskTable.updateData(context, valueBucket, predicates);
 
         Logger.info("ShowTaskTable", "update finished:" + JSON.stringify(valueBucket));
         return promise;
     }
 
-    queryContext(sql: string, callback: Function, ...bindArgs: string[]) {
+    queryContext(context: Context, sql: string, callback: Function, ...bindArgs: string[]) {
         Logger.info("ShowTaskTable", "queryContext SQL: " + sql + "-----Args: " + bindArgs.toString());
-        this.showTaskTable.query(sql, bindArgs, function (resultSet) {
+        const showTaskTable = new EventRdb(RdbCommon.SHOW_TASK_TABLE.tableName, RdbCommon.SHOW_TASK_TABLE.sqlCreate);
+        showTaskTable.query(context, sql, bindArgs, function (resultSet) {
             if (resultSet.rowCount <= 0) {
                 Logger.error("ShowTaskTable", "queryContext query no results");
                 callback(resultSet, resultSet.rowCount);
@@ -65,9 +59,10 @@ export default class ShowTaskTable {
         });
     }
 
-    queryNumber(sql: string, callback: Function, ...bindArgs: string[]) {
+    queryNumber(context: Context, sql: string, callback: Function, ...bindArgs: string[]) {
         Logger.info("ShowTaskTable", "queryNumber SQL:" + sql + "-----Args: " + bindArgs.toString());
-        this.showTaskTable.query(sql, bindArgs, function (resultSet) {
+        const showTaskTable = new EventRdb(RdbCommon.SHOW_TASK_TABLE.tableName, RdbCommon.SHOW_TASK_TABLE.sqlCreate);
+        showTaskTable.query(context, sql, bindArgs, function (resultSet) {
             let countRow = resultSet.rowCount;
             if (countRow <= 0) {
                 Logger.error("ShowTaskTable", "queryNumber query no results");
@@ -80,9 +75,10 @@ export default class ShowTaskTable {
         });
     }
 
-    executeSql(sql: string, ...bindArgs: string[]): Promise<any> {
+    executeSql(context: Context, sql: string, ...bindArgs: string[]): Promise<any> {
         Logger.info("ShowTaskTable", "executeSql SQL: " + sql + "-----Args: " + bindArgs.toString());
-        let promise = this.showTaskTable.executeSqlPromise(sql, bindArgs);
+        const showTaskTable = new EventRdb(RdbCommon.SHOW_TASK_TABLE.tableName, RdbCommon.SHOW_TASK_TABLE.sqlCreate);
+        let promise = showTaskTable.executeSqlPromise(context, sql, bindArgs);
         return promise;
     }
 }

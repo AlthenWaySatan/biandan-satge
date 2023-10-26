@@ -1,4 +1,3 @@
-import { initTable } from './InitAndTable';
 import { resultToTaskData } from '../../model/TaskData';
 import { ShowTaskData } from '../../model/ShowTaskData';
 import { FavoritesData } from '../../model/FavoritesData';
@@ -9,12 +8,17 @@ import { ShowTaskInterface } from "./Interface/ShowTaskInterface";
 import { TaskData } from "../../model/TaskData";
 import { TaskInterface } from "./Interface/TaskInterface";
 import common from '@ohos.app.ability.common';
+import FavoritesTable from '../database/tables/FavoritesTable';
+import TaskTable from '../database/tables/TaskTable';
+import ShowTaskTable from '../database/tables/ShowTaskTable';
 
 export default class TaskImpl implements TaskInterface {
-    private showTaskImpl: ShowTaskInterface = new ShowTaskImpl(getContext(this) as common.Context);
+    // private showTaskImpl: ShowTaskInterface;
 
-    constructor(context) {
-        initTable.taskTable.getRdbStore(context);
+    constructor() {
+        // const initTable = new InitTable(context);
+        // initTable.taskTable.getRdbStore(context);
+        // this.showTaskImpl = new ShowTaskImpl(context);
     }
 
     /**
@@ -23,17 +27,18 @@ export default class TaskImpl implements TaskInterface {
      * @param taskData
      * @param callback(id1,flag,reason)
      */
-    insert(taskData: TaskData, callback: Function): void {
+    insert(taskData: TaskData, callback: Function, context: Context): void {
+        const favoritesTable = new FavoritesTable();
         //判断favorites表是否为空，若空，则插入一行表示默认未分类
         this.queryById3(1, (flag: boolean) => {
             if (!flag) {
-                initTable.favoritesTable.insertData(new FavoritesData(0, "默认", "black"), (id3, flag1, reason) => {
+                favoritesTable.insertData(context, new FavoritesData(0, "默认", "black"), (id3, flag1, reason) => {
                     if (flag1) {
                         Logger.info("TaskImpl", "insert default FavoritesData!");
                     }
                 })
             }
-        })
+        }, context)
 
         //判断taskData.id3是否存在，若不存在，则将其修改为默认分类，taskData.id3=1
         this.queryById3(taskData.id3, (flag: boolean) => {
@@ -41,20 +46,22 @@ export default class TaskImpl implements TaskInterface {
                 taskData.id3 = 1;
             }
             //      Logger.info("TaskImpl", "---favoritesImpl.queryById3: " + taskData.id3);
-            initTable.taskTable.insertData(taskData, (id1, flag, reason) => {
+            const taskTable = new TaskTable();
+            taskTable.insertData(context, taskData, (id1, flag, reason) => {
                 if (flag) {
                     taskData.id1 = id1;
                     Logger.info("TaskImpl", " insert newTask success:" + JSON.stringify(taskData));
-                    this.showTaskImpl.transformAndInsert(taskData, (flag1) => {
+                    let showTaskImpl = new ShowTaskImpl();
+                    showTaskImpl.transformAndInsert(taskData, (flag1) => {
                         if (flag1 == false) {
                             flag = false;
                             reason = "创建失败";
                         }
-                    })
+                    }, context)
                 }
                 callback(id1, flag, reason)
             })
-        });
+        }, context);
     }
 
 
@@ -63,12 +70,14 @@ export default class TaskImpl implements TaskInterface {
      * @param id1
      * @param callback(flag,reason)
      */
-    deleteTask(id1: number, callback: Function): void {
-        initTable.taskTable.deleteDate(id1, (flag1, reason1) => {
+    deleteTask(id1: number, callback: Function, context: Context): void {
+        const taskTable = new TaskTable();
+        const showTaskTable = new ShowTaskTable();
+        taskTable.deleteDate(context, id1, (flag1, reason1) => {
             if (flag1) {
                 Logger.info("TaskImpl", "delete task success! id1:" + id1);
                 //删除相关显示事项
-                initTable.showTaskTable.deleteDate(0, (flag2, reason2) => {
+                showTaskTable.deleteDate(context, 0, (flag2, reason2) => {
                     if (flag2) {
                         Logger.info("TaskImpl", "delete showTask success! by id1:" + id1);
                         callback(true, "事项删除成功")
@@ -89,7 +98,7 @@ export default class TaskImpl implements TaskInterface {
      * @param callback(flag,reason)
      * （重复取消收藏需要返回false）
      */
-    changeCollectible(id1: number, isCollectible: boolean, callback: Function) {
+    changeCollectible(id1: number, isCollectible: boolean, callback: Function, context: Context) {
         let taskId1: number = id1;
         this.queryTask(taskId1, (taskData: TaskData) => {
             if (taskData != null) {
@@ -102,7 +111,8 @@ export default class TaskImpl implements TaskInterface {
                 if (taskData.id3 <= 1) {
                     taskData.id3 = 1;
                 }
-                let promise = initTable.taskTable.update(taskData);
+                const taskTable = new TaskTable();
+                let promise = taskTable.update(context, taskData);
                 promise.then((ret) => {
                     Logger.info("TaskImpl", "changeCollectible success id1-" + taskId1 + " -> isCollectible: " + taskData.isCollectible);
                     callback(true, " ");
@@ -113,7 +123,7 @@ export default class TaskImpl implements TaskInterface {
             } else {
                 callback(false, "查无事项");
             }
-        })
+        }, context)
 
     }
 
@@ -123,13 +133,14 @@ export default class TaskImpl implements TaskInterface {
      * @param id3 分类的id3
      * @param callback(flag,reason)
      */
-    changeFavorites(id1: number, id3: number, callback: Function): void {
+    changeFavorites(id1: number, id3: number, callback: Function, context: Context): void {
         let taskId1: number = id1;
         let favoritesId3: number = id3;
         this.queryTask(taskId1, (taskData: TaskData) => {
             if (taskData != null) {
                 taskData.id3 = favoritesId3;
-                let promise = initTable.taskTable.update(taskData);
+                const taskTable = new TaskTable();
+                let promise = taskTable.update(context, taskData);
                 promise.then((ret) => {
                     Logger.info("TaskImpl", "changeCollectible success rowCount: " + ret + " - id3:" + taskData.id3);
                     callback(true, " ");
@@ -140,7 +151,7 @@ export default class TaskImpl implements TaskInterface {
             } else {
                 callback(false, "查无事项");
             }
-        })
+        }, context)
 
     }
 
@@ -149,7 +160,7 @@ export default class TaskImpl implements TaskInterface {
      * @param id1
      * @param isFinish: true 完成 / false 未完成
      */
-    changeIsFinish(id1: number, isFinish: boolean): void {
+    changeIsFinish(id1: number, isFinish: boolean, context: Context): void {
     }
 
     /**
@@ -157,12 +168,13 @@ export default class TaskImpl implements TaskInterface {
      * @param taskData 有id1
      * @param callback(flag,reason)
      */
-    updateNotLoopTask(newTask: TaskData, callback: Function) {
+    updateNotLoopTask(newTask: TaskData, callback: Function, context: Context) {
         let taskId1 = newTask.id1;
         this.queryTask(taskId1, (oldTask: TaskData) => {
             if (oldTask != null && newTask.isLoop == oldTask.isLoop) {
                 //修改task信息
-                let promise1 = initTable.taskTable.update(newTask)
+                const taskTable = new TaskTable();
+                let promise1 = taskTable.update(context, newTask)
                 promise1.then((ret) => {
                     Logger.info("TaskImpl", "updateNotLoopTask change task success id1: " + taskId1 + " -> rowCount:" + ret);
                 }).catch((err) => {
@@ -170,8 +182,8 @@ export default class TaskImpl implements TaskInterface {
                     callback(false, "修改非循环事项信息失败")
                     return;
                 })
-
-                this.showTaskImpl.queryAllShowTaskById1(taskId1, (showTaskArray: Array<ShowTaskData>) => {
+                let showTaskImpl = new ShowTaskImpl();
+                showTaskImpl.queryAllShowTaskById1(taskId1, (showTaskArray: Array<ShowTaskData>) => {
                     if (showTaskArray != null) {
                         for (let i = 0;i < showTaskArray.length; i++) {
                             if (showTaskArray[i].completedCount >= newTask.unitTimeNumber) {
@@ -183,8 +195,8 @@ export default class TaskImpl implements TaskInterface {
                                 showTaskArray[i].validStartTime = newTask.validStartTime;
                                 showTaskArray[i].validEndTime = newTask.validEndTime;
                             }
-
-                            let promise2 = initTable.showTaskTable.update(showTaskArray[i])
+                            const showTaskTable = new ShowTaskTable();
+                            let promise2 = showTaskTable.update(context, showTaskArray[i])
                             promise2.then((ret) => {
                                 Logger.info("TaskImpl", "updateTask change showTask success by id2: " + showTaskArray[i] + " -> rowCount:" + ret);
                                 callback(true, "")
@@ -201,11 +213,11 @@ export default class TaskImpl implements TaskInterface {
                         return;
                     }
 
-                })
+                }, context)
             } else {
                 callback(false, "error！编辑非循环事项");
             }
-        })
+        }, context)
 
     }
 
@@ -214,7 +226,7 @@ export default class TaskImpl implements TaskInterface {
      * @param taskData 有id1
      * @param callback(flag,reason)
      */
-    updateLoopTask(newTask: TaskData, callback: Function): void {
+    updateLoopTask(newTask: TaskData, callback: Function, context: Context): void {
         let taskId1 = newTask.id1;
         this.queryTask(taskId1, (oldTask: TaskData) => {
             if (oldTask != null && newTask.isLoop == true) {
@@ -224,7 +236,7 @@ export default class TaskImpl implements TaskInterface {
                         Logger.error("TaskImpl", "updateLoopTask deleteTask failed!");
                         callback(false, "未知错误");
                     }
-                });
+                }, context);
                 //重新插入一个新的task信息
                 this.insert(newTask, (id1, flag, reason) => {
                     if (flag) {
@@ -236,11 +248,11 @@ export default class TaskImpl implements TaskInterface {
                         callback(false, "编辑循环事项失败");
                         return;
                     }
-                })
+                }, context)
             } else {
                 callback(false, "error！编辑循环事项");
             }
-        })
+        }, context)
     }
 
     /**
@@ -248,8 +260,9 @@ export default class TaskImpl implements TaskInterface {
      * @param id1
      * callback(taskData/null)
      */
-    queryTask(id1: number, callback: Function) {
-        initTable.taskTable.queryContext(RdbCommon.QUERY_TASK_INFORMATION_3, (resultSet, countRow) => {
+    queryTask(id1: number, callback: Function, context: Context) {
+        const taskTable = new TaskTable();
+        taskTable.queryContext(context, RdbCommon.QUERY_TASK_INFORMATION_3, (resultSet, countRow) => {
             if (countRow > 0) {
                 let taskArray: Array<TaskData> = resultToTaskData(resultSet);
                 callback(taskArray[0]);
@@ -263,21 +276,22 @@ export default class TaskImpl implements TaskInterface {
      * 获取全部事项、默认事项、收藏事项、重要事项的数量
      * @param callback([全部待办数，未分类数，我的收藏数，重要待办数])
      */
-    queryNumber(callback: Function) {
+    queryNumber(callback: Function, context: Context) {
         let count: number[] = [0, 0, 0, 0];
-        initTable.taskTable.queryNumber(RdbCommon.QUERY_TASK_NUMBER_1 + RdbCommon.QUERY_TASK_NOTNULL, (count0) => {
+        const taskTable = new TaskTable();
+        taskTable.queryNumber(context, RdbCommon.QUERY_TASK_NUMBER_1 + RdbCommon.QUERY_TASK_NOTNULL, (count0) => {
             count[0] = count0;
             Logger.info("TaskImpl", "queryNumber count[0]:" + count[0]);
 
-            initTable.taskTable.queryNumber(RdbCommon.QUERY_TASK_NUMBER_1 + RdbCommon.QUERY_TASK_default, (count1) => {
+            taskTable.queryNumber(context, RdbCommon.QUERY_TASK_NUMBER_1 + RdbCommon.QUERY_TASK_default, (count1) => {
                 count[1] = count1;
                 Logger.info("TaskImpl", "queryNumber count[1]:" + count[1]);
 
-                initTable.taskTable.queryNumber(RdbCommon.QUERY_TASK_NUMBER_1 + RdbCommon.QUERY_TASK_isCollectable, (count2) => {
+                taskTable.queryNumber(context, RdbCommon.QUERY_TASK_NUMBER_1 + RdbCommon.QUERY_TASK_isCollectable, (count2) => {
                     count[2] = count2;
                     Logger.info("TaskImpl", "queryNumber count[2]:" + count[2]);
 
-                    initTable.taskTable.queryNumber(RdbCommon.QUERY_TASK_NUMBER_1 + RdbCommon.QUERY_TASK_isImportant, (count3) => {
+                    taskTable.queryNumber(context, RdbCommon.QUERY_TASK_NUMBER_1 + RdbCommon.QUERY_TASK_isImportant, (count3) => {
                         count[3] = count3;
                         Logger.info("TaskImpl", "queryNumber count[2]:" + count[2]);
 
@@ -292,8 +306,9 @@ export default class TaskImpl implements TaskInterface {
      * 根据id3查询是否存在该分类
      * callback(true/false)
      */
-    queryById3(id3: number, callback: Function) {
-        initTable.favoritesTable.queryContext(RdbCommon.QUERY_FAVORITES_byId3, (resultSet, countRow) => {
+    queryById3(id3: number, callback: Function, context: Context) {
+        const favoritesTable = new FavoritesTable();
+        favoritesTable.queryContext(context, RdbCommon.QUERY_FAVORITES_byId3, (resultSet, countRow) => {
             let flag: boolean = false;
             if (countRow <= 0) {
                 Logger.info("TaskImpl", "queryById3: " + id3 + " exist ->" + flag);

@@ -1,4 +1,3 @@
-import { initTable } from './InitAndTable';
 import TaskImpl from './TaskImpl';
 import Logger from '../utils/log/Logger';
 import { TaskInterface } from './Interface/TaskInterface';
@@ -6,12 +5,15 @@ import { RdbCommon } from "../../model/RdbCommon";
 import { FavoritesData } from "../../model/FavoritesData";
 import { FavoritesInterface } from "./Interface/FavoritesInterface";
 import common from '@ohos.app.ability.common';
+import FavoritesTable from '../database/tables/FavoritesTable';
+import TaskTable from '../database/tables/TaskTable';
 
 export class FavoritesImpl implements FavoritesInterface {
-  private taskImpl: TaskInterface = new TaskImpl(getContext(this) as common.Context);
+  // private taskImpl: TaskInterface = new TaskImpl(getContext(this) as common.Context);
 
-  constructor(context) {
-    initTable.favoritesTable.getRdbStore(context);
+  constructor() {
+    // const initTable = new InitTable(context);
+    // initTable.favoritesTable.getRdbStore(context);
   }
 
   /**
@@ -19,8 +21,9 @@ export class FavoritesImpl implements FavoritesInterface {
    * @param favoritesData
    * @param callback(id3,flag,reason)
    */
-  insert(favoritesData: FavoritesData, callback: Function) {
-    initTable.favoritesTable.insertData(favoritesData, (id3, flag, reason) => {
+  insert(favoritesData: FavoritesData, callback: Function, context: Context) {
+    const favoritesTable = new FavoritesTable();
+    favoritesTable.insertData(context, favoritesData, (id3, flag, reason) => {
       if (flag) {
         favoritesData.id3 = id3;
         Logger.info("FavoritesImpl", " insert newFavoritesData success:" + JSON.stringify(favoritesData));
@@ -34,23 +37,25 @@ export class FavoritesImpl implements FavoritesInterface {
    * @param id3
    * @param callback(flag,reason)
    */
-  deleteFavorites(id3: number, callback: Function) {
+  deleteFavorites(id3: number, callback: Function, context: Context) {
     let favoritesId3: number = id3;
     this.queryAllId1ById3(favoritesId3, (id1Array: Array<number>) => {
       if (id1Array != null) {
         //删除相关
         for (let i = 0;i < id1Array.length; i++) {
-          this.taskImpl.deleteTask(id1Array[i], (flag: boolean, reason: string) => {
+          let taskImpl: TaskInterface = new TaskImpl()
+          taskImpl.deleteTask(id1Array[i], (flag: boolean, reason: string) => {
             if (!flag) {
               callback(flag, "删除事项失败")
               return;
             }
-          })
+          }, context)
         }
       }
-    })
+    }, context)
     //删除favorites表中的一行
-    initTable.favoritesTable.deleteDate(id3, (flag, reason) => {
+    const favoritesTable = new FavoritesTable();
+    favoritesTable.deleteDate(context, id3, (flag, reason) => {
       if (flag) {
         Logger.info("FavoritesImpl", "delete favorites success! id3:" + id3);
       }
@@ -63,13 +68,14 @@ export class FavoritesImpl implements FavoritesInterface {
    * @param id3
    * @param callback(flag,reason)
    */
-  deleteFavoritesAndMove(id3: number, callback: Function) {
+  deleteFavoritesAndMove(id3: number, callback: Function, context: Context) {
     let favoritesId3: number = id3;
     if (favoritesId3 <= 1) {
       callback(false, "默认分类不可删除！");
       return;
     }
-    this.taskImpl.queryById3(favoritesId3, (flag: boolean) => {
+    let taskImpl: TaskInterface = new TaskImpl()
+    taskImpl.queryById3(favoritesId3, (flag: boolean) => {
       if (flag == false) {
         callback(false, "该分类不存在!")
         return;
@@ -78,18 +84,19 @@ export class FavoritesImpl implements FavoritesInterface {
         if (id1Array != null) {
           //事件移动到默认
           for (let i = 0;i < id1Array.length; i++) {
-            this.taskImpl.changeFavorites(id1Array[i], 1, (flag: boolean, reason: string) => {
+            taskImpl.changeFavorites(id1Array[i], 1, (flag: boolean, reason: string) => {
               if (!flag) {
                 callback(flag, "移动事项失败")
                 return;
               }
-            })
+            }, context)
           }
         }
-      })
-    })
+      }, context)
+    }, context)
     //删除favorites表中的一行
-    initTable.favoritesTable.deleteDate(id3, (flag, reason) => {
+    const favoritesTable = new FavoritesTable();
+    favoritesTable.deleteDate(context, id3, (flag, reason) => {
       if (flag) {
         Logger.info("FavoritesImpl", "deleteFavoritesAndMove-delete favorites success! id3:" + id3);
       }
@@ -105,18 +112,20 @@ export class FavoritesImpl implements FavoritesInterface {
    * @param color
    * @param callback(flag,reason)
    */
-  changeFavorites(id3: number, name: string, color: string, callback: Function) {
+  changeFavorites(id3: number, name: string, color: string, callback: Function, context: Context) {
     let newFavorites: FavoritesData = new FavoritesData(id3, name, color)
     if (id3 <= 1) {
       callback(false, "默认分类不可删除！")
       return;
     }
-    this.taskImpl.queryById3(id3, (flag: boolean) => {
+    let taskImpl: TaskInterface = new TaskImpl()
+    taskImpl.queryById3(id3, (flag: boolean) => {
       if (flag == false) {
         callback(false, "分类不存在!");
         return;
       }
-      let promise = initTable.favoritesTable.update(newFavorites);
+      const favoritesTable = new FavoritesTable();
+      let promise = favoritesTable.update(context, newFavorites);
       promise.then((ret) => {
         Logger.info("FavoritesImpl", "changeFavorites success id3: " + id3 + " -> rowCount:" + ret);
         callback(true, " ");
@@ -124,7 +133,7 @@ export class FavoritesImpl implements FavoritesInterface {
         Logger.error("FavoritesImpl", "changeFavorites() failed, err: " + err);
         callback(false, "更改失败！");
       })
-    })
+    }, context)
 
   }
 
@@ -132,10 +141,10 @@ export class FavoritesImpl implements FavoritesInterface {
    * 查询全部待办单的信息和内容数量
    * return(Promise<Array<FavoritesData>>) FavoritesData：[id3,name,color,count]
    */
-  async queryAllAndNumber(): Promise<Array<FavoritesData>> {
+  async queryAllAndNumber(context: Context): Promise<Array<FavoritesData>> {
     let dataArray: Array<FavoritesData> = [];
-
-    let resultData = await initTable.favoritesTable.promiseQueryContext(RdbCommon.QUERY_FAVORITES_ALL, "0");
+    const favoritesTable = new FavoritesTable();
+    let resultData = await favoritesTable.promiseQueryContext(context, RdbCommon.QUERY_FAVORITES_ALL, "0");
     let countRow = resultData.rowCount;
     if (countRow > 0) {
       resultData.goToFirstRow();
@@ -146,7 +155,7 @@ export class FavoritesImpl implements FavoritesInterface {
         tmp.favoritesName = resultData.getString(resultData.getColumnIndex("favoritesName"));
         tmp.favoritesColor = resultData.getString(resultData.getColumnIndex("favoritesColor"));
 
-        let resultNumber = await initTable.favoritesTable.promiseQueryContext(RdbCommon.QUERY_TASK_NUMBER_1 + RdbCommon.QUERY_TASK_default, tmp.id3.toString());
+        let resultNumber = await favoritesTable.promiseQueryContext(context, RdbCommon.QUERY_TASK_NUMBER_1 + RdbCommon.QUERY_TASK_default, tmp.id3.toString());
         resultNumber.goToFirstRow();
         tmp.count = resultNumber.getDouble(resultNumber.getColumnIndex("EventNumber"));
 
@@ -163,9 +172,10 @@ export class FavoritesImpl implements FavoritesInterface {
    * @param id3
    * @param callback(Array<number>)
    */
-  queryAllId1ById3(id3: number, callback: Function) {
+  queryAllId1ById3(id3: number, callback: Function, context: Context) {
     let id1Array: Array<number> = [];
-    initTable.taskTable.queryContext(RdbCommon.QUERY_ALL_id1_byId3, (resultSet, countRow) => {
+    const taskTable = new TaskTable();
+    taskTable.queryContext(context, RdbCommon.QUERY_ALL_id1_byId3, (resultSet, countRow) => {
       if (countRow > 0) {
         resultSet.goToFirstRow();
         for (let i = 0;i < countRow; i++) {

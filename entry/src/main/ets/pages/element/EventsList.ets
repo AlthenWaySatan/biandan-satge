@@ -3,6 +3,7 @@ import vibrator from '@ohos.vibrator';
 import ThingsResource from '../../model/EventsResourceContact';
 import { checkEvents, AddCompTime, SubCompTime, putOff, queryCreateResource } from '../../control/EventsController';
 import { get_accent } from '../../control/AccentController';
+import common from '@ohos.app.ability.common';
 
 PersistentStorage.PersistProp('DefaultTimeFormat', 0)
 
@@ -38,10 +39,11 @@ export struct EventsList {
   }
 
   private completeEvent(eventId: number, state: number) {
+    let context: Context = getContext(this) as common.Context
     if (state == 2) {
-      SubCompTime(eventId);
+      SubCompTime(eventId, context);
     } else {
-      AddCompTime(eventId);
+      AddCompTime(eventId, context);
     }
     this.CODE_DISTURBANCE()
   }
@@ -101,7 +103,8 @@ export struct EventsList {
               LongPressGesture()
                 .onAction(() => {
                   if (item.doneTimes != 0) {
-                    SubCompTime(item.eventId)
+                    let context: Context = getContext(this) as common.Context
+                    SubCompTime(item.eventId, context)
                     vibrator.vibrate(10)
                     this.CODE_DISTURBANCE()
                   }
@@ -173,8 +176,9 @@ export struct EventsList {
                 if (this.isEdit)
                   this.checkEvents(!item.isChecked, item.eventId)
                 else {
+                  let context: Context = getContext(this) as common.Context
                   console.log("edit event " + item.eventId)
-                  queryCreateResource(item.eventId)
+                  queryCreateResource(item.eventId, context)
                   setTimeout(() => {
                     AppStorage.Set<boolean>("showEventAddPanel", true)
                   }, 200)
@@ -196,7 +200,8 @@ export struct EventsList {
                     .fontColor(this.accentColor)
                     .backgroundColor($r('app.color.divider'))
                     .onClick(() => {
-                      putOff(item.eventId)
+                      let context: Context = getContext(this) as common.Context
+                      putOff(item.eventId, context)
                     })
                 }
                 .width(this.isEdit ? 0 : 72)

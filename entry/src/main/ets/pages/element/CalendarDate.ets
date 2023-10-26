@@ -1,6 +1,7 @@
 import { getResource, getResource_little } from '../../control/EventsController';
 import { EventsList_little } from '../element/EventsList'
 import { get_accent, get_translucentSaturation_accent } from '../../control/AccentController';
+import common from '@ohos.app.ability.common';
 
 @Component
 export struct CalendarDate {
@@ -16,7 +17,8 @@ export struct CalendarDate {
   private translucentSaturationAccentColor: Resource
 
   private getResource() {
-    getResource_little(this.date[0], this.date[1], this.date[2], this.folderId).then((ret) => {
+    let context: Context = getContext(this) as common.Context
+    getResource_little(this.date[0], this.date[1], this.date[2], this.folderId, context).then((ret) => {
       this.showResource = ret[2]
       this.showResource0 = ret[0];
       this.showResource1 = ret[1];
@@ -102,7 +104,8 @@ export struct CalendarDate {
       .onClick(() => {
         this.showDate[1] = this.date[1]
         this.showDate[2] = this.date[2]
-        getResource(this.showDate[0], this.showDate[1], this.showDate[2], this.folderId);
+        let context: Context = getContext(this) as common.Context
+        getResource(this.showDate[0], this.showDate[1], this.showDate[2], this.folderId, context);
         this.openCalendar = true
       })
     }

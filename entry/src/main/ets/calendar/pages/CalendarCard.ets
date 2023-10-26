@@ -92,7 +92,10 @@ struct CalendarCard {
       "action": 'router',
       "abilityName": 'EntryAbility',
       "params": {
-        "message": 'addEvent'
+        "message": 'addEvent',
+        "year": this.thisYear,
+        "month": this.thisMonth,
+        "day": this.thisDate
       }
     });
   }

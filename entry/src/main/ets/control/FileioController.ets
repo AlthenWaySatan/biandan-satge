@@ -20,9 +20,8 @@ PersistentStorage.PersistProp('AutoBackUpSwitch', 0)
 /**
  * 查询权限
  */
-export async function getPermission_WRITE_MEDIA(): Promise<boolean> {
+export async function getPermission_WRITE_MEDIA(context: Context): Promise<boolean> {
   let array: Array<Permissions> = ['ohos.permission.READ_MEDIA', 'ohos.permission.WRITE_MEDIA'];
-  var context: Context = getContext(this) as common.Context;
   let atManager = abilityAccessCtrl.createAtManager();
   let PermissionRequestResult = await atManager.requestPermissionsFromUser(context, array);
   let authResults0 = PermissionRequestResult.authResults[0];
@@ -39,11 +38,10 @@ export async function getPermission_WRITE_MEDIA(): Promise<boolean> {
 /**
  * 获取媒体资源
  */
-export async function getMediaLibrary(): Promise<mediaLibrary.FileAsset[]> {
+export async function getMediaLibrary(context: Context): Promise<mediaLibrary.FileAsset[]> {
   let BackUpSwitch: boolean = AppStorage.Get<boolean>('BackUpSwitch')
   if (!BackUpSwitch) return []
 
-  var context: Context = getContext(this) as common.Context;
   let media = mediaLibrary.getMediaLibrary(context);
   console.log('filesFetchOptions = ' + JSON.stringify(filesFetchOptions))
   let fetchFileResult = await media.getFileAssets(filesFetchOptions)
@@ -101,11 +99,10 @@ function getTimeDate(): string {
   return ret
 }
 
-async function deleteRedundancyFile() {
+async function deleteRedundancyFile(context: Context) {
   let BackUpSwitch: boolean = AppStorage.Get<boolean>('BackUpSwitch')
   if (!BackUpSwitch) return []
 
-  var context: Context = getContext(this) as common.Context;
   let media = mediaLibrary.getMediaLibrary(context);
   console.log('filesFetchOptions = ' + JSON.stringify(filesFetchOptions))
   let fetchFileResult = await media.getFileAssets(filesFetchOptions)
@@ -128,9 +125,8 @@ async function deleteRedundancyFile() {
  * 写入文件
  * @param data 文件内容
  */
-export async function writeFile(data: string) {
+export async function writeFile(data: string, context: Context) {
   let fileName = getTimeDate()
-  var context: Context = getContext(this) as common.Context;
   let media = mediaLibrary.getMediaLibrary(context);
   let mediaType = mediaLibrary.MediaType.FILE;
   console.info('ready to createAsset , parameters :  mediaType = ' + mediaType + ', fileName = ' + fileName + ', backUpPath = ' + backUpPath);
@@ -148,8 +144,8 @@ const backUpImpl: Backup = new Backup()
  * 导入文件
  * @param data 文件内容
  */
-export async function importFile(data: mediaLibrary.FileAsset): Promise<[boolean, string]> {
-  let value = await getPermission_WRITE_MEDIA()
+export async function importFile(data: mediaLibrary.FileAsset, context: Context): Promise<[boolean, string]> {
+  let value = await getPermission_WRITE_MEDIA(context)
   if (value) {
     console.log('import: ' + JSON.stringify(data));
     let obj: string = await readFile(data)
@@ -158,7 +154,7 @@ export async function importFile(data: mediaLibrary.FileAsset): Promise<[boolean
     return new Promise((resolve) => {
       backUpImpl.importData(ret, (flag: boolean, reason: string) => {
         resolve([flag, reason])
-      })
+      }, context)
     })
   }
 }
@@ -166,26 +162,26 @@ export async function importFile(data: mediaLibrary.FileAsset): Promise<[boolean
 /**
  * 以promise形式获取备份信息
  */
-async function getBackupObject(): Promise<object> {
+async function getBackupObject(context: Context): Promise<object> {
   return new Promise((resolve) => {
     backUpImpl.exportData((obj: object) => {
       resolve(obj)
-    })
+    }, context)
   })
 }
 
 /**
  * 备份文件
  */
-export async function backupFile() {
+export async function backupFile(context: Context) {
   //  let data: object = { "text": new Date() }
-  let value = await getPermission_WRITE_MEDIA()
+  let value = await getPermission_WRITE_MEDIA(context)
   if (value) {
-    let data: object = await getBackupObject()
+    let data: object = await getBackupObject(context)
     let str: string = JSON.stringify(data)
     console.log('backup value: ' + str);
-    await writeFile(str)
-    await deleteRedundancyFile()
+    await writeFile(str, context)
+    await deleteRedundancyFile(context)
   }
 }
 

@@ -2,6 +2,7 @@ import ThingsResource from '../../model/EventsResourceContact';
 import vibrator from '@ohos.vibrator';
 import { AddCompTime, queryCreateResource, SubCompTime } from '../../control/EventsController';
 import { refreshResource } from '../../control/EventsController';
+import common from '@ohos.app.ability.common';
 
 PersistentStorage.PersistProp('DefaultTimeFormat', 0)
 
@@ -31,10 +32,11 @@ export struct EventQuadrant {
   }
 
   private completeEvent(eventId: number, state: number) {
+    let context: Context = getContext(this) as common.Context
     if (state == 2) {
-      SubCompTime(eventId);
+      SubCompTime(eventId, context);
     } else {
-      AddCompTime(eventId);
+      AddCompTime(eventId, context);
     }
     this.CODE_DISTURBANCE()
   }
@@ -105,7 +107,8 @@ export struct EventQuadrant {
                     LongPressGesture()
                       .onAction(() => {
                         if (item.doneTimes != 0) {
-                          SubCompTime(item.eventId)
+                          let context: Context = getContext(this) as common.Context
+                          SubCompTime(item.eventId, context)
                           vibrator.vibrate(10)
                           this.CODE_DISTURBANCE()
                         }
@@ -165,7 +168,8 @@ export struct EventQuadrant {
                     .layoutWeight(1)
                     .onClick(() => {
                       console.log("edit event " + item.eventId)
-                      queryCreateResource(item.eventId)
+                      let context: Context = getContext(this) as common.Context
+                      queryCreateResource(item.eventId, context)
                       setTimeout(() => {
                         AppStorage.Set<boolean>("showEventAddPanel", true)
                       }, 200)
@@ -229,7 +233,8 @@ export struct EventQuadrant {
         }
       })
       .onRefreshing(async () => {
-        await refreshResource()
+        let context: Context = getContext(this) as common.Context
+        await refreshResource(context)
         setTimeout(() => {
           this.CODE_DISTURBANCE()
           this.isRefreshing = false

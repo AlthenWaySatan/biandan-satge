@@ -33,7 +33,7 @@ struct TodolistCard {
 
   private getTitleColor(isPath: boolean, State: number): Resource {
     if (State == 2)
-      return $r('app.color.text_level2')
+      return $r('app.color.text_level3')
     if (isPath)
       return $r('app.color.warning')
     return $r('app.color.text_level1')
@@ -41,10 +41,10 @@ struct TodolistCard {
 
   private getDescriptionColor(isPath: boolean, State: number): Resource {
     if (State == 2)
-      return $r('app.color.text_level2')
+      return $r('app.color.text_level3')
     if (isPath)
       return $r('app.color.warning')
-    return $r('app.color.text_level2')
+    return $r('app.color.text_level3')
   }
 
   private completeEvent(eventId: number, state: number) {
@@ -86,7 +86,7 @@ struct TodolistCard {
     });
   }
 
-  @LocalStorageProp('widthLength') widthLength:number = 2;
+  @LocalStorageProp('widthLength') widthLength:number = 4;
   @LocalStorageProp('listLength') listLength:number = 5;
 
   @LocalStorageProp('Date') Date:string = "--月--日";
@@ -266,7 +266,7 @@ struct TodolistCard {
                   Blank()
                     .flexGrow(1)
                   Text(item.Time)
-                    .fontSize(14)
+                    .fontSize(12)
                     .fontWeight(FontWeight.Medium)
                     .fontColor(this.getDescriptionColor(item.isPath, item.State))
                     .textOverflow({overflow :TextOverflow.Clip})

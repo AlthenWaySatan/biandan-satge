@@ -6,22 +6,13 @@ import { EventRdb } from "../EventRdb";
 import common from '@ohos.app.ability.common';
 
 export default class FavoritesTable {
-  private favoritesTable = new EventRdb(RdbCommon.FAVORITES_TABLE.tableName,
-  RdbCommon.FAVORITES_TABLE.sqlCreate);
 
-  constructor(context, callback: Function=() => {
-  }) {
-    this.favoritesTable.getRdbStore(context, callback);
-  }
+  constructor() {}
 
-  getRdbStore(context, callback: Function=() => {
-  }) {
-    this.favoritesTable.getRdbStore(context, callback);
-  }
-
-  insertData(favoritesData: {}, callback: Function) {
+  insertData(context: Context, favoritesData: {}, callback: Function) {
     const valueBucket = generateBucket(favoritesData);
-    this.favoritesTable.insertData(valueBucket, (ret) => {
+    const favoritesTable = new EventRdb(RdbCommon.FAVORITES_TABLE.tableName,  RdbCommon.FAVORITES_TABLE.sqlCreate);
+    favoritesTable.insertData(context, valueBucket, (ret) => {
       if (ret < 0 || ret == null || typeof ret == "undefined") {
         Logger.error("FavoritesTable", "insertData favoritesData failed:"+ JSON.stringify(valueBucket));
         callback(ret, false, "创建失败！");
@@ -34,26 +25,29 @@ export default class FavoritesTable {
 //    Logger.info("FavoritesTable", "Insert favoritesData :" + JSON.stringify(valueBucket) + "finished.");
   }
 
-  deleteDate(favoritesId3: number, callback: Function) {
+  deleteDate(context: Context, favoritesId3: number, callback: Function) {
     Logger.info("FavoritesTable", "delete favorites start");
     let predicates = new data_rdb.RdbPredicates(RdbCommon.FAVORITES_TABLE.tableName);
     predicates.equalTo("id3", favoritesId3);
-    this.favoritesTable.deleteData(predicates, callback);
+    const favoritesTable = new EventRdb(RdbCommon.FAVORITES_TABLE.tableName,  RdbCommon.FAVORITES_TABLE.sqlCreate);
+    favoritesTable.deleteData(context, predicates, callback);
   }
 
-  update(favoritesData: FavoritesData): Promise<any> {
+  update(context: Context, favoritesData: FavoritesData): Promise<any> {
     const valueBucket = generateBucket(favoritesData);
     let predicates = new data_rdb.RdbPredicates(RdbCommon.FAVORITES_TABLE.tableName);
     predicates.equalTo("id3", favoritesData.id3);
-    let promise =  this.favoritesTable.updateData(valueBucket, predicates);
+    const favoritesTable = new EventRdb(RdbCommon.FAVORITES_TABLE.tableName,  RdbCommon.FAVORITES_TABLE.sqlCreate);
+    let promise =  favoritesTable.updateData(context, valueBucket, predicates);
 
     Logger.info("FavoritesTable", "update finished:" + JSON.stringify(valueBucket));
     return promise;
   }
 
-  queryContext(sql: string, callback: Function, ...bindArgs: string[]) {
+  queryContext(context: Context, sql: string, callback: Function, ...bindArgs: string[]) {
     Logger.info("FavoritesTable", "queryContext SQL: " + sql + "-----Args: " + bindArgs.toString());
-    this.favoritesTable.query(sql, bindArgs, function (resultSet) {
+    const favoritesTable = new EventRdb(RdbCommon.FAVORITES_TABLE.tableName,  RdbCommon.FAVORITES_TABLE.sqlCreate);
+    favoritesTable.query(context, sql, bindArgs, function (resultSet) {
       let countRow: number = -1;
       countRow = resultSet.rowCount;
       if (countRow <= -1) {
@@ -63,15 +57,17 @@ export default class FavoritesTable {
     });
   }
 
-  promiseQueryContext(sql: string, ...bindArgs: string[]):Promise<any>{
+  promiseQueryContext(context: Context, sql: string, ...bindArgs: string[]):Promise<any>{
     Logger.info("FavoritesTable", "promiseQueryContext SQL: " + sql + "-----Args: " + bindArgs.toString());
-    let promise = this.favoritesTable.queryPromise(sql,bindArgs);
+    const favoritesTable = new EventRdb(RdbCommon.FAVORITES_TABLE.tableName,  RdbCommon.FAVORITES_TABLE.sqlCreate);
+    let promise = favoritesTable.queryPromise(context, sql, bindArgs);
     return promise;
   }
 
-  queryNumber(sql: string, callback: Function, ...bindArgs: string[]) {
+  queryNumber(context: Context, sql: string, callback: Function, ...bindArgs: string[]) {
     Logger.info("FavoritesTable", "queryNumber SQL:" + sql + "-----Args: " + bindArgs.toString());
-    this.favoritesTable.query(sql, bindArgs, function (resultSet) {
+    const favoritesTable = new EventRdb(RdbCommon.FAVORITES_TABLE.tableName,  RdbCommon.FAVORITES_TABLE.sqlCreate);
+    favoritesTable.query(context, sql, bindArgs, function (resultSet) {
       let countRow = resultSet.rowCount;
       if (countRow <= 0) {
         Logger.error("FavoritesTable", "queryNumber query no results");
@@ -84,9 +80,10 @@ export default class FavoritesTable {
     });
   }
 
-  executeSql(sql: string, ...bindArgs: string[]):Promise<any>{
+  executeSql(context: Context, sql: string, ...bindArgs: string[]):Promise<any>{
     Logger.info("FavoritesTable", "executeSql SQL: " + sql + "-----Args: " + bindArgs.toString());
-    let promise = this.favoritesTable.executeSqlPromise(sql,bindArgs);
+    const favoritesTable = new EventRdb(RdbCommon.FAVORITES_TABLE.tableName,  RdbCommon.FAVORITES_TABLE.sqlCreate);
+    let promise = favoritesTable.executeSqlPromise(context, sql,bindArgs);
     return promise;
   }
 

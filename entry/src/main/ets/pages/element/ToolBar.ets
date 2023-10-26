@@ -12,6 +12,7 @@ import {
   deleteAll,
 } from '../../control/EventsController';
 import { get_accent, get_allChoose_on_Marking, get_collect_on_Marking } from '../../control/AccentController';
+import common from '@ohos.app.ability.common';
 
 @CustomDialog
 struct FolderCustomDialog {
@@ -35,7 +36,8 @@ struct FolderCustomDialog {
 
   //设置所有待办单
   private async setAllFolder(folderId: number) {
-    await setAllFolder(folderId)
+    let context: Context = getContext(this) as common.Context
+    await setAllFolder(folderId, context)
     this.CODE_DISTURBANCE()
   }
 
@@ -160,7 +162,8 @@ struct DirectlyDeleteCustomDialog {
           .height(40)
         Button($r('app.string.delete'))
           .onClick(() => {
-            deleteAll(this.isWhole)
+            let context: Context = getContext(this) as common.Context
+            deleteAll(this.isWhole, context)
             this.CODE_DISTURBANCE()
             this.controller1.close()
           })
@@ -315,10 +318,12 @@ export struct ToolBar {
       case 1: {
         if (this.getCounter() <= 0) return;
         if (getIsAllCollect()) {
-          await setAllCollect(false);
+          let context: Context = getContext(this) as common.Context
+          await setAllCollect(false, context);
         }
         else {
-          await setAllCollect(true);
+          let context: Context = getContext(this) as common.Context
+          await setAllCollect(true, context);
         }
         this.CODE_DISTURBANCE()
         return

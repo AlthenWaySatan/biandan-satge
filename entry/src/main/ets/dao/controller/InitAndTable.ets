@@ -17,30 +17,22 @@ import TaskImpl from './TaskImpl';
 import TaskTable from '../database/tables/TaskTable';
 import common from '@ohos.app.ability.common';
 
-class InitTable {
-    public favoritesTable = new FavoritesTable(getContext(this) as common.Context);
-    public taskTable = new TaskTable(getContext(this) as common.Context);
-    public showTaskTable = new ShowTaskTable(getContext(this) as common.Context);
-
-    constructor() {
-    }
-}
-
-export const initTable = new InitTable();
+// export const initTable = new InitTable();
 
 export class ImplTable {
-    private favoritesImpl: FavoritesInterface = new FavoritesImpl(getContext(this) as common.Context);
-    private newFavoritesData: FavoritesData = new FavoritesData(0, "默认", "white");
+    // private favoritesImpl: FavoritesImpl;
 
     constructor() {
+        // this.favoritesImpl = new FavoritesImpl(context);
     }
 
-    initTable() {
-        this.favoritesImpl.insert(this.newFavoritesData, (id3, flag, reason) => {
+    initTable(context: Context) {
+        let favoritesImpl = new FavoritesImpl();
+        favoritesImpl.insert(new FavoritesData(0, "默认", "white"), (id3, flag, reason) => {
             Logger.info("ImplTable", "id3: " + id3);
             Logger.info("ImplTable", "flag: " + flag);
             Logger.info("ImplTable", "reason: " + reason);
-        });
+        }, context);
     }
 }
 
@@ -48,22 +40,25 @@ export class Backup {
     constructor() {
     }
 
-    exportData(callback: Function) {
+    exportData(callback: Function, context: Context) {
         let favoritesArray: Array<[number, string, string]> = [];
         let taskArray: Array<[number, string, string, number, boolean, boolean, string, string, boolean, number, string, string, number, number, number, string[], number, boolean, string, string, boolean]> = []
         let showTaskArray: Array<[number, string, string, string, string, number, string, number, boolean]> = []
 
-        initTable.favoritesTable.queryContext(RdbCommon.QUERY_FAVORITES_All, (resultSet1, countRow1) => {
+        const favoritesTable = new FavoritesTable();
+        const taskTable = new TaskTable();
+
+        favoritesTable.queryContext(context, RdbCommon.QUERY_FAVORITES_All, (resultSet1, countRow1) => {
             if (countRow1 > 0) {
                 favoritesArray = resultToFArray(resultSet1);
             }
 
-            initTable.taskTable.queryContext(RdbCommon.QUERY_TASK_All, (resultSet2, countRow2) => {
+            taskTable.queryContext(context, RdbCommon.QUERY_TASK_All, (resultSet2, countRow2) => {
                 if (countRow2 > 0) {
                     taskArray = resultToTArray(resultSet2);
                 }
-
-                initTable.showTaskTable.queryContext(RdbCommon.QUERY_ShowTASK_All, (resultSet3, countRow3) => {
+                const showTaskTable = new ShowTaskTable();
+                showTaskTable.queryContext(context, RdbCommon.QUERY_ShowTASK_All, (resultSet3, countRow3) => {
                     if (countRow3 > 0) {
                         showTaskArray = resultToSTArray(resultSet3);
                     }
@@ -85,7 +80,7 @@ export class Backup {
      * @param allData{"favoritesDataArray": [], "taskDataArray": [], "showTaskDataArray": []}
      * @param callback(flag,reason)
      */
-    async importData(allData, callback: Function) {
+    async importData(allData, callback: Function, context: Context) {
         Logger.info("Backup", "----> enter importData <----");
         if (allData.favoritesDataArray.length <= 0 && allData.taskDataArray.length <= 0 && allData.showTaskDataArray.length <= 0) {
             callback(false, "数据缺失")
@@ -93,9 +88,12 @@ export class Backup {
         }
         //先清空数据库各表中的内容
         try {
-            let promise1 = await initTable.favoritesTable.executeSql(RdbCommon.DELETE_FAVORITES_All, "0")
-            let promise2 = await initTable.taskTable.executeSql(RdbCommon.DELETE_TASK_All, "0")
-            let promise3 = await initTable.showTaskTable.executeSql(RdbCommon.DELETE_ShowTASK_All, "0")
+            const favoritesTable = new FavoritesTable();
+            const taskTable = new TaskTable();
+            const showTaskTable = new ShowTaskTable();
+            let promise1 = await favoritesTable.executeSql(context, RdbCommon.DELETE_FAVORITES_All, "0")
+            let promise2 = await taskTable.executeSql(context, RdbCommon.DELETE_TASK_All, "0")
+            let promise3 = await showTaskTable.executeSql(context, RdbCommon.DELETE_ShowTASK_All, "0")
         } catch (err) {
             callback(false, "部分原始数据删除失败")
         }
@@ -112,7 +110,8 @@ export class Backup {
             Logger.info("Backup", "importData favoritesArray: " + i + ": " + JSON.stringify(tmp));
             favoritesArray.push(tmp);
 
-            let promise = initTable.favoritesTable.executeSql(RdbCommon.INSERT_FAVORITES_DATA,
+            const favoritesTable = new FavoritesTable();
+            let promise = favoritesTable.executeSql(context, RdbCommon.INSERT_FAVORITES_DATA,
             tmp.id3.toString(), tmp.favoritesName, tmp.favoritesColor);
             promise.catch((err) => {
                 callback(false, "分类数据缺失")
@@ -156,7 +155,8 @@ export class Backup {
             Logger.info("Backup", "importData taskDataArray: " + i + ": " + JSON.stringify(tmp));
             taskArray.push(tmp);
 
-            let promise = initTable.taskTable.executeSql(RdbCommon.INSERT_TASK_DATA,
+            const taskTable = new TaskTable();
+            let promise = taskTable.executeSql(context, RdbCommon.INSERT_TASK_DATA,
             tmp.id1.toString(), tmp.taskTitle, tmp.taskContent, tmp.id3.toString(), (tmp.isImportant ? 1 : 0).toString(), (tmp.isCollectible ? 1 : 0).toString(),
             tmp.startTime, tmp.endTime, (tmp.isLoop ? 1 : 0).toString(), tmp.unitTimeNumber.toString(),
             tmp.validStartTime, tmp.validEndTime, tmp.loopSet.toString(), tmp.loopBaseNumber.toString(), tmp.loopUnit.toString(),
@@ -186,7 +186,8 @@ export class Backup {
             Logger.info("Backup", "importData showTaskArray: " + i + ": " + JSON.stringify(tmp));
             showTaskArray.push(tmp);
 
-            let promise = initTable.showTaskTable.executeSql(RdbCommon.INSERT_ShowTASK_DATA,
+            const showTaskTable = new ShowTaskTable();
+            let promise = showTaskTable.executeSql(context, RdbCommon.INSERT_ShowTASK_DATA,
             tmp.id2.toString(), tmp.startTime, tmp.endTime, tmp.validStartTime, tmp.validEndTime,
             tmp.completedCount.toString(), tmp.recentFinishedTime, tmp.id1.toString(), (tmp.isFinish ? 1 : 0).toString());
             promise.catch((err) => {

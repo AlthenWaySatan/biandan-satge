@@ -5,21 +5,12 @@ import { EventRdb } from "../EventRdb";
 import { TaskData } from "../../../model/TaskData";
 
 export default class TaskTable {
-  private taskTable = new EventRdb(RdbCommon.TASK_TABLE.tableName, RdbCommon.TASK_TABLE.sqlCreate);
+  constructor() {}
 
-  constructor(context, callback: Function=() => {
-  }) {
-    this.taskTable.getRdbStore(context, callback);
-  }
-
-  getRdbStore(context, callback: Function=() => {
-  }) {
-    this.taskTable.getRdbStore(context, callback);
-  }
-
-  insertData(taskData: TaskData, callback: Function) {
+  insertData(context: Context, taskData: TaskData, callback: Function) {
     let valueBucket = generateBucket(taskData);
-    this.taskTable.insertData(valueBucket, (ret) => {
+    const taskTable = new EventRdb(RdbCommon.TASK_TABLE.tableName, RdbCommon.TASK_TABLE.sqlCreate);
+    taskTable.insertData(context, valueBucket, (ret) => {
       if (ret < 0 || ret == null || typeof ret == "undefined") {
         Logger.error("TaskTable", "Insert taskData failed:"+ JSON.stringify(valueBucket));
         callback(ret, false, "创建失败！");
@@ -31,32 +22,36 @@ export default class TaskTable {
 //    Logger.info("TaskTable", "Insert taskData :" + JSON.stringify(valueBucket) + "finished.");
   }
 
-  deleteDate(taskId1: number, callback: Function) {
+  deleteDate(context: Context, taskId1: number, callback: Function) {
     Logger.info("TaskTable", "delete task start");
     let predicates = new data_rdb.RdbPredicates(RdbCommon.TASK_TABLE.tableName);
     predicates.equalTo("id1", taskId1);
-    this.taskTable.deleteData(predicates, callback);
+    const taskTable = new EventRdb(RdbCommon.TASK_TABLE.tableName, RdbCommon.TASK_TABLE.sqlCreate);
+    taskTable.deleteData(context, predicates, callback);
   }
 
-  update(taskData: TaskData): Promise<any> {
+  update(context: Context, taskData: TaskData): Promise<any> {
     const valueBucket = generateBucket(taskData);
     let predicates = new data_rdb.RdbPredicates(RdbCommon.TASK_TABLE.tableName);
     predicates.equalTo("id1", taskData.id1);
-    let promise = this.taskTable.updateData(valueBucket, predicates);
+    const taskTable = new EventRdb(RdbCommon.TASK_TABLE.tableName, RdbCommon.TASK_TABLE.sqlCreate);
+    let promise = taskTable.updateData(context, valueBucket, predicates);
 
     Logger.info("TaskTable", "update finished:" + JSON.stringify(valueBucket));
     return promise;
   }
 
-  promiseQueryContext(sql: string, ...bindArgs: string[]):Promise<any>{
+  promiseQueryContext(context: Context, sql: string, ...bindArgs: string[]):Promise<any>{
     Logger.info("TaskTable", "promiseQueryContext SQL: " + sql + "-----Args: " + bindArgs.toString());
-    let promise = this.taskTable.queryPromise(sql,bindArgs);
+    const taskTable = new EventRdb(RdbCommon.TASK_TABLE.tableName, RdbCommon.TASK_TABLE.sqlCreate);
+    let promise = taskTable.queryPromise(context, sql,bindArgs);
     return promise;
   }
 
-  queryContext(sql: string, callback: Function, ...bindArgs: string[]) {
+  queryContext(context: Context, sql: string, callback: Function, ...bindArgs: string[]) {
     Logger.info("TaskTable", "queryContext SQL:" + sql + "-----Args: " + bindArgs.toString());
-    this.taskTable.query(sql, bindArgs, function (resultSet) {
+    const taskTable = new EventRdb(RdbCommon.TASK_TABLE.tableName, RdbCommon.TASK_TABLE.sqlCreate);
+    taskTable.query(context, sql, bindArgs, function (resultSet) {
       if (resultSet.rowCount <= 0) {
         Logger.error("TaskTable", "queryContext query no results");
         callback([], 0);
@@ -66,9 +61,10 @@ export default class TaskTable {
     });
   }
 
-  queryNumber(sql: string, callback: Function, ...bindArgs: string[]) {
+  queryNumber(context: Context, sql: string, callback: Function, ...bindArgs: string[]) {
     Logger.info("TaskTable", "queryNumber SQL:" + sql + "-----Args: " + bindArgs.toString());
-    this.taskTable.query(sql, bindArgs, function (resultSet) {
+    const taskTable = new EventRdb(RdbCommon.TASK_TABLE.tableName, RdbCommon.TASK_TABLE.sqlCreate);
+    taskTable.query(context, sql, bindArgs, function (resultSet) {
       let countRow: number = resultSet.rowCount;
       if (countRow <= 0) {
         Logger.error("TaskTable", "queryNumber query no results");
@@ -81,9 +77,10 @@ export default class TaskTable {
     });
   }
 
-  executeSql(sql: string, ...bindArgs: string[]):Promise<any>{
+  executeSql(context: Context, sql: string, ...bindArgs: string[]):Promise<any>{
     Logger.info("TaskTable", "executeSql SQL: " + sql + "-----Args: " + bindArgs.toString());
-    let promise = this.taskTable.executeSqlPromise(sql,bindArgs);
+    const taskTable = new EventRdb(RdbCommon.TASK_TABLE.tableName, RdbCommon.TASK_TABLE.sqlCreate);
+    let promise = taskTable.executeSqlPromise(context, sql,bindArgs);
     return promise;
   }
 }

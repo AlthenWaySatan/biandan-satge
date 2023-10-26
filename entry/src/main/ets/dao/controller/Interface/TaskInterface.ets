@@ -6,14 +6,14 @@ export interface TaskInterface {
    * @param taskData
    * @param callback(id1,flag,reason)
    */
-  insert(taskData: TaskData, callback: Function): void
+  insert(taskData: TaskData, callback: Function, context: Context): void
 
   /**
    * 删除事项
    * @param id1
    * @param callback(flag,reason)
    */
-  deleteTask(id1: number, callback: Function): void
+  deleteTask(id1: number, callback: Function, context: Context): void
 
   /**
    * 更新事项的收藏属性
@@ -22,7 +22,7 @@ export interface TaskInterface {
    * @param callback(flag,reason)
    * （重复取消收藏需要返回false）
    */
-  changeCollectible(id1: number, isCollectible: boolean, callback: Function)
+  changeCollectible(id1: number, isCollectible: boolean, callback: Function, context: Context)
 
   /**
    * 更新事项的分类属性
@@ -30,48 +30,48 @@ export interface TaskInterface {
    * @param id3 分类的id3
    * @param callback(flag,reason)
    */
-  changeFavorites(id1: number, id3: number, callback: Function): void
+  changeFavorites(id1: number, id3: number, callback: Function, context: Context): void
 
   /**
    * 更新整个事项的完成状态isFinish
    * @param id1
    * @param isFinish: true 完成 / false 未完成
    */
-  changeIsFinish(id1: number, isFinish: boolean): void
+  changeIsFinish(id1: number, isFinish: boolean, context: Context): void
 
   /**
    * 编辑非重复事项的信息，同时修改showTask表对应的信息
    * @param taskData 有id1
    * @param callback(flag,reason)
    */
-  updateNotLoopTask(newTaskData: TaskData, callback: Function): void
+  updateNotLoopTask(newTaskData: TaskData, callback: Function, context: Context): void
 
   /**
    * 编辑重复事项的信息，先删除全部相关showTask再重新插入
    * @param taskData 有id1
    * @param callback(flag,reason)
    */
-  updateLoopTask(newTaskData: TaskData, callback: Function): void
+  updateLoopTask(newTaskData: TaskData, callback: Function, context: Context): void
 
   /**
    * 获取Task的详细信息
    * @param id1
    * callback(taskData/null)
    */
-  queryTask(id1: number, callback: Function)
+  queryTask(id1: number, callback: Function, context: Context)
 
 
   /**
    * 获取全部事项、默认事项、收藏事项的数量
    * @param callback([全部待办数，未分类数，我的收藏数，重要待办数])
    */
-  queryNumber(callback: Function): void
+  queryNumber(callback: Function, context: Context): void
 
   /**
    * 根据id3查询是否存在该分类
    * callback(true/false)
    */
-  queryById3(id3: number, callback: Function)
+  queryById3(id3: number, callback: Function, context: Context)
 
 
 }

@@ -27,6 +27,8 @@ import { get_accent, getAccentColor } from '../../control/AccentController';
 import { deleteAFolder } from '../../control/FolderController';
 import FolderResource from '../../model/FolderResourceContact';
 import prompt from '@ohos.prompt'
+import common from '@ohos.app.ability.common';
+import { setStorage } from '../../control/StorageController';
 
 PersistentStorage.PersistProp('BackUpSwitch', 0)
 PersistentStorage.PersistProp('AutoBackUpSwitch', 0)
@@ -52,7 +54,8 @@ export struct LocationBackUpPage {
 
   private async refreshFileList() {
     if (this.BackUpSwitch) {
-      this.fileList = await getMediaLibrary()
+      let context: Context = getContext(this) as common.Context
+      this.fileList = await getMediaLibrary(context)
     } else {
       this.fileList = []
     }
@@ -61,7 +64,8 @@ export struct LocationBackUpPage {
   aboutToAppear() {
     this.accentColor = get_accent();
     if (this.BackUpSwitch) {
-      getPermission_WRITE_MEDIA().then((value: boolean) => {
+      let context: Context = getContext(this) as common.Context
+      getPermission_WRITE_MEDIA(context).then((value: boolean) => {
         if (!value) {
           this.BackUpSwitch = 0
           this.CODE_DISTURBANCE()
@@ -97,7 +101,8 @@ export struct LocationBackUpPage {
   }
 
   private async backUpNow() {
-    await backupFile()
+    let context: Context = getContext(this) as common.Context
+    await backupFile(context)
     setTimeout(() => {
       this.refreshFileList()
     }, 0)
@@ -105,14 +110,15 @@ export struct LocationBackUpPage {
   }
 
   private async importObject(filename: mediaLibrary.FileAsset) {
-    importFile(filename).then((ret: [boolean, string]) => {
+    let context: Context = getContext(this) as common.Context
+    importFile(filename, context).then((ret: [boolean, string]) => {
       if (ret[0]) {
         prompt.showToast({
           message: '导入成功',
           duration: 1000,
         });
         UpdateVersionNumber()
-        RebuildNotification()
+        RebuildNotification(context)
       } else {
         prompt.showToast({
           message: '导入失败：' + ret[1],
@@ -218,7 +224,8 @@ export struct LocationBackUpPage {
 
   private async openBackUp(value: boolean): Promise<boolean> {
     if (value) {
-      let isOn = await getPermission_WRITE_MEDIA()
+      let context: Context = getContext(this) as common.Context
+      let isOn = await getPermission_WRITE_MEDIA(context)
       if (!isOn) {
         prompt.showToast({
           message: '权限未获取，暂无法开启',
@@ -387,15 +394,17 @@ export struct TerminalsSyncPage {
   @State localTerminals: object = {}
 
   private async refreshTerminalsList() {
-    this.TerminalsList = await getTerminalsList()
+    let context: Context = getContext(this) as common.Context
+    this.TerminalsList = await getTerminalsList(context)
   }
 
   aboutToAppear() {
     this.accentColor = get_accent();
     this.localTerminals = getLocalTerminals();
-    clearTerminalsList()
+    let context: Context = getContext(this) as common.Context
+    clearTerminalsList(context)
     if (this.TerminalsSyncSwitch) {
-      getPermission_DISTRIBUTED_DATASYNC().then((value: boolean) => {
+      getPermission_DISTRIBUTED_DATASYNC(context).then((value: boolean) => {
         if (!value) {
           this.TerminalsSyncSwitch = 0
           this.CODE_DISTURBANCE()
@@ -414,23 +423,26 @@ export struct TerminalsSyncPage {
   }
 
   private setListener() {
+    let context: Context = getContext(this) as common.Context
     if (this.TerminalsSyncSwitch) {
-      OpenSyncListener()
+      OpenSyncListener(context)
       OpenSyncListener_devices(() => {
         this.refreshTerminalsList()
-      })
+      }, context)
     } else {
-      CloseSyncListener();
-      CloseSyncListener_devices();
+      CloseSyncListener(context);
+      CloseSyncListener_devices(context);
     }
   }
 
   private exportNow() {
-    ExportNewVersion(true)
+    let context: Context = getContext(this) as common.Context
+    ExportNewVersion(context, true)
   }
 
   private importNow() {
-    getNewAndImportData()
+    let context: Context = getContext(this) as common.Context
+    getNewAndImportData(context)
   }
 
   @Styles Card() {
@@ -513,7 +525,8 @@ export struct TerminalsSyncPage {
 
   private async openTerminalsSync(value: boolean): Promise<boolean> {
     if (value) {
-      let isOn = await getPermission_DISTRIBUTED_DATASYNC()
+      let context: Context = getContext(this) as common.Context
+      let isOn = await getPermission_DISTRIBUTED_DATASYNC(context)
       if (!isOn) {
         prompt.showToast({
           message: '权限未获取，暂无法开启',
@@ -543,7 +556,8 @@ export struct TerminalsSyncPage {
                     this.TerminalsSyncSwitch = 0
                   if (!this.TerminalsSyncSwitch)
                     this.AutoTerminalsSyncSwitch = 0
-                  clearTerminalsList();
+                  let context: Context = getContext(this) as common.Context
+                  clearTerminalsList(context);
                   this.refreshTerminalsList()
                   this.CODE_DISTURBANCE();
                 })
@@ -853,6 +867,8 @@ export struct AccentColorPage {
                     if (isChecked) {
                       this.AccentColor0 = index;
                       this.AccentColor1 = item[1];
+                      let context: Context = getContext(this) as common.Context
+                      setStorage("accent", "color", this.AccentColor1, context);
                       prompt.showToast({
                         message: (Object)($r('app.string.restartToTakeEffect')),
                         duration: 500,
@@ -866,6 +882,8 @@ export struct AccentColorPage {
               if (item[1] != this.AccentColor1) {
                 this.AccentColor0 = index
                 this.AccentColor1 = item[1]
+                let context: Context = getContext(this) as common.Context
+                setStorage("accent", "color", this.AccentColor1, context);
                 prompt.showToast({
                   message: (Object)($r('app.string.restartToTakeEffect')),
                   duration: 500,
@@ -992,7 +1010,8 @@ struct DeleteCustomDialog {
       Column() {
         Button($r('app.string.folderMove'))
           .onClick(() => {
-            deleteAFolder(this.folderId, false)
+            let context: Context = getContext(this) as common.Context
+            deleteAFolder(this.folderId, false, context)
             this.controller.close()
           })
           .width('100%')
@@ -1002,7 +1021,8 @@ struct DeleteCustomDialog {
 
         Button($r('app.string.deleteAll'))
           .onClick(() => {
-            deleteAFolder(this.folderId, true)
+            let context: Context = getContext(this) as common.Context
+            deleteAFolder(this.folderId, true, context)
             this.controller.close()
           })
           .width('100%')
@@ -1099,7 +1119,8 @@ export struct FolderEditPage {
                   .width(30)
                   .onClick(() => {
                     if (item.counter == 0) {
-                      deleteAFolder(item.id, true)
+                      let context: Context = getContext(this) as common.Context
+                      deleteAFolder(item.id, true, context)
                     } else {
                       this.chooseFolder = item.id
                       this.dialogController.open()

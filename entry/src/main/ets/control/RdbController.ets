@@ -3,9 +3,7 @@ import { ShowTaskImpl } from '../dao/controller/ShowTaskImpl';
 import { ShowTaskInterface } from '../dao/controller/Interface/ShowTaskInterface';
 import common from '@ohos.app.ability.common';
 
-export const showTaskImpl: ShowTaskInterface = new ShowTaskImpl(getContext(this) as common.Context);
-
-export async function getEventResource(date: number[], folderId: number): Promise<[number, number, EventInfo[], EventInfo[], EventInfo[]]> {
+export async function getEventResource(date: number[], folderId: number, context: Context): Promise<[number, number, EventInfo[], EventInfo[], EventInfo[]]> {
     if (isNaN(folderId)) folderId = 0
     let thisDate: number[] = [(new Date().getFullYear()), (new Date().getMonth() + 1), (new Date().getDate())]
     if (date[0] != thisDate[0]) {
@@ -23,6 +21,7 @@ export async function getEventResource(date: number[], folderId: number): Promis
     console.log('myFormAbility 待办内容：{日期：' + date + ' 分类：' + folderId + '}');
 
     return new Promise((resolve) => {
+        const showTaskImpl: ShowTaskInterface = new ShowTaskImpl();
         showTaskImpl.queryDisplayTaskContext(new Date(date[0], date[1] - 1, date[2], date[3], date[4]), folderId, (
             finishedCount: number, notFinishedCount: number, TodoArray: EventInfo[], PassArray: EventInfo[], DoneArray: EventInfo[]
         ) => {
@@ -33,6 +32,6 @@ export async function getEventResource(date: number[], folderId: number): Promis
             console.log('1-2.事件内容(number)：' + finishedCount + ', ' + notFinishedCount);
             console.log('1-2.事件内容(length)：' + TodoArray.length + ', ' + PassArray.length + ', ' + DoneArray.length);
             resolve([finishedCount, notFinishedCount, TodoArray, PassArray, DoneArray])
-        })
+        }, context)
     })
 }

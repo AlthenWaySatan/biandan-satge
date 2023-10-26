@@ -116,6 +116,7 @@ export default class EventResource {
     }
 
     public checkQuadrant(isImportant: boolean, isUrgent: boolean, showDate: number[]): boolean {
+        // console.log("updateForm ", this.isImportant,  isImportant, this.checkUrgent(showDate), isUrgent)
         return this.isImportant == isImportant && this.checkUrgent(showDate) == isUrgent
     }
 

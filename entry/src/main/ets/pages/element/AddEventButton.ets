@@ -4,6 +4,7 @@ import { ExportNewVersion } from '../../control/TerminalsSyncController';
 import { get_accent } from '../../control/AccentController';
 import vibrator from '@ohos.vibrator';
 import { get_translucentSaturation_accent, get_add_Marking } from '../../control/AccentController';
+import common from '@ohos.app.ability.common';
 
 PersistentStorage.PersistProp('TerminalsSyncSwitch', 0)
 
@@ -28,12 +29,14 @@ export struct AddEventButton {
   }
 
   private exportNow() {
-    ExportNewVersion(true)
+    let context: Context = getContext(this) as common.Context
+    ExportNewVersion(context, true)
   }
 
   private async importNow() {
-    await getNewAndImportData()
-    await refreshResource()
+    let context: Context = getContext(this) as common.Context
+    await getNewAndImportData(context)
+    await refreshResource(context)
   }
 
   private shortPress() {

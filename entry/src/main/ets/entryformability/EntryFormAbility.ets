@@ -4,6 +4,7 @@ import FormExtensionAbility from '@ohos.app.form.FormExtensionAbility';
 import formProvider from '@ohos.app.form.formProvider';
 import { changeDate, changeMonth, changePage, clickEvent, refreshForm, UpdateForm } from '../control/FormController'
 import { setStorage, getStorage, hasStorage, deleteStorage } from '../control/StorageController'
+import common from '@ohos.app.ability.common';
 
 
 
@@ -34,8 +35,9 @@ export default class EntryFormAbility extends FormExtensionAbility {
       formPage: 0
     };
     console.log('[EntryFormAbility] onAddForm thisFormInfo' + JSON.stringify(thisFormInfo))
-    setStorage("thisFormInfo", formId, JSON.stringify(thisFormInfo));
-    UpdateForm(formId);
+    setStorage("thisFormInfo", formId, JSON.stringify(thisFormInfo), this.context).then(() => {
+      UpdateForm(formId, this.context);
+    });
     return null;
   }
 
@@ -45,7 +47,7 @@ export default class EntryFormAbility extends FormExtensionAbility {
   }
 
   onUpdateForm(formId) {
-    refreshForm(formId);
+    refreshForm(formId, this.context);
     // Called to notify the form provider to update a specified form.
   }
 
@@ -58,35 +60,35 @@ export default class EntryFormAbility extends FormExtensionAbility {
     let obj = JSON.parse(message);
     switch (obj.type) {
       case "refresh":
-        refreshForm(formId);
+        refreshForm(formId, this.context);
         break;
       case "clickEvent":
-        clickEvent(formId, obj.eventId, obj.state)
+        clickEvent(formId, obj.eventId, obj.state, this.context)
         break;
       case "lastPage":
-        changePage(formId, -1);
+        changePage(formId, -1, this.context);
         break;
       case "nextPage":
-        changePage(formId, 1);
+        changePage(formId, 1, this.context);
         break;
       case "changePage":
-        changePage(formId, 1);
+        changePage(formId, 1, this.context);
         break;
       case "changeDate":
-        changeDate(formId, obj.date);
+        changeDate(formId, obj.date, this.context);
         break;
       case "lastMonth":
-        changeMonth(formId, -1);
+        changeMonth(formId, -1, this.context);
         break;
       case "nextMonth":
-        changeMonth(formId, 1);
+        changeMonth(formId, 1, this.context);
         break;
     }
     // Called when a specified message event defined by the form provider is triggered.
   }
 
   onRemoveForm(formId) {
-    deleteStorage("thisFormInfo", formId);
+    deleteStorage("thisFormInfo", formId, this.context);
     // Called to notify the form provider that a specified form has been destroyed.
   }
 

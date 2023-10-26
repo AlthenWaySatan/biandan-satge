@@ -4,6 +4,7 @@ import { createEvent, editThisEvent } from '../../control/EventsController';
 import CreateResource from '../../model/CreateResourceContact';
 import { get_accent, get_translucentSaturation_accent } from '../../control/AccentController';
 import { getFolderClassify, getFolderIcon } from '../../control/FolderController';
+import common from '@ohos.app.ability.common';
 
 PersistentStorage.PersistProp('FirstDayOfWeek', 0)
 PersistentStorage.PersistProp('DefaultTimeFormat', 0)
@@ -1098,7 +1099,8 @@ export struct EventAddPanel {
                               value: $r('app.string.confirm'),
                               fontColor: this.accentColor,
                               action: () => {
-                                editThisEvent(this.thisEvent.id1, this.thisEvent, true)
+                                let context: Context = getContext(this) as common.Context
+                                editThisEvent(this.thisEvent.id1, this.thisEvent, true, context)
                                 this.closeThis()
                               }
                             },
@@ -1107,11 +1109,13 @@ export struct EventAddPanel {
                           }
                         )
                       } else {
-                        editThisEvent(this.thisEvent.id1, this.thisEvent, false)
+                        let context: Context = getContext(this) as common.Context
+                        editThisEvent(this.thisEvent.id1, this.thisEvent, false, context)
                         this.closeThis()
                       }
                     } else {
-                      createEvent(this.thisEvent)
+                      let context: Context = getContext(this) as common.Context
+                      createEvent(this.thisEvent, context)
                       this.closeThis()
                     }
                   }

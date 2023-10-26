@@ -4,6 +4,7 @@ import { putOffAll } from '../../control/EventsController'
 import ThingsResource from '../../model/EventsResourceContact';
 import { get_accent } from '../../control/AccentController';
 import { refreshResource } from '../../control/EventsController';
+import common from '@ohos.app.ability.common';
 
 @Component
 export struct EventsTable {
@@ -122,7 +123,8 @@ export struct EventsTable {
                   .fontColor(this.accentColor)
                   .backgroundColor('#00000000')
                   .onClick(() => {
-                    putOffAll()
+                    let context: Context = getContext(this) as common.Context
+                    putOffAll(context)
                   })
               }
               .padding({ top: 8 })
@@ -189,7 +191,8 @@ export struct EventsTable {
         }
       })
       .onRefreshing(async () => {
-        await refreshResource()
+        let context: Context = getContext(this) as common.Context
+        await refreshResource(context)
         setTimeout(() => {
           this.isRefreshing = false
         }, 200)

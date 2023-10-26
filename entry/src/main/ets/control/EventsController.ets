@@ -18,9 +18,6 @@ import common from '@ohos.app.ability.common';
 
 PersistentStorage.PersistProp('eventsShowResource', [[], [], []])
 
-const showTaskImpl: ShowTaskInterface = new ShowTaskImpl(getContext(this) as common.Context);
-const taskImpl: TaskInterface = new TaskImpl(getContext(this) as common.Context);
-
 function getDateTime(yearNum: number, monthNum: number, dayNum: number): number[] {
   let date: number[] = [yearNum, monthNum, dayNum]
   let y = new Date().getFullYear()
@@ -148,12 +145,12 @@ function eventInfoToEventResource(eventInfo: EventInfo): EventResource {
  * @param dayNum 查询的时间-日
  * @param folderId 查询的待办单号
  */
-export async function getResource(yearNum: number, monthNum: number, dayNum: number, folderId: number) {
+export async function getResource(yearNum: number, monthNum: number, dayNum: number, folderId: number, context: Context) {
   let doneNum = AppStorage.Get<number>("doneNum");
   let todoNum = AppStorage.Get<number>("todoNum");
   let eventsShowResource = AppStorage.Get<EventResource[][]>("eventsShowResource");
 
-  let obj = await getEventResource([yearNum, monthNum, dayNum], folderId)
+  let obj = await getEventResource([yearNum, monthNum, dayNum], folderId, context)
 
   doneNum = obj[0]
   todoNum = obj[1]
@@ -178,9 +175,9 @@ export async function getResource(yearNum: number, monthNum: number, dayNum: num
  * @param dayNum 查询的时间-日
  * @param folderId 查询的待办单号
  */
-export async function getFormResource(yearNum: number, monthNum: number, dayNum: number, folderId: number): Promise<[number, number, EventResource[][]]>{
+export async function getFormResource(yearNum: number, monthNum: number, dayNum: number, folderId: number, context: Context): Promise<[number, number, EventResource[][]]>{
 
-  let obj = await getEventResource([yearNum, monthNum, dayNum], folderId)
+  let obj = await getEventResource([yearNum, monthNum, dayNum], folderId, context)
 
   let doneNum = obj[0]
   let todoNum = obj[1]
@@ -196,13 +193,12 @@ export async function getFormResource(yearNum: number, monthNum: number, dayNum:
   return [doneNum, todoNum, eventsShowResource];
 }
 
-export async function refreshResource() {
-
-  await getNewAndImportData(false)
+export async function refreshResource(context: Context) {
+  await getNewAndImportData(context, false)
   let showDate = AppStorage.Get<number[]>('showDate');
   let folderId = AppStorage.Get<number>('folderId');
-  getFolderResource();
-  await getResource(showDate[0], showDate[1], showDate[2], folderId);
+  getFolderResource(context);
+  await getResource(showDate[0], showDate[1], showDate[2], folderId, context);
 }
 
 /**
@@ -239,12 +235,14 @@ function getBackgroundColor(classify: string): Resource {
  * @param dayNum 查询的时间-日
  * @param folderId 查询的待办单号
  */
-export async function getResource_little(yearNum: number, monthNum: number, dayNum: number, folderId: number): Promise<[number, number, [string, Resource, number][]]> {
+export async function getResource_little(yearNum: number, monthNum: number, dayNum: number, folderId: number, context: Context): Promise<[number, number, [string, Resource, number][]]> {
 
   let dateTime: number[] = getDateTime(yearNum, monthNum, dayNum)
   var doneNum = 0
   var todoNum = 0
   var eventsShowResource: [string, Resource, number][] = []
+
+  const showTaskImpl: ShowTaskInterface = new ShowTaskImpl();
 
   return new Promise((resolve) => {
     showTaskImpl.queryDisplayTaskContext(new Date(dateTime[0], dateTime[1] - 1, dateTime[2], dateTime[3], dateTime[4]), folderId, (
@@ -270,25 +268,17 @@ export async function getResource_little(yearNum: number, monthNum: number, dayN
         eventsShowResource.push([DoneArray[i].title, getBackgroundColor(DoneArray[i].favoritesColor), 2])
 
       resolve([doneNum, todoNum, eventsShowResource])
-    })
+    }, context)
   })
 }
 
 /**
  * 获取是否有事项
  */
-export async function getFormResource_little(yearNum: number, monthNum: number, dayNum: number, folderId: number): Promise<boolean> {
-
-  let dateTime: number[] = getDateTime(yearNum, monthNum, dayNum)
-  var todoNum = 0;
-
+export async function getFormResource_little(yearNum: number, monthNum: number, dayNum: number, folderId: number, context: Context): Promise<boolean> {
+  let obj = await getEventResource([yearNum, monthNum, dayNum], folderId, context);
   return new Promise((resolve) => {
-    showTaskImpl.queryDisplayTaskContext(new Date(dateTime[0], dateTime[1] - 1, dateTime[2], dateTime[3], dateTime[4]), folderId, (
-      finishedCount: number, notFinishedCount: number, TodoArray: EventInfo[], PassArray: EventInfo[], DoneArray: EventInfo[]
-    ) => {
-      todoNum = notFinishedCount
-      resolve(todoNum > 0)
-    })
+      resolve((obj[0] + obj[1] > 0));
   })
 }
 
@@ -348,20 +338,25 @@ export function getCounter(): number {
  * 完成一次事项
  * @param eventId 事件的ID
  */
-export function AddCompTime(eventId: number) {
-  showTaskImpl.addCompleteCount(eventId, new Date(), (flag: boolean, reason: string) => {
-    console.log('1-3.完成一次事项: {事件的ID:' + eventId + ',完成的时间:' + new Date().getFullYear() + '年' +
-    (new Date().getMonth() + 1) + '月' + new Date().getDate() + '日' + new Date().getHours() + '时' +
-    new Date().getMinutes() + '分' + new Date().getSeconds() + '秒}',);
-    if (flag) {
-      refreshResource()
-      UpdateVersionNumber()
-    } else {
-      prompt.showToast({
-        message: '完成事项失败，' + reason,
-        duration: 1000,
-      });
-    }
+export async function AddCompTime(eventId: number, context: Context):Promise<void> {
+  const showTaskImpl: ShowTaskInterface = new ShowTaskImpl();
+
+  return new Promise((resolve) => {
+    showTaskImpl.addCompleteCount(eventId, new Date(), (flag: boolean, reason: string) => {
+      console.log('1-3.完成一次事项: {事件的ID:' + eventId + ',完成的时间:' + new Date().getFullYear() + '年' +
+      (new Date().getMonth() + 1) + '月' + new Date().getDate() + '日' + new Date().getHours() + '时' +
+      new Date().getMinutes() + '分' + new Date().getSeconds() + '秒}',);
+      if (flag) {
+        refreshResource(context)
+        UpdateVersionNumber()
+      } else {
+        prompt.showToast({
+          message: '完成事项失败，' + reason,
+          duration: 1000,
+        });
+      }
+      resolve()
+    }, context)
   })
 }
 
@@ -370,18 +365,22 @@ export function AddCompTime(eventId: number) {
  * 取消完成一次事项
  * @param eventId 事件的ID
  */
-export function SubCompTime(eventId: number) {
-  showTaskImpl.cancelCompleteCount(eventId, (flag: boolean, reason: string) => {
-    console.log('1-4.取消完成一次事项: {事件的ID:' + eventId + '}')
-    if (flag) {
-      refreshResource()
-      UpdateVersionNumber()
-    } else {
-      prompt.showToast({
-        message: '取消完成事项失败，' + reason,
-        duration: 1000,
-      });
-    }
+export async function SubCompTime(eventId: number, context: Context):Promise<void> {
+  const showTaskImpl: ShowTaskInterface = new ShowTaskImpl();
+  return new Promise((resolve) => {
+    showTaskImpl.cancelCompleteCount(eventId, (flag: boolean, reason: string) => {
+      console.log('1-4.取消完成一次事项: {事件的ID:' + eventId + '}')
+      if (flag) {
+        refreshResource(context)
+        UpdateVersionNumber()
+      } else {
+        prompt.showToast({
+          message: '取消完成事项失败，' + reason,
+          duration: 1000,
+        });
+      }
+      resolve();
+    }, context)
   })
 }
 
@@ -443,15 +442,17 @@ export function checkEvents(state: boolean, eventId: number): void {
  * @param id 事件的ID
  * @param folderId 改动的待办单目标
  */
-async function setFolder(id: number, folderId: number): Promise<[boolean, string]> {
+async function setFolder(id: number, folderId: number, context: Context): Promise<[boolean, string]> {
+  const showTaskImpl: ShowTaskInterface = new ShowTaskImpl();
+  const taskImpl: TaskInterface = new TaskImpl();
   console.log('1-10.移动一个事项: {事件的ID:' + id + ',移动的目标:' + folderId + '}')
 
   return new Promise((resolve) => {
     showTaskImpl.queryID1ByID2(id, (id1: number, isLoop: boolean, unitTimeNumber: number) => {
       taskImpl.changeFavorites(id1, folderId, (flag: boolean, reason: string) => {
         resolve([flag, reason])
-      })
-    })
+      }, context)
+    }, context)
   });
 
 }
@@ -460,7 +461,7 @@ async function setFolder(id: number, folderId: number): Promise<[boolean, string
  * 改动所有所选事件的待办单分类
  * @param folderId 改动的待办单目标ID
  */
-export async function setAllFolder(folderId: number) {
+export async function setAllFolder(folderId: number, context: Context) {
   let isHidden = AppStorage.Get<boolean[]>("isHidden");
   let eventsShowResource = AppStorage.Get<EventResource[][]>("eventsShowResource");
 
@@ -472,7 +473,7 @@ export async function setAllFolder(folderId: number) {
     if (!isHidden[i])
       for (let j = 0;j < eventsShowResource[i].length; j++)
         if (eventsShowResource[i][j].isChecked) {
-          let ret: [boolean, string] = await setFolder(eventsShowResource[i][j].eventId, folderId)
+          let ret: [boolean, string] = await setFolder(eventsShowResource[i][j].eventId, folderId, context)
           if (ret[0]) {
             addFolderCounter(eventsShowResource[i][j].folderId, -1)
             addFolderCounter(folderId, 1)
@@ -533,20 +534,22 @@ export function isCyclic(): boolean {
  * @param id 删除的事项ID
  * @param isWhole 是否删除整个重复
  */
-async function deleteEach(id: number, isWhole: boolean): Promise<[boolean, string]> {
+async function deleteEach(id: number, isWhole: boolean, context: Context): Promise<[boolean, string]> {
+  const showTaskImpl: ShowTaskInterface = new ShowTaskImpl();
+
   if (isWhole) {
     console.log('1-7.删除整个事项: {事件的ID:' + id.toString() + '}',)
     return new Promise((resolve) => {
       showTaskImpl.deleteAll(id, (flag: boolean, reason: string) => {
         resolve([flag, reason])
-      })
+      }, context)
     });
   } else {
     console.log('1-6.删除一个事项: {事件的ID:' + id.toString() + '}',)
     return new Promise((resolve) => {
       showTaskImpl.deleteSingleShow(id, (flag: boolean, reason: string) => {
         resolve([flag, reason])
-      })
+      }, context)
     });
   }
 }
@@ -555,7 +558,7 @@ async function deleteEach(id: number, isWhole: boolean): Promise<[boolean, strin
  * 删除所有所选的事项
  * @param isWhole 是否删除整个重复
  */
-export async function deleteAll(isWhole: boolean) {
+export async function deleteAll(isWhole: boolean, context: Context) {
   let doneNum = AppStorage.Get<number>("doneNum");
   let todoNum = AppStorage.Get<number>("todoNum");
   let eventsShowResource = AppStorage.Get<EventResource[][]>("eventsShowResource");
@@ -564,7 +567,7 @@ export async function deleteAll(isWhole: boolean) {
   for (let i = 0;i < 3; i++)
     for (let j = 0;j < eventsShowResource[i].length; j++)
       if (eventsShowResource[i][j].isChecked) {
-        let ret: [boolean, string] = await deleteEach(eventsShowResource[i][j].eventId, isWhole)
+        let ret: [boolean, string] = await deleteEach(eventsShowResource[i][j].eventId, isWhole, context)
         if (ret[0]) {
           if (isWhole || !eventsShowResource[i][j].isCyclic) {
             addFolderCounter(eventsShowResource[i][j].folderId, -1)
@@ -578,9 +581,9 @@ export async function deleteAll(isWhole: boolean) {
           if (eventsShowResource[i][j].state == 2) doneNum--
           else todoNum--
           if (isWhole) {
-            DeleteNotification(eventsShowResource[i][j].eventId)
+            DeleteNotification(eventsShowResource[i][j].eventId, context)
           } else {
-            DeleteOneNotification(eventsShowResource[i][j].eventId)
+            DeleteOneNotification(eventsShowResource[i][j].eventId, context)
           }
           UpdateVersionNumber()
         } else {
@@ -601,7 +604,7 @@ export async function deleteAll(isWhole: boolean) {
   AppStorage.Set<number>("todoNum", todoNum)
   AppStorage.Set<EventResource[][]>("eventsShowResource", eventsShowResource);
 
-  refreshResource();
+  refreshResource(context);
 }
 
 /*------------------------------------------------------收藏-------------------------------------------------------*/
@@ -628,15 +631,18 @@ export function getIsAllCollect(): boolean {
  * @param value 是否收藏
  * @param id 事项的ID
  */
-async function setCollect(value: boolean, id: number): Promise<[boolean, string]> {
+async function setCollect(value: boolean, id: number, context: Context): Promise<[boolean, string]> {
   console.log('1.7/8 收藏一个事项（整个重复）: id: ' + id + ' ,value:' + value)
+
+  const showTaskImpl: ShowTaskInterface = new ShowTaskImpl();
+  const taskImpl: TaskInterface = new TaskImpl();
 
   return new Promise((resolve) => {
     showTaskImpl.queryID1ByID2(id, (id1: number, isLoop: boolean, unitTimeNumber: number) => {
       taskImpl.changeCollectible(id1, value, (flag: boolean, reason: string) => {
         resolve([flag, reason])
-      })
-    })
+      }, context)
+    }, context)
   });
 
 }
@@ -645,7 +651,7 @@ async function setCollect(value: boolean, id: number): Promise<[boolean, string]
  * 设置所有所选的是否收藏
  * @param value 是否收藏
  */
-export async function setAllCollect(value: boolean) {
+export async function setAllCollect(value: boolean, context: Context) {
   let isHidden = AppStorage.Get<boolean[]>("isHidden");
   let eventsShowResource = AppStorage.Get<EventResource[][]>("eventsShowResource");
 
@@ -654,7 +660,7 @@ export async function setAllCollect(value: boolean) {
       for (let j = 0;j < eventsShowResource[i].length; j++)
         if (eventsShowResource[i][j].isChecked && eventsShowResource[i][j].isCollected != value) {
 
-          let ret: [boolean, string] = await setCollect(value, eventsShowResource[i][j].eventId)
+          let ret: [boolean, string] = await setCollect(value, eventsShowResource[i][j].eventId, context)
           if (ret[0]) {
             if (eventsShowResource[i][j].isCollected != value)
               addFolderCounter(-2, value ? 1 : -1)
@@ -677,10 +683,12 @@ export async function setAllCollect(value: boolean) {
  * 创建新事项
  * @param newCreator
  */
-export function createEvent(newCreator: CreateResource) {
+export function createEvent(newCreator: CreateResource, context: Context) {
   console.log('2-2.创建一个事件: ' + JSON.stringify(newCreator))
   let taskData: TaskData = newCreator.toTaskData()
   console.log('2-2.创建一个事件: ' + JSON.stringify(taskData))
+
+  const taskImpl: TaskInterface = new TaskImpl();
 
   taskImpl.insert(taskData, async (id1: number, flag: boolean, reason: string) => {
     console.log('2-2.创建一个事件: ' + flag)
@@ -693,8 +701,8 @@ export function createEvent(newCreator: CreateResource) {
         addFolderCounter(-2, 1)
       if (newCreator.isImportant)
         addFolderCounter(-3, 1)
-      refreshResource();
-      await AddNotification(id1)
+      refreshResource(context);
+      await AddNotification(id1, context)
       UpdateVersionNumber()
     } else {
       prompt.showToast({
@@ -702,18 +710,19 @@ export function createEvent(newCreator: CreateResource) {
         duration: 1000,
       });
     }
-  })
+  }, context)
 }
 
 
-function funToPromise(taskData: TaskData, changedCycle: boolean) {
+function funToPromise(taskData: TaskData, changedCycle: boolean, context: Context) {
+  const taskImpl: TaskInterface = new TaskImpl();
   return new Promise((resolve) => {
     if (changedCycle) {
       taskImpl.updateLoopTask(taskData, (flag: boolean, reason: string) => {
         console.log(JSON.stringify(taskData))
         console.log('flag: ' + flag + ' ,reason: ' + reason);
         if (flag) {
-          refreshResource()
+          refreshResource(context)
           UpdateVersionNumber()
           resolve([flag, reason])
         } else {
@@ -723,12 +732,12 @@ function funToPromise(taskData: TaskData, changedCycle: boolean) {
           });
           resolve([flag, reason])
         }
-      })
+      }, context)
     } else {
       taskImpl.updateNotLoopTask(taskData, (flag: boolean, reason: string) => {
         console.log(JSON.stringify(taskData))
         if (flag) {
-          refreshResource()
+          refreshResource(context)
           UpdateVersionNumber()
           resolve([flag, reason])
         } else {
@@ -738,7 +747,7 @@ function funToPromise(taskData: TaskData, changedCycle: boolean) {
           });
           resolve([flag, reason])
         }
-      })
+      }, context)
     }
   })
 }
@@ -748,14 +757,14 @@ function funToPromise(taskData: TaskData, changedCycle: boolean) {
  * @param newCreator
  * @param changedCycle 是否修改了循环模式
  */
-export async function editThisEvent(id1: number, newCreator: CreateResource, changedCycle: boolean) {
-  await DeleteNotification(id1)
+export async function editThisEvent(id1: number, newCreator: CreateResource, changedCycle: boolean, context: Context) {
+  await DeleteNotification(id1, context)
 
   let taskData: TaskData = newCreator.toTaskData()
 
-  await funToPromise(taskData, changedCycle)
+  await funToPromise(taskData, changedCycle, context)
 
-  await AddNotification(id1)
+  await AddNotification(id1, context)
 
   // if (changedCycle) {
   //   console.log('3-3.编辑重复事项信息: ' + JSON.stringify(newCreator))
@@ -796,7 +805,8 @@ export async function editThisEvent(id1: number, newCreator: CreateResource, cha
  * @param endTime 新的结束时间
  * @param isToday 是否是今天的时间（如果是则覆盖后两个，否则覆盖前三个）
  */
-async function putOffEvent(eventId: number, isToday: boolean): Promise<[boolean, string]> {
+async function putOffEvent(eventId: number, isToday: boolean, context: Context): Promise<[boolean, string]> {
+  const showTaskImpl: ShowTaskInterface = new ShowTaskImpl();
   let newEndDate: Date = new Date((new Date().getFullYear()), (new Date().getMonth()), (new Date().getDate()), 23, 59)
   if (isToday) {
     console.log('2-2.顺延事件（当天）:{ 事件ID：' + eventId +
@@ -804,7 +814,7 @@ async function putOffEvent(eventId: number, isToday: boolean): Promise<[boolean,
     return new Promise((resolve) => {
       showTaskImpl.deferredTaskToday(eventId, newEndDate, (flag: boolean, reason: string) => {
         resolve([flag, reason])
-      })
+      }, context)
     });
   } else {
     console.log('2-3.顺延事件（当天以前）:{ 事件ID：' + eventId +
@@ -812,7 +822,7 @@ async function putOffEvent(eventId: number, isToday: boolean): Promise<[boolean,
     return new Promise((resolve) => {
       showTaskImpl.deferredTaskBefore(eventId, newEndDate, (flag: boolean, reason: string) => {
         resolve([flag, reason])
-      })
+      }, context)
     });
   }
 }
@@ -821,7 +831,7 @@ async function putOffEvent(eventId: number, isToday: boolean): Promise<[boolean,
  * 顺延一个事件
  * @param eventId 顺延事件的ID
  */
-export async function putOff(eventId: number) {
+export async function putOff(eventId: number, context: Context) {
   let eventsShowResource = AppStorage.Get<EventResource[][]>("eventsShowResource");
 
   let showDate = AppStorage.Get<number[]>("showDate");
@@ -831,7 +841,7 @@ export async function putOff(eventId: number) {
 
   if (id == -1) return;
 
-  let ret = await putOffEvent(eventId, isToday)
+  let ret = await putOffEvent(eventId, isToday, context)
 
   if (ret[0]) {
     eventsShowResource[1][id].state = 0
@@ -859,7 +869,7 @@ export async function putOff(eventId: number) {
 /**
  * 顺延所有事件
  */
-export async function putOffAll() {
+export async function putOffAll(context: Context) {
   let eventsShowResource = AppStorage.Get<EventResource[][]>("eventsShowResource");
 
   let showDate = AppStorage.Get<number[]>("showDate");
@@ -867,7 +877,7 @@ export async function putOffAll() {
 
 
   for (let i = 0;i < eventsShowResource[1].length; i++) {
-    let ret = await putOffEvent(eventsShowResource[1][i].eventId, isToday)
+    let ret = await putOffEvent(eventsShowResource[1][i].eventId, isToday, context)
 
     if (ret[0]) {
       eventsShowResource[1][i].state = 0
@@ -943,9 +953,12 @@ function taskDataToCreateResource(taskData: TaskData): CreateResource {
   return ret
 }
 
-export function queryCreateResource(id2: number) {
+export function queryCreateResource(id2: number, context: Context) {
   let thisEvent = AppStorage.Get<CreateResource>("thisEvent")
   let editEvent = AppStorage.Get<boolean>("editEvent")
+
+  const showTaskImpl: ShowTaskInterface = new ShowTaskImpl();
+  const taskImpl: TaskInterface = new TaskImpl();
 
   showTaskImpl.queryID1ByID2(id2, (id1: number, isLoop: boolean, unitTimeNumber: number) => {
     taskImpl.queryTask((id1), (taskData: TaskData) => {
@@ -957,6 +970,6 @@ export function queryCreateResource(id2: number) {
         AppStorage.Set<CreateResource>("thisEvent", thisEvent)
         console.log("set done :" + AppStorage.Get<boolean>("editEvent"))
       }
-    })
-  })
+    }, context)
+  }, context)
 }

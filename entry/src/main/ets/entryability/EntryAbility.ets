@@ -1,13 +1,16 @@
 import UIAbility from '@ohos.app.ability.UIAbility';
 import hilog from '@ohos.hilog';
 import window from '@ohos.window';
+import { refreshAllForm } from '../control/FormController'
 import Want from '@ohos.app.ability.Want';
-// import { getResource } from '../control/EventsController';
+import { getResource } from '../control/EventsController';
+import common from '@ohos.app.ability.common';
 
-function getFormFolder(want: Want) {
+function getFormFolder() {
   let showDate = AppStorage.Get<number[]>("showDate")
   let folderId = AppStorage.Get<number>("folderId")
-  // getResource(showDate[0], showDate[1], showDate[2], folderId);
+  // let context: Context = getContext(this) as common.Context
+  // getResource(showDate[0], showDate[1], showDate[2], folderId, context);
 }
 
 export default class EntryAbility extends UIAbility {
@@ -23,16 +26,16 @@ export default class EntryAbility extends UIAbility {
         AppStorage.SetOrCreate("showEventAddPanel", true)
         if (params.year != null)
           AppStorage.SetOrCreate("showDate", [params.year, params.month, params.day])
-        getFormFolder(want)
+        getFormFolder()
       }
       else if (params.message == 'todoList' || params.message == 'recommend') {
-        getFormFolder(want)
+        getFormFolder()
       } else if (params.message == 'calendar') {
         AppStorage.SetOrCreate("showDate", [params.year, params.month, params.day])
-        getFormFolder(want)
+        getFormFolder()
         AppStorage.SetOrCreate("selectPos", 1)
       } else if (params.message == 'fourQuadrants') {
-        getFormFolder(want)
+        getFormFolder()
         AppStorage.SetOrCreate("selectPos", 2)
       }
     }
@@ -69,5 +72,6 @@ export default class EntryAbility extends UIAbility {
   onBackground() {
     // Ability has back to background
     hilog.info(0x0000, 'testTag', '%{public}s', 'Ability onBackground');
+    refreshAllForm(this.context);
   }
 }

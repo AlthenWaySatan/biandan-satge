@@ -4,6 +4,7 @@ import { EventsTable } from '../element/EventsTable';
 import { AddEventButton } from '../element/AddEventButton';
 import { ToolBar } from '../element/ToolBar';
 import { getStartDate, getNextNDay, getNextNMonth} from '../../control/CalendarControl';
+import common from '@ohos.app.ability.common';
 
 
 PersistentStorage.PersistProp('FirstDayOfWeek', 0)
@@ -26,7 +27,9 @@ export struct CalendarMonth {
     else
       this.showDate = getNextNMonth(this.showDate, value)
     console.log('1-2.事件内容：??? next -> ', this.showDate);
-    getResource(this.showDate[0], this.showDate[1], this.showDate[2], this.folderId);
+
+    let context: Context = getContext(this) as common.Context
+    getResource(this.showDate[0], this.showDate[1], this.showDate[2], this.folderId, context);
   }
 
   private checkNeedClose(startDate: number[]): boolean {

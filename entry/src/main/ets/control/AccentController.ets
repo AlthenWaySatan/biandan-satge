@@ -22,7 +22,7 @@ export function getAccentColor(accent: string): Resource {
 
 export function get_accent(): Resource {
   let AccentColor1:string = AppStorage.Get<string>("AccentColor1");
- console.info('get accent ' + AccentColor1)
+  console.info('get accent ' + AccentColor1)
   switch (AccentColor1) {
     case '_blue':
       return $r('app.color.accent_blue');

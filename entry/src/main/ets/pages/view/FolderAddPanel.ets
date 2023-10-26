@@ -2,6 +2,7 @@ import window from '@ohos.window';
 import prompt from '@ohos.prompt'
 import { addNewFolder, editNewFolder } from '../../control/FolderController';
 import { get_accent } from '../../control/AccentController';
+import common from '@ohos.app.ability.common';
 
 @Component
 export struct FolderAddPanel {
@@ -116,10 +117,11 @@ export struct FolderAddPanel {
                       duration: 2000,
                     });
                   } else {
+                    let context: Context = getContext(this) as common.Context
                     if(this.isEdit){
-                      editNewFolder(this.folderId, this.chooseClassify, this.name)
+                      editNewFolder(this.folderId, this.chooseClassify, this.name, context)
                     } else {
-                      addNewFolder(this.chooseClassify, this.name)
+                      addNewFolder(this.chooseClassify, this.name, context)
                     }
                     this.setToStart()
                     this.showFolderAddPanel = false
