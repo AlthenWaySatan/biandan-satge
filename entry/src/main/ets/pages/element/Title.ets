@@ -185,12 +185,12 @@ export struct TitleTwo {
     Column() {
       Column() {
         DatePicker({
-          selected: new Date(this.showDate[0] + '-' + this.showDate[1] + '-' + this.showDate[2])
+          selected: new Date(this.showDate[0], this.showDate[1] - 1 , this.showDate[2])
         })
           .lunar(this.isLunar)
           .onChange((value: DatePickerResult) => {
             this.changeDate = [value.year, value.month + 1, value.day]
-            console.info('select current date is: ' + value.year)
+            console.info('select this.changeDate is: ', this.changeDate)
           })
           .width('100%')
           .height('100%')
@@ -204,6 +204,7 @@ export struct TitleTwo {
           Button($r('app.string.Today'))
             .onTouch(() => {
               this.showDate = [(new Date().getFullYear()), (new Date().getMonth() + 1), (new Date().getDate())]
+              console.info('select this.showDate is: ', this.showDate)
               this.mainTitle = this.getShowDate();
               let context: Context = getContext(this) as common.Context
               getResource(this.showDate[0], this.showDate[1], this.showDate[2], this.folderId, context);
@@ -222,6 +223,7 @@ export struct TitleTwo {
           Button($r('app.string.confirm'))
             .onTouch(() => {
               this.showDate = this.changeDate
+              console.info('select this.showDate is: ', this.showDate)
               this.mainTitle = this.getShowDate();
               let context: Context = getContext(this) as common.Context
               getResource(this.showDate[0], this.showDate[1], this.showDate[2], this.folderId, context);
@@ -324,7 +326,7 @@ export struct TitleOne {
     Column() {
       Column() {
         DatePicker({
-          selected: new Date(this.showDate[0] + '-' + this.showDate[1] + '-' + this.showDate[2])
+          selected: new Date(this.showDate[0], this.showDate[1] - 1 , this.showDate[2])
         })
           .lunar(this.isLunar)
           .onChange((value: DatePickerResult) => {

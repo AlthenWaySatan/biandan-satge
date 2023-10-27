@@ -2,8 +2,30 @@ import { get_accent } from '../../control/AccentController';
 
 @Component
 export struct ProgressRing {
-  @Link doneRate: number;
+  @Link @Watch("doneRateChanged") doneRate: number;
+  private tempDoneRate: number = this.doneRate
   private accentColor: Resource
+  @State ringDoneRate: number = this.tempDoneRate;
+
+  delay(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  async doneRateChanged() {
+    this.tempDoneRate = this.doneRate;
+    var d_rate = (this.tempDoneRate - this.ringDoneRate) > 0 ? 0.001 : -0.001;
+    for (let i = 0; i < 1000; i++) {
+      if (Math.abs(this.tempDoneRate - this.ringDoneRate) < Math.abs(d_rate)) {
+        this.ringDoneRate = this.tempDoneRate;
+        d_rate = 0;
+        break;
+      } else {
+        this.ringDoneRate += d_rate;
+        await this.delay(2);
+      }
+    }
+    // console.log("doneRateChanged ~", this.tempDoneRate, this.ringDoneRate)
+  }
 
   aboutToAppear() {
     this.accentColor = get_accent()
@@ -13,7 +35,7 @@ export struct ProgressRing {
     Column() {
       Stack() {
         Row() {
-          Text((100 * this.doneRate).toFixed(this.doneRate == 1 ? 0 : 1).toString())
+          Text((100 * this.ringDoneRate).toFixed(this.ringDoneRate == 1 ? 0 : 1).toString())
             .fontWeight(FontWeight.Medium)
             .fontSize(36)
             .fontColor($r('app.color.text_level1'))
@@ -29,7 +51,7 @@ export struct ProgressRing {
         })
 
         Progress({ value: 0, total: 100, type: ProgressType.Ring })
-          .value(this.doneRate * 100)
+          .value(this.ringDoneRate * 100)
           .color(this.accentColor)
           .backgroundColor($r('app.color.barIcon_fill_off'))
           .style({ strokeWidth: 18 })

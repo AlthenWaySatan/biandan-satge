@@ -266,7 +266,7 @@ export struct EventAddPanel {
     Column() {
       Column() {
         DatePicker({
-          selected: new Date(this.thisEvent.thisDate[0] + '-' + this.thisEvent.thisDate[1] + '-' + this.thisEvent.thisDate[2])
+          selected: new Date(this.thisEvent.thisDate[0], this.thisEvent.thisDate[1] - 1, this.thisEvent.thisDate[2])
         })
           .onChange((value: DatePickerResult) => {
             this.thisEvent.setDate(value.year, value.month + 1, value.day, this.DefineCycleLength)
@@ -560,7 +560,7 @@ export struct EventAddPanel {
 
       Column() {
         TimePicker({
-          selected: new Date(this.thisEvent.clockTime[0], this.thisEvent.clockTime[1] - 1, +this.thisEvent.clockTime[2], this.thisEvent.clockTime[3], this.thisEvent.clockTime[4])
+          selected: new Date(this.thisEvent.clockTime[0], this.thisEvent.clockTime[1] - 1, this.thisEvent.clockTime[2], this.thisEvent.clockTime[3], this.thisEvent.clockTime[4])
         })
           .useMilitaryTime(this.DefaultTimeFormat == 0)
           .onChange((value: TimePickerResult) => {
