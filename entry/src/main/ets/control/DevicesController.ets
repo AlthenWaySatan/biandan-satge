@@ -72,7 +72,7 @@ export async function CloseSyncListener_devices(context: Context) {
  */
 export async function clearTerminalsList(context: Context) {
   let TerminalsSyncSwitch = AppStorage.Get<number>('TerminalsSyncSwitch')
-  if (!TerminalsSyncSwitch) return;
+  if (TerminalsSyncSwitch == 0) return;
   const kvStore = await getKVStore(context)
   kvStore.put(Device_Key, '')
 }
@@ -109,7 +109,7 @@ export function getLocalTerminals(): object {
  */
 export async function getTerminalsList(context: Context): Promise<object[]> {
   let TerminalsSyncSwitch = AppStorage.Get<number>('TerminalsSyncSwitch')
-  if (!TerminalsSyncSwitch)
+  if (TerminalsSyncSwitch == 0)
     return []
   const kvStore = await getKVStore(context)
   let thisDevice = getLocalTerminals()

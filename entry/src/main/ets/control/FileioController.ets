@@ -39,8 +39,8 @@ export async function getPermission_WRITE_MEDIA(context: Context): Promise<boole
  * 获取媒体资源
  */
 export async function getMediaLibrary(context: Context): Promise<mediaLibrary.FileAsset[]> {
-  let BackUpSwitch: boolean = AppStorage.Get<boolean>('BackUpSwitch')
-  if (!BackUpSwitch) return []
+  let BackUpSwitch: number = AppStorage.Get<number>('BackUpSwitch')
+  if (BackUpSwitch == 0) return []
 
   let media = mediaLibrary.getMediaLibrary(context);
   console.log('filesFetchOptions = ' + JSON.stringify(filesFetchOptions))
@@ -100,8 +100,8 @@ function getTimeDate(): string {
 }
 
 async function deleteRedundancyFile(context: Context) {
-  let BackUpSwitch: boolean = AppStorage.Get<boolean>('BackUpSwitch')
-  if (!BackUpSwitch) return []
+  let BackUpSwitch: number = AppStorage.Get<number>('BackUpSwitch')
+  if (BackUpSwitch == 0) return []
 
   let media = mediaLibrary.getMediaLibrary(context);
   console.log('filesFetchOptions = ' + JSON.stringify(filesFetchOptions))
@@ -173,16 +173,19 @@ async function getBackupObject(context: Context): Promise<object> {
 /**
  * 备份文件
  */
-export async function backupFile(context: Context) {
+export async function backupFile(context: Context):Promise<void> {
   //  let data: object = { "text": new Date() }
   let value = await getPermission_WRITE_MEDIA(context)
-  if (value) {
-    let data: object = await getBackupObject(context)
-    let str: string = JSON.stringify(data)
-    console.log('backup value: ' + str);
-    await writeFile(str, context)
-    await deleteRedundancyFile(context)
-  }
+  return new Promise(async (resolve) => {
+    if (value) {
+      let data: object = await getBackupObject(context)
+      let str: string = JSON.stringify(data)
+      console.log('backup value: ' + str);
+      await writeFile(str, context)
+      await deleteRedundancyFile(context)
+    }
+    resolve();
+  })
 }
 
 /**

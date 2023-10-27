@@ -72,7 +72,7 @@ export async function OpenSyncListener(context: Context) {
   const kvStore = await getKVStore(context)
   kvStore.on('dataChange', distributedData.SubscribeType.SUBSCRIBE_TYPE_ALL, function (data) {
     let TerminalsSyncSwitch = AppStorage.Get<number>('TerminalsSyncSwitch')
-    if (!TerminalsSyncSwitch) return;
+    if (TerminalsSyncSwitch == 0) return;
     let newVersion: number = AppStorage.Get<number>('LocalVersionNumber')
     kvStore.get(Version_Key, function (err, SyncVersion) {
       console.log("get success Version_Key: " + SyncVersion);
@@ -126,7 +126,7 @@ export async function CloseSyncListener(context: Context) {
  * 导出数据新版本到数据库
  * @param showPrompt 是否前台导出
  */
-export async function ExportNewVersion(context: Context, showPrompt: boolean = false) {
+export async function ExportNewVersion(context: Context, showPrompt: boolean = false):Promise<void> {
   const kvStore = await getKVStore(context)
 
   let data: object = await getBackupObject(context)
@@ -136,34 +136,36 @@ export async function ExportNewVersion(context: Context, showPrompt: boolean = f
   let newVersion: number = AppStorage.Get<number>('LocalVersionNumber')
 
   console.log('[Sync] newVersion: ' + newVersion);
-  kvStore.get(Version_Key, function (err, SyncVersion) {
-    console.log("get success Version_Key: " + SyncVersion);
-    console.log("get error: " + err);
-    if (SyncVersion == undefined || SyncVersion < newVersion) {
-      console.log('[Sync] newVersion: ' + newVersion);
-      kvStore.put(Version_Key, newVersion)
+  return new Promise(async (resolve) => {
+    kvStore.get(Version_Key, function (err, SyncVersion) {
+      console.log("get success Version_Key: " + SyncVersion);
+      console.log("get error: " + err);
+      if (SyncVersion == undefined || SyncVersion < newVersion) {
+        console.log('[Sync] newVersion: ' + newVersion);
+        kvStore.put(Version_Key, newVersion)
 
-      let i: number = 0;
-      for (; i < str.length; i += MaxLength) {
-        kvStore.put(Data_Key + (i.toString()), str.substring(i, i + MaxLength))
-        //        result.push(str.substring(i, i + MaxLength));
+        let i: number = 0;
+        for (; i < str.length; i += MaxLength) {
+          kvStore.put(Data_Key + (i.toString()), str.substring(i, i + MaxLength))
+          //        result.push(str.substring(i, i + MaxLength));
+        }
+        kvStore.put(Length_Key, str.length)
+        //      kvStore.put(Data_Key, str)
+        if (showPrompt)
+          prompt.showToast({
+            message: '发送成功，快去看看吧！',
+            duration: 1000,
+          });
+      } else {
+        if (showPrompt)
+          prompt.showToast({
+            message: '发送失败，发送数据不为最新',
+            duration: 1000,
+          });
       }
-      kvStore.put(Length_Key, str.length)
-      //      kvStore.put(Data_Key, str)
-
-      if (showPrompt)
-        prompt.showToast({
-          message: '发送成功，快去看看吧！',
-          duration: 1000,
-        });
-    } else {
-      if (showPrompt)
-        prompt.showToast({
-          message: '发送失败，发送数据不为最新',
-          duration: 1000,
-        });
-    }
-  });
+      resolve();
+    });
+  })
 }
 
 
@@ -172,7 +174,7 @@ export async function ExportNewVersion(context: Context, showPrompt: boolean = f
  */
 async function ImportNewVersion(context: Context): Promise<[boolean, number, string]> {
   let TerminalsSyncSwitch = AppStorage.Get<number>('TerminalsSyncSwitch')
-  if (!TerminalsSyncSwitch)
+  if (TerminalsSyncSwitch == 0)
     return [false, 0, '']
 
   const kvStore = await getKVStore(context)
@@ -223,7 +225,7 @@ export function UpdateVersionNumber(newVersionNumber: number = new Date().getTim
  */
 export async function getNewAndImportData(context: Context, showFail: boolean = true) {
   let TerminalsSyncSwitch = AppStorage.Get<number>('TerminalsSyncSwitch')
-  if (!TerminalsSyncSwitch) return;
+  if (TerminalsSyncSwitch == 0) return;
   let ret: [boolean, number, string] = await ImportNewVersion(context)
   if (ret[0]) {
     UpdateVersionNumber(ret[1])

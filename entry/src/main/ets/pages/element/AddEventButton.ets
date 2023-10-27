@@ -51,7 +51,7 @@ export struct AddEventButton {
 
   private longPress() {
     if (!this.isEdit && !this.showAddMore) {
-      if (!AppStorage.Get<boolean>('TerminalsSyncSwitch')) return;
+      if (AppStorage.Get<number>('TerminalsSyncSwitch') == 0) return;
       vibrator.vibrate(20)
       this.showAddMore = true
     }

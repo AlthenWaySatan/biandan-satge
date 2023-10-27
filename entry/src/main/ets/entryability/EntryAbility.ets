@@ -1,10 +1,10 @@
 import UIAbility from '@ohos.app.ability.UIAbility';
 import hilog from '@ohos.hilog';
 import window from '@ohos.window';
-import { refreshAllForm } from '../control/FormController'
-import Want from '@ohos.app.ability.Want';
-import { getResource } from '../control/EventsController';
-import common from '@ohos.app.ability.common';
+import { refreshAllForm } from '../control/FormController';
+import { setBackgroundTask } from '../control/BackgroundTaskController';
+import { ExportNewVersion } from '../control/TerminalsSyncController';
+import { backupFile } from '../control/FileioController';
 
 function getFormFolder() {
   let showDate = AppStorage.Get<number[]>("showDate")
@@ -73,5 +73,17 @@ export default class EntryAbility extends UIAbility {
     // Ability has back to background
     hilog.info(0x0000, 'testTag', '%{public}s', 'Ability onBackground');
     // refreshAllForm(this.context);
+    let reason: string = "刷新卡片";
+    let tasks: Function[] = [];
+    tasks.push(refreshAllForm);
+    if ( AppStorage.Get<number>('AutoBackUpSwitch') != 0) {
+      tasks.push(backupFile);
+      reason += "，自动备份";
+    }
+    if (AppStorage.Get<number>('AutoTerminalsSyncSwitch') != 0) {
+      tasks.push(ExportNewVersion);
+      reason += "，同步新版本";
+    }
+    setBackgroundTask(reason, tasks, this.context);
   }
 }

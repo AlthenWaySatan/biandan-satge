@@ -53,7 +53,7 @@ export struct LocationBackUpPage {
   //  @State fileList: string[] = ['20230404222400.json', '20230404222400.json', '20230404222400.json', '20230404222400.json', '20230404222400.json']
 
   private async refreshFileList() {
-    if (this.BackUpSwitch) {
+    if (this.BackUpSwitch == 1) {
       let context: Context = getContext(this) as common.Context
       this.fileList = await getMediaLibrary(context)
     } else {
@@ -63,7 +63,7 @@ export struct LocationBackUpPage {
 
   aboutToAppear() {
     this.accentColor = get_accent();
-    if (this.BackUpSwitch) {
+    if (this.BackUpSwitch == 1) {
       let context: Context = getContext(this) as common.Context
       getPermission_WRITE_MEDIA(context).then((value: boolean) => {
         if (!value) {
@@ -253,7 +253,7 @@ export struct LocationBackUpPage {
                     this.BackUpSwitch = 1
                   else
                     this.BackUpSwitch = 0
-                  if (!this.BackUpSwitch)
+                  if (this.BackUpSwitch == 0)
                     this.AutoBackUpSwitch = 0
                   this.refreshFileList()
                   this.CODE_DISTURBANCE();
@@ -264,13 +264,13 @@ export struct LocationBackUpPage {
           }.height(56).width('100%')
 
           Column() {
-            if (this.BackUpSwitch)
+            if (this.BackUpSwitch == 1)
               Text('备份目录：' + backUpPath + '\n最多可以保留10个备份')
                 .fontSize(14)
                 .fontColor($r('app.color.text_level2'))
           }
           .alignItems(HorizontalAlign.Start)
-          .height(this.BackUpSwitch ? 45 : 0)
+          .height(this.BackUpSwitch == 1 ? 45 : 0)
           .width('100%')
           .padding({ left: 12, right: 12 })
           .animation({
@@ -279,13 +279,13 @@ export struct LocationBackUpPage {
           })
         }
         .Card()
-        .height(this.BackUpSwitch ? 101 : 56)
+        .height(this.BackUpSwitch == 1 ? 101 : 56)
         .animation({
           duration: 200, // 动画时长
           curve: Curve.EaseOut, // 动画曲线
         })
 
-        if (this.BackUpSwitch)
+        if (this.BackUpSwitch == 1)
         Column() {
           Stack({ alignContent: Alignment.End }) {
             this.settingItem({ title: '开启自动备份' })
@@ -304,13 +304,13 @@ export struct LocationBackUpPage {
           }.height(56).width('100%')
 
           Column() {
-            if (this.AutoBackUpSwitch)
+            if (this.AutoBackUpSwitch == 1)
               Text('每次退出应用时自动备份')
                 .fontSize(14)
                 .fontColor($r('app.color.text_level2'))
           }
           .alignItems(HorizontalAlign.Start)
-          .height(this.AutoBackUpSwitch ? 30 : 0)
+          .height(this.AutoBackUpSwitch == 1 ? 30 : 0)
           .width('100%')
           .padding({ left: 12, right: 12 })
           .animation({
@@ -319,14 +319,14 @@ export struct LocationBackUpPage {
           })
         }
         .Card()
-        .height(this.AutoBackUpSwitch ? 86 : 56)
+        .height(this.AutoBackUpSwitch == 1 ? 86 : 56)
         .animation({
           duration: 200, // 动画时长
           curve: Curve.EaseOut, // 动画曲线
         })
 
 
-        if (this.BackUpSwitch)
+        if (this.BackUpSwitch == 1)
         Column() {
           Row() {
             Button('立即备份')
@@ -357,7 +357,7 @@ export struct LocationBackUpPage {
         }
         .width('100%')
 
-        if (this.BackUpSwitch)
+        if (this.BackUpSwitch == 1)
         Column() {
           if (this.fileList.length == 0) {
             Row() {
@@ -403,7 +403,7 @@ export struct TerminalsSyncPage {
     this.localTerminals = getLocalTerminals();
     let context: Context = getContext(this) as common.Context
     clearTerminalsList(context)
-    if (this.TerminalsSyncSwitch) {
+    if (this.TerminalsSyncSwitch == 1) {
       getPermission_DISTRIBUTED_DATASYNC(context).then((value: boolean) => {
         if (!value) {
           this.TerminalsSyncSwitch = 0
@@ -424,7 +424,7 @@ export struct TerminalsSyncPage {
 
   private setListener() {
     let context: Context = getContext(this) as common.Context
-    if (this.TerminalsSyncSwitch) {
+    if (this.TerminalsSyncSwitch == 1) {
       OpenSyncListener(context)
       OpenSyncListener_devices(() => {
         this.refreshTerminalsList()
@@ -554,7 +554,7 @@ export struct TerminalsSyncPage {
                     this.TerminalsSyncSwitch = 1
                   else
                     this.TerminalsSyncSwitch = 0
-                  if (!this.TerminalsSyncSwitch)
+                  if (this.TerminalsSyncSwitch == 0)
                     this.AutoTerminalsSyncSwitch = 0
                   let context: Context = getContext(this) as common.Context
                   clearTerminalsList(context);
@@ -567,13 +567,13 @@ export struct TerminalsSyncPage {
           }.height(56).width('100%')
 
           Column() {
-            if (this.TerminalsSyncSwitch)
+            if (this.TerminalsSyncSwitch == 1)
               Text('开启后将允许其他设备数据覆盖本地数据')
                 .fontSize(14)
                 .fontColor($r('app.color.text_level2'))
           }
           .alignItems(HorizontalAlign.Start)
-          .height(this.TerminalsSyncSwitch ? 30 : 0)
+          .height(this.TerminalsSyncSwitch == 1 ? 30 : 0)
           .width('100%')
           .padding({ left: 12, right: 12 })
           .animation({
@@ -582,13 +582,13 @@ export struct TerminalsSyncPage {
           })
         }
         .Card()
-        .height(this.TerminalsSyncSwitch ? 86 : 56)
+        .height(this.TerminalsSyncSwitch == 1 ? 86 : 56)
         .animation({
           duration: 200, // 动画时长
           curve: Curve.EaseOut, // 动画曲线
         })
 
-        if (this.TerminalsSyncSwitch)
+        if (this.TerminalsSyncSwitch == 1)
         Column() {
           Stack({ alignContent: Alignment.End }) {
             this.settingItem({ title: '自动同步数据到其他设备' })
@@ -607,13 +607,13 @@ export struct TerminalsSyncPage {
           }.height(56).width('100%')
 
           Column() {
-            if (this.AutoTerminalsSyncSwitch)
+            if (this.AutoTerminalsSyncSwitch == 1)
               Text('每次退出应用时自动同步')
                 .fontSize(14)
                 .fontColor($r('app.color.text_level2'))
           }
           .alignItems(HorizontalAlign.Start)
-          .height(this.AutoTerminalsSyncSwitch ? 30 : 0)
+          .height(this.AutoTerminalsSyncSwitch == 1 ? 30 : 0)
           .width('100%')
           .padding({ left: 12, right: 12 })
           .animation({
@@ -622,13 +622,13 @@ export struct TerminalsSyncPage {
           })
         }
         .Card()
-        .height(this.AutoTerminalsSyncSwitch ? 86 : 56)
+        .height(this.AutoTerminalsSyncSwitch == 1 ? 86 : 56)
         .animation({
           duration: 200, // 动画时长
           curve: Curve.EaseOut, // 动画曲线
         })
 
-        if (this.TerminalsSyncSwitch)
+        if (this.TerminalsSyncSwitch == 1)
         Column() {
           Row() {
             Button('向所有设备发送数据')
@@ -656,7 +656,7 @@ export struct TerminalsSyncPage {
         }
         .width('100%')
 
-        if (this.TerminalsSyncSwitch)
+        if (this.TerminalsSyncSwitch == 1)
         Column() {
           Stack({ alignContent: Alignment.End }) {
             this.settingItem({ title: '已连接设备' })

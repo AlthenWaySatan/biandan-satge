@@ -25,6 +25,7 @@ import EventResource from '../model/EventsResourceContact';
 import FolderResource from '../model/FolderResourceContact';
 import common from '@ohos.app.ability.common';
 import { refreshAllForm } from '../control/FormController';
+import { setBackgroundTask } from '../control/BackgroundTaskController';
 
 PersistentStorage.PersistProp('IsFirstIn_', 0)
 PersistentStorage.PersistProp('AutoBackUpSwitch', 0)
@@ -211,12 +212,13 @@ struct Index {
   @StorageLink('AutoBackUpSwitch') AutoBackUpSwitch: number = 0
   @StorageLink('AutoTerminalsSyncSwitch') AutoTerminalsSyncSwitch: number = 0
 
-  async onPageHide() {
-    let context: Context = getContext(this) as common.Context
-    if (this.AutoBackUpSwitch != 0)
-      await backupFile(context)
-    if (this.AutoTerminalsSyncSwitch != 0)
-      await ExportNewVersion(context)
+  onPageHide() {
+    // let context: Context = getContext(this) as common.Context
+    // if (this.AutoBackUpSwitch != 0)
+    //   setBackgroundTask("自动备份", backupFile, context);
+    // if (this.AutoTerminalsSyncSwitch != 0)
+    //   setBackgroundTask("同步新版本", ExportNewVersion, context);
+    // setBackgroundTask("刷新卡片", refreshAllForm, context);
     // await ExportNewVersion_form()
   }
 
