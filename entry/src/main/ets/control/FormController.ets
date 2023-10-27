@@ -1,7 +1,7 @@
 import formInfo from '@ohos.app.form.formInfo';
 import formBindingData from '@ohos.app.form.formBindingData';
 import FormExtensionAbility from '@ohos.app.form.FormExtensionAbility';
-import { getStartDate, getNextNDay, getNextNMonth} from './CalendarControl';
+import { getNextNDay, getNextNMonth} from './CalendarControl';
 import formProvider from '@ohos.app.form.formProvider';
 import { getFormFolderTitle } from './FolderController';
 import EventResource from '../model/EventsResourceContact';
@@ -12,7 +12,7 @@ import common from '@ohos.app.ability.common';
 import { checkQuadrant, getDescription, getStateResource } from './EventsResourceController';
 
 export async function get_accent(context: Context): Promise<Resource> {
-  let AccentColor1 = await getStorage("accent", "color", context)
+  let AccentColor1 = await getStorage("setting", "accentColor", context)
   console.info('get accent ' + AccentColor1)
   switch (AccentColor1) {
     case '_blue':
@@ -41,8 +41,7 @@ interface formData {
  * @param isDone 是否已完成
  * @returns 卡片显示数据
  */
-function turnIntoFormEvent(item: EventResource, isPath: boolean, isDone: boolean): object {
-  let DefaultTimeFormat = AppStorage.Get<number>('DefaultTimeFormat')
+function turnIntoFormEvent(item: EventResource, isPath: boolean, isDone: boolean, DefaultTimeFormat: number): object {
   return {
     'Title': item.title,
     'Time': getDescription(item, [new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate()], DefaultTimeFormat == 0),
@@ -55,6 +54,19 @@ function turnIntoFormEvent(item: EventResource, isPath: boolean, isDone: boolean
     'State': item.state,
     'eventId': item.eventId
   }
+}
+/**
+ * 获取这个月第一天
+ * @param date
+ * @returns
+ */
+export function getStartDate(date: number[], FirstDayOfWeek: number): number[] {
+  var dateTime = new Date(date[0], date[1] - 1, 1);
+  if (FirstDayOfWeek == 0)
+    dateTime = new Date(dateTime.setDate(dateTime.getDate() - (dateTime.getDay() + 6) % 7));
+  else
+    dateTime = new Date(dateTime.setDate(dateTime.getDate() - dateTime.getDay()));
+  return [(dateTime.getFullYear()), (dateTime.getMonth() + 1), (dateTime.getDate())]
 }
 
 /**
@@ -85,8 +97,8 @@ async function getWeek(date: number[], folder: number, context: Context): Promis
  * @param folder 待办单id
  * @returns 这一月每天的显示数据
  */
-async function getFormDate(date: number, month: number, year: number, folder: number, context: Context): Promise<object[][]> {
-  let startDate = getStartDate([year, month, date]);
+async function getFormDate(date: number, month: number, year: number, folder: number, FirstDayOfWeek: number, context: Context): Promise<object[][]> {
+  let startDate = getStartDate([year, month, date], FirstDayOfWeek);
   let ret = [
     await getWeek(startDate, folder, context),
     await getWeek(getNextNDay(startDate, 7), folder, context),
@@ -105,15 +117,15 @@ async function getFormDate(date: number, month: number, year: number, folder: nu
  * @param index 需要显示的数据
  * @returns 显示数据
  */
-function getIndex(Odata: EventResource[][], index: number): object {
+function getIndex(Odata: EventResource[][], index: number, DefaultTimeFormat: number): object {
   if (index < Odata[0].length)
-    return turnIntoFormEvent(Odata[0][index], false, false);
+    return turnIntoFormEvent(Odata[0][index], false, false, DefaultTimeFormat);
   index -= Odata[0].length;
   if (index < Odata[1].length)
-    return turnIntoFormEvent(Odata[1][index], true, false);
+    return turnIntoFormEvent(Odata[1][index], true, false, DefaultTimeFormat);
   index -= Odata[1].length;
   if (index < Odata[2].length)
-    return turnIntoFormEvent(Odata[2][index], false, true);
+    return turnIntoFormEvent(Odata[2][index], false, true, DefaultTimeFormat);
   return null;
 }
 
@@ -159,12 +171,15 @@ export async function getFormObject(type: string, dimension: number, date: numbe
     doneStr: formDoneStr,
     pageNumber: page
   }
+
+  let DefaultTimeFormat = Number(await getStorage("setting", "DefaultTimeFormat", context));
+
   switch (type) {
     case 'recommend': {
-      ret['event'] = getIndex(event_O, page);
+      ret['event'] = getIndex(event_O, page, DefaultTimeFormat);
       if (ret['event'] === null) {
         ret['pageNumber'] = 0;
-        ret['event'] = getIndex(event_O, 0);
+        ret['event'] = getIndex(event_O, 0, DefaultTimeFormat);
         if (ret['event'] === null)
           ret['showEvent'] = false;
       }
@@ -177,7 +192,7 @@ export async function getFormObject(type: string, dimension: number, date: numbe
       function getEventList(page: number): object[] {
         let eventList = [];
         for (let i = 0; i < eventLength; i++) {
-          let temp = getIndex(event_O, page * eventLength + i);
+          let temp = getIndex(event_O, page * eventLength + i, DefaultTimeFormat);
           if (temp === null)
             break;
           eventList.push(temp);
@@ -211,7 +226,7 @@ export async function getFormObject(type: string, dimension: number, date: numbe
             for (let q = 0; q < 4; q++) {
               if (checkQuadrant(event_O[i][j], q < 2, (q & 1) == 0, date) && eventList[q].length < eventLength) {
                 if (trashLength[q] == 0)
-                  eventList[q].push(turnIntoFormEvent(event_O[i][j], isPathTemp, isDoneTemp));
+                  eventList[q].push(turnIntoFormEvent(event_O[i][j], isPathTemp, isDoneTemp, DefaultTimeFormat));
                 else
                   trashLength[q]--;
               }
@@ -236,7 +251,7 @@ export async function getFormObject(type: string, dimension: number, date: numbe
       function getEventList(page: number): object[] {
         let eventList = [];
         for (let i = 0; i < eventLength; i++) {
-          let temp = getIndex(event_O, page * eventLength + i);
+          let temp = getIndex(event_O, page * eventLength + i, DefaultTimeFormat);
           if (temp === null)
             break;
           eventList.push(temp);
@@ -250,8 +265,8 @@ export async function getFormObject(type: string, dimension: number, date: numbe
       }
       ret['Month'] = year.toString() + "年" + month.toString() + "月";
       ret['events'] = eventList;
-      ret['dates'] = await getFormDate(day, month, year, folder, context);
-      let FirstDayOfWeek = AppStorage.Get<number>('FirstDayOfWeek')
+      let FirstDayOfWeek = Number(await getStorage("setting", "FirstDayOfWeek", context));
+      ret['dates'] = await getFormDate(day, month, year, folder, FirstDayOfWeek, context);
       ret['dateHeader'] = (FirstDayOfWeek == 1) ? ['日', '一', '二', '三', '四', '五', '六'] : ['一', '二', '三', '四', '五', '六', '日'];
       break;
     }

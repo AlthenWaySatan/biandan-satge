@@ -1,5 +1,7 @@
 import router from '@ohos.router'
+import common from '@ohos.app.ability.common';
 import { get_accent, get_translucentSaturation_accent } from '../../control/AccentController';
+import { setStorage } from '../../control/StorageController';
 //import {client_id, redirect_uri} from '../../model/HMSContact';
 
 PersistentStorage.PersistProp('FirstDayOfWeek', 0)
@@ -328,6 +330,8 @@ export struct SettingTable {
             ], outPut: (value: number) => {
               if (value > -1) {
                 this.FirstDayOfWeek = value
+                let context: Context = getContext(this) as common.Context
+                setStorage("setting", "FirstDayOfWeek", value.toString(), context)
               }
               return this.FirstDayOfWeek
             }})
@@ -341,6 +345,8 @@ export struct SettingTable {
             ], outPut: (value: number) => {
               if (value > -1) {
                 this.DefaultTimeFormat = value
+                let context: Context = getContext(this) as common.Context
+                setStorage("setting", "DefaultTimeFormat", value.toString(), context)
               }
               return this.DefaultTimeFormat
             }})

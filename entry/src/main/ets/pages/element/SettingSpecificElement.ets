@@ -868,7 +868,7 @@ export struct AccentColorPage {
                       this.AccentColor0 = index;
                       this.AccentColor1 = item[1];
                       let context: Context = getContext(this) as common.Context
-                      setStorage("accent", "color", this.AccentColor1, context);
+                      setStorage("setting", "accentColor", this.AccentColor1, context);
                       prompt.showToast({
                         message: (Object)($r('app.string.restartToTakeEffect')),
                         duration: 500,
@@ -883,7 +883,7 @@ export struct AccentColorPage {
                 this.AccentColor0 = index
                 this.AccentColor1 = item[1]
                 let context: Context = getContext(this) as common.Context
-                setStorage("accent", "color", this.AccentColor1, context);
+                setStorage("setting", "accentColor", this.AccentColor1, context);
                 prompt.showToast({
                   message: (Object)($r('app.string.restartToTakeEffect')),
                   duration: 500,
