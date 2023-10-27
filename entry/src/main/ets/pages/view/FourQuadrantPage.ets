@@ -6,6 +6,7 @@ import { AddEventButton } from '../element/AddEventButton';
 
 @Component
 export struct FourQuadrantPage {
+  @StorageLink('selectPos') selectPos: number = 2;
 
   //当前日期和待办单
   @StorageLink('showDate') showDate: number[] = []
@@ -103,6 +104,7 @@ export struct FourQuadrantPage {
             Column() {
               Stack() {
                 Column() {
+                  if (this.selectPos == 2)
                   FourQuadrant({
                   })
                 }

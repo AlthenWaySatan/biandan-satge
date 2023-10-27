@@ -5,6 +5,7 @@ import { SettingSpecific } from '../element/SettingSpecific';
 
 @Component
 export struct SettingPage {
+  @StorageLink('selectPos') selectPos: number = 3;
   @StorageLink('settingNum') settingNum: number = 0
 
   //屏幕类型
@@ -62,6 +63,7 @@ export struct SettingPage {
                 })
               }
 
+              if (this.selectPos == 3)
               Column() {
                 if (this.screenType == 'lg') {
                   Column() {
@@ -107,6 +109,7 @@ export struct SettingPage {
       .width('100%')
 
       if (this.screenType == 'lg') {
+        if (this.selectPos == 3)
         Column() {
           SettingSpecific({
             columnNum: 8,

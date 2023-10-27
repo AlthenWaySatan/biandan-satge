@@ -8,6 +8,7 @@ import { AddEventButton } from '../element/AddEventButton';
 
 @Component
 export struct TodoPage {
+  @StorageLink('selectPos') selectPos: number = 0;
 
   //是否编辑模式
   @StorageLink('isEdit') isEdit: boolean = false
@@ -125,6 +126,7 @@ export struct TodoPage {
           GridContainer({ columns: this.screenType == 'sm' ? 4 : 8, gutter: 12, margin: 12 }) {
             Column() {
               Stack() {
+                if (this.selectPos == 0)
                 Column() {
                   EventsTable({})
                 }

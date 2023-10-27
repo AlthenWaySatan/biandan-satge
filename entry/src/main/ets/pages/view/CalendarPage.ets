@@ -7,6 +7,7 @@ import FolderResource from '../../model/FolderResourceContact';
 
 @Component
 export struct CalendarPage {
+  @StorageLink('selectPos') selectPos: number = 1;
 
   //是否编辑模式
   @StorageLink('isEdit') isEdit: boolean = false
@@ -103,6 +104,7 @@ export struct CalendarPage {
           }
 
           //数据区
+          if (this.selectPos == 1)
           Column() {
             CalendarMonth({})
           }

@@ -236,26 +236,42 @@ struct Index {
 
           if (this.screenType != '') {
             Column() {
-              if (this.selectPos == 0)
-                TodoPage({
-                  statusBarHeightVp: this.statusBarHeight / this.screenDensity
-                })
-
-              if (this.selectPos == 1)
-                CalendarPage({
-                  statusBarHeightVp: this.statusBarHeight / this.screenDensity
-                })
-
-              if (this.selectPos == 2)
-                FourQuadrantPage({
-                  statusBarHeightVp: this.statusBarHeight / this.screenDensity
-                })
-
-              if (this.selectPos == 3)
-                SettingPage({
-                  statusBarHeightVp: this.statusBarHeight / this.screenDensity
-                })
+            Column() {
+              TodoPage({
+                statusBarHeightVp: this.statusBarHeight / this.screenDensity
+              })
             }
+            .width('100%')
+            .height('100%')
+            .visibility(this.selectPos == 0 ? Visibility.Visible : Visibility.None)
+
+            Column() {
+              CalendarPage({
+                statusBarHeightVp: this.statusBarHeight / this.screenDensity
+              })
+            }
+            .width('100%')
+            .height('100%')
+            .visibility(this.selectPos == 1 ? Visibility.Visible : Visibility.None)
+
+            Column() {
+              FourQuadrantPage({
+                statusBarHeightVp: this.statusBarHeight / this.screenDensity
+              })
+            }
+            .width('100%')
+            .height('100%')
+            .visibility(this.selectPos == 2 ? Visibility.Visible : Visibility.None)
+
+            Column() {
+              SettingPage({
+                statusBarHeightVp: this.statusBarHeight / this.screenDensity
+              })
+            }
+            .width('100%')
+            .height('100%')
+            .visibility(this.selectPos == 3 ? Visibility.Visible : Visibility.None)
+          }
           }
 
           /**
