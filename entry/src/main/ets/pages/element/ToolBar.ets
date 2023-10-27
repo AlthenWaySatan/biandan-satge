@@ -1,12 +1,10 @@
-import ThingsResource from '../../model/EventsResourceContact';
+import EventResource from '../../model/EventsResourceContact';
 import { FolderList_item } from '../element/FolderList';
 import FolderResource from '../../model/FolderResourceContact';
 import {
   getIsAllCollect,
   setAllCollect,
-  getIsAllChecked,
   changeAllChoice,
-  getOneCounter,
   isCyclic,
   setAllFolder,
   deleteAll,
@@ -18,7 +16,7 @@ import common from '@ohos.app.ability.common';
 struct FolderCustomDialog {
   controller: CustomDialogController
   @StorageLink('isHidden') isCardHidden: boolean[] = [false, false, false]
-  @StorageLink('eventsShowResource') eventsShowResource: ThingsResource[][] = [[], [], []]
+  @StorageLink('eventsShowResource') eventsShowResource: string = JSON.stringify([[], [], []])
   @StorageLink('userFolderResource') userFolderResource: FolderResource[] = []
   @StorageLink('systemFolderResource') systemFolderResource: FolderResource[] = []
   @Link thisFolder: number
@@ -112,7 +110,7 @@ struct FolderCustomDialog {
 struct DirectlyDeleteCustomDialog {
   controller1: CustomDialogController
   @StorageLink('isHidden') isCardHidden: boolean[] = [false, false, false]
-  @StorageLink('eventsShowResource') eventsShowResource: ThingsResource[][] = [[], [], []]
+  @StorageLink('eventsShowResource') eventsShowResource: string = JSON.stringify([[], [], []])
   private isWhole = false
   private accentColor: Resource
   aboutToAppear() {
@@ -191,7 +189,7 @@ struct DeleteCustomDialog {
   })
   controller: CustomDialogController
   @StorageLink('isHidden') isCardHidden: boolean[] = [false, false, false]
-  @StorageLink('eventsShowResource') eventsShowResource: ThingsResource[][] = [[], [], []]
+  @StorageLink('eventsShowResource') eventsShowResource: string = JSON.stringify([[], [], []])
 
   private accentColor: Resource
   aboutToAppear() {
@@ -275,7 +273,7 @@ export struct ToolBar {
   /**
    * 展示资源
    */
-  @StorageLink('eventsShowResource') eventsShowResource: ThingsResource[][] = [[], [], []]
+  @StorageLink('eventsShowResource') eventsShowResource: string = JSON.stringify([[], [], []])
 
   //是否编辑模式
   @StorageLink('isEdit') isEdit: boolean = false
@@ -283,6 +281,7 @@ export struct ToolBar {
   //是否隐藏
   @StorageLink('isHidden') isCardHidden: boolean[] = [false, false, false]
   @StorageLink('screenType') screenType: string = ''
+  @State CODE_DISTURBANCE_BOOL: boolean = true;
   @Link isHidden: boolean
 
   private accentColor: Resource
@@ -297,16 +296,43 @@ export struct ToolBar {
   private CODE_DISTURBANCE() {
     this.isCardHidden[0] = !this.isCardHidden[0];
     this.isCardHidden[0] = !this.isCardHidden[0];
+    this.CODE_DISTURBANCE_BOOL = !this.CODE_DISTURBANCE_BOOL;
+    this.CODE_DISTURBANCE_BOOL = !this.CODE_DISTURBANCE_BOOL;
+  }
+
+  private getOneCounter(type: number): number {
+    let temp:EventResource[][] = JSON.parse(this.eventsShowResource);
+    var ret: number = 0;
+    for (let i = 0;i < temp[type].length; i++) {
+      if (temp[type][i].isChecked)
+        ret++;
+    }
+    return ret;
   }
 
   private getCounter(): number {
     var ret: number = 0;
     for (let i = 0;i < 3; i++) {
       if (!this.isCardHidden[i]) {
-        ret += getOneCounter(i)
+        ret += this.getOneCounter(i)
       }
     }
     return ret;
+  }
+
+  public getIsAllChecked(): boolean {
+    let isCardHidden = AppStorage.Get<boolean[]>("isHidden")
+    if (this.getCounter() == 0)
+      return false;
+    let temp:EventResource[][] = JSON.parse(this.eventsShowResource);
+    for (let i = 0;i < 3; i++) {
+      if (!isCardHidden[i] && (this.getOneCounter(i) != temp[i].length))
+        return false;
+    }
+    if (!isCardHidden[0] || !isCardHidden[1] || !isCardHidden[2])
+      return true;
+    else
+      return false;
   }
 
   public async barClick(id: number) {
@@ -343,13 +369,14 @@ export struct ToolBar {
         return
       }
       case 4: {
-        if (getIsAllChecked()) {
+        if (this.getIsAllChecked()) {
           changeAllChoice(false);
         }
         else {
           changeAllChoice(true);
         }
         this.CODE_DISTURBANCE()
+        console.log("checkEvents ", this.getIsAllChecked())
         return
       }
     }
@@ -390,13 +417,14 @@ export struct ToolBar {
    */
   private getFolder(): number {
     var ret: number = -5
+    let temp = JSON.parse(this.eventsShowResource);
     for (let i = 0;i < 3; i++) {
       if (!this.isCardHidden[i]) {
-        for (let j = 0;j < this.eventsShowResource[i].length; j++) {
-          if (this.eventsShowResource[i][j].isChecked) {
-            if (ret != -5 && ret != this.eventsShowResource[i][j].folderId)
+        for (let j = 0;j < temp[i].length; j++) {
+          if (temp[i][j].isChecked) {
+            if (ret != -5 && ret != temp[i][j].folderId)
               return -5
-            ret = this.eventsShowResource[i][j].folderId
+            ret = temp[i][j].folderId
           }
         }
       }
@@ -481,13 +509,14 @@ export struct ToolBar {
         .onClick(this.barClick.bind(this, 3))
 
         Column() {
-          this.BarIcon({icon: getIsAllChecked() ?
-            this.ic_allChoose_on_Marking :
-          $r('app.media.ic_choose_allChoose_off')})
-          this.BarTextBut({
-            text: getIsAllChecked() ? $r('app.string.cancelAllChoose') : $r('app.string.allChoose'),
-            color: getIsAllChecked() ? this.accentColor : $r('app.color.text_level1')
-          })
+          if(this.CODE_DISTURBANCE_BOOL)
+            this.BarIcon({icon: this.getIsAllChecked() ?
+              this.ic_allChoose_on_Marking :
+            $r('app.media.ic_choose_allChoose_off')})
+            this.BarTextBut({
+              text: this.getIsAllChecked() ? $r('app.string.cancelAllChoose') : $r('app.string.allChoose'),
+              color: this.getIsAllChecked() ? this.accentColor : $r('app.color.text_level1')
+            })
         }
         .Item()
         .onClick(this.barClick.bind(this, 4))

@@ -1,5 +1,5 @@
 import FolderResource from '../../model/FolderResourceContact';
-import ThingsResource from '../../model/EventsResourceContact';
+import EventResource from '../../model/EventsResourceContact';
 import { getResource } from '../../control/EventsController';
 import { get_accent } from '../../control/AccentController';
 import common from '@ohos.app.ability.common';
@@ -12,7 +12,6 @@ export struct FolderList {
   @StorageLink('doneNum') doneNum: number = 0
   @StorageLink('todoNum') todoNum: number = 0
   @StorageLink('showDate') showDate: number[] = []
-  @StorageLink('thingsShowResource') thingsShowResource: ThingsResource[][] = [[], [], []]
   @StorageLink('showFolderAddPanel') showFolderAddPanel: boolean = false
 
   private accentColor: Resource
@@ -113,7 +112,6 @@ export struct FolderList_item {
   @StorageLink('doneNum') doneNum: number = 0
   @StorageLink('todoNum') todoNum: number = 0
   @StorageLink('showDate') showDate: number[] = []
-  @StorageLink('thingsShowResource') thingsShowResource: ThingsResource[][] = [[], [], []]
   @StorageLink('showFolderAddPanel') showFolderAddPanel: boolean = false
 
   @Link thisFolder: number

@@ -250,13 +250,13 @@ export function editNewFolder(folderId: number, classify: string, title: string,
       if (flag) {
         let id = userFolderResource.findIndex((item) => item.id == folderId)
         userFolderResource[id] = new FolderResource(folderId, icon, classify, title, userFolderResource[id].counter)
-        let eventsShowResource = AppStorage.Get<EventResource[][]>("eventsShowResource");
+        let eventsShowResource:EventResource[][] = JSON.parse(AppStorage.Get<string>("eventsShowResource"));
         for (let i = 0;i < 3; i++)
           for (let j = 0;j < eventsShowResource[i].length; j++)
             if (eventsShowResource[i][j].folderId == folderId) {
               eventsShowResource[i][j].classify = classify
             }
-        AppStorage.Set<EventResource[][]>("eventsShowResource", eventsShowResource);
+        AppStorage.Set<string>("eventsShowResource", JSON.stringify(eventsShowResource))
         AppStorage.Set<FolderResource[]>("userFolderResource", userFolderResource)
         UpdateVersionNumber()
       } else {

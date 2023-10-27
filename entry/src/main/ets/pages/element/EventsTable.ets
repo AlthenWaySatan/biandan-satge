@@ -1,7 +1,7 @@
 import { TitleOne_small } from './Title';
 import { EventsList } from './EventsList';
 import { putOffAll } from '../../control/EventsController'
-import ThingsResource from '../../model/EventsResourceContact';
+import EventResource from '../../model/EventsResourceContact';
 import { get_accent } from '../../control/AccentController';
 import { refreshResource } from '../../control/EventsController';
 import common from '@ohos.app.ability.common';

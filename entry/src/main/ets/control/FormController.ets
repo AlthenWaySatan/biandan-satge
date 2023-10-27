@@ -9,6 +9,7 @@ import { getFormResource, getFormResource_little, AddCompTime, SubCompTime } fro
 import { setStorage, getStorage, getAllStorage } from './StorageController'
 import { FormInfo } from '../entryformability/EntryFormAbility'
 import common from '@ohos.app.ability.common';
+import { checkQuadrant, getDescription, getStateResource } from './EventsResourceController';
 
 export async function get_accent(context: Context): Promise<Resource> {
   let AccentColor1 = await getStorage("accent", "color", context)
@@ -44,10 +45,10 @@ function turnIntoFormEvent(item: EventResource, isPath: boolean, isDone: boolean
   let DefaultTimeFormat = AppStorage.Get<number>('DefaultTimeFormat')
   return {
     'Title': item.title,
-    'Time': item.getDescription([new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate()], DefaultTimeFormat == 0),
+    'Time': getDescription(item, [new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate()], DefaultTimeFormat == 0),
     'isWarning': item.isImportant,
     'isHighlight': item.isCollected,
-    'stateResource': item.getStateResource(),
+    'stateResource': getStateResource(item),
     'isClock': item.isClock,
     'isPath': isPath,
     'isDone': isDone,
@@ -208,7 +209,7 @@ export async function getFormObject(type: string, dimension: number, date: numbe
           let isDoneTemp: boolean = (i == 3);
           for (let j = 0;j < event_O[i].length; j++) {
             for (let q = 0; q < 4; q++) {
-              if (event_O[i][j].checkQuadrant(q < 2, (q & 1) == 0, date) && eventList[q].length < eventLength) {
+              if (checkQuadrant(event_O[i][j], q < 2, (q & 1) == 0, date) && eventList[q].length < eventLength) {
                 if (trashLength[q] == 0)
                   eventList[q].push(turnIntoFormEvent(event_O[i][j], isPathTemp, isDoneTemp));
                 else

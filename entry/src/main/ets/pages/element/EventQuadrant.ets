@@ -1,8 +1,9 @@
-import ThingsResource from '../../model/EventsResourceContact';
+import EventResource from '../../model/EventsResourceContact';
 import vibrator from '@ohos.vibrator';
 import { AddCompTime, queryCreateResource, SubCompTime } from '../../control/EventsController';
 import { refreshResource } from '../../control/EventsController';
 import common from '@ohos.app.ability.common';
+import { getDescription, getStateResource } from '../../control/EventsResourceController';
 
 PersistentStorage.PersistProp('DefaultTimeFormat', 0)
 
@@ -14,8 +15,8 @@ export struct EventQuadrant {
   @StorageLink('isQuadrantHidden') isQuadrantHidden: boolean[] = []
   @StorageLink('showDate') showDate: number[] = []
   @StorageLink('folderId') folderId: number = 0
-  @StorageLink('eventsShowResource') eventsShowResource: ThingsResource[][] = [[], [], []]
-  @State thisQuadrant: ThingsResource[][] = [[], [], []]
+  @StorageLink('eventsShowResource') eventsShowResource: string = JSON.stringify([[], [], []])
+  @State thisQuadrant: EventResource[][] = [[], [], []]
 
   @State isRefreshing: boolean = false
   @State isScroll: boolean = false
@@ -66,19 +67,20 @@ export struct EventQuadrant {
       return $r('app.color.text_level2')
   }
 
-  // private checkUrgent(event: ThingsResource): boolean {
+  // private checkUrgent(event: EventResource): boolean {
   //   return (event.validEndTime[0] == this.showDate[0]) && (event.validEndTime[1] == this.showDate[1]) && (event.validEndTime[2] == this.showDate[2]) &&
   //   (event.validEndTime[3] != 23 || event.validEndTime[4] != 59)
   // }
 
-  private getNewResource(): ThingsResource[][] {
+  private getNewResource(): EventResource[][] {
     this.thisQuadrant = [[], [], []]
+    let temp = JSON.parse(this.eventsShowResource);
     //    getResource(this.showDate[0], this.showDate[1], this.showDate[2], this.folderId);
     for (let i = 0;i < 3; i++) {
-      for (let j = 0;j < this.eventsShowResource[i].length; j++)
-        if(this.eventsShowResource[i][j].checkQuadrant(this.isImportant, this.isUrgent, this.showDate))
+      for (let j = 0;j < temp[i].length; j++)
+        if(temp[i][j].checkQuadrant(this.isImportant, this.isUrgent, this.showDate))
         // if (this.eventsShowResource[i][j].isImportant == this.isImportant && this.checkUrgent(this.eventsShowResource[i][j]) == this.isUrgent)
-          this.thisQuadrant[i].push(this.eventsShowResource[i][j])
+          this.thisQuadrant[i].push(temp[i][j])
     }
     return this.thisQuadrant
   }
@@ -88,12 +90,12 @@ export struct EventQuadrant {
       Refresh({ refreshing: this.isRefreshing }) {
         Scroll() {
           Column() {
-            ForEach(this.thisQuadrant = this.getNewResource(), (typeQuadrant: ThingsResource[], index: number) => {
-              ForEach(typeQuadrant, (item: ThingsResource) => {
+            ForEach(this.thisQuadrant = this.getNewResource(), (typeQuadrant: EventResource[], index: number) => {
+              ForEach(typeQuadrant, (item: EventResource) => {
                 Column() {
                   Row() {
                     Column() {
-                      Image(item.getStateResource())
+                      Image(getStateResource(item))
                         .height(24)
                         .width(24)
                     }
@@ -148,7 +150,7 @@ export struct EventQuadrant {
                               .width(12)
                               .margin({ right: 4 })
                           }
-                          Text(item.getDescription(this.showDate, this.DefaultTimeFormat == 0))
+                          Text(getDescription(item, this.showDate, this.DefaultTimeFormat == 0))
                             .fontColor(this.getDescriptionColor(index))
                             .maxLines(1)
                             .textOverflow({

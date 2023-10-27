@@ -1,9 +1,10 @@
 import CreateResource from '../../model/CreateResourceContact';
 import vibrator from '@ohos.vibrator';
-import ThingsResource from '../../model/EventsResourceContact';
+import EventResource from '../../model/EventsResourceContact';
 import { checkEvents, AddCompTime, SubCompTime, putOff, queryCreateResource } from '../../control/EventsController';
 import { get_accent } from '../../control/AccentController';
 import common from '@ohos.app.ability.common';
+import { getDescription, getStateResource } from '../../control/EventsResourceController';
 
 PersistentStorage.PersistProp('DefaultTimeFormat', 0)
 
@@ -13,7 +14,7 @@ export struct EventsList {
   @StorageLink('showDate') showDate: number[] = []
 
   //显示资源
-  @StorageLink('eventsShowResource') eventsShowResource: ThingsResource[][] = [[], [], []]
+  @StorageLink('eventsShowResource') eventsShowResource: string = JSON.stringify([[], [], []])
 
   //是否编辑模式
   @StorageLink('isEdit') isEdit: boolean = false
@@ -84,12 +85,12 @@ export struct EventsList {
 
   build() {
     Column() {
-      ForEach(this.eventsShowResource[this.type], (item: ThingsResource) => {
+      ForEach(JSON.parse(this.eventsShowResource)[this.type], (item: EventResource) => {
         Column() {
           if (!this.isHidden[this.type]) {
             Row() {
               Column() {
-                Image(item.getStateResource())
+                Image(getStateResource(item))
                   .height(24)
                   .width(24)
               }
@@ -144,7 +145,7 @@ export struct EventsList {
                         .width(12)
                         .margin({ right: 4 })
                     }
-                    Text(item.getDescription(this.showDate, this.DefaultTimeFormat == 0))
+                    Text(getDescription(item, this.showDate, this.DefaultTimeFormat == 0))
                       .fontColor(this.getDescriptionColor())
                       .maxLines(1)
                       .textOverflow({
@@ -232,7 +233,7 @@ export struct EventsList {
           }
           if (!this.isHidden[this.type]) {
             Row() {
-              if (this.eventsShowResource[this.type].findIndex((item1) => item1.eventId == item.eventId) != this.eventsShowResource[this.type].length - 1) {
+              if (JSON.parse(this.eventsShowResource)[this.type].findIndex((item1) => item1.eventId == item.eventId) != JSON.parse(this.eventsShowResource)[this.type].length - 1) {
                 Divider().width('100%').color($r('app.color.divider'))
               }
             }

@@ -138,7 +138,7 @@ struct Index {
   /**
    * 展示资源
    */
-  @StorageLink('eventsShowResource') eventsShowResource: EventResource[][] = [[], [], []]
+  @StorageLink('eventsShowResource') eventsShowResource: string = JSON.stringify([[], [], []])
 
   /**
    * 是否展示添加面板

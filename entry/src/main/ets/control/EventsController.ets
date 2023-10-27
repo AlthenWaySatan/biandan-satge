@@ -16,7 +16,7 @@ import { getFolderClassify, addFolderCounter } from './FolderController';
 import prompt from '@ohos.prompt'
 import common from '@ohos.app.ability.common';
 
-PersistentStorage.PersistProp('eventsShowResource', [[], [], []])
+PersistentStorage.PersistProp('eventsShowResource', JSON.stringify([[], [], []]))
 
 function getDateTime(yearNum: number, monthNum: number, dayNum: number): number[] {
   let date: number[] = [yearNum, monthNum, dayNum]
@@ -148,7 +148,7 @@ function eventInfoToEventResource(eventInfo: EventInfo): EventResource {
 export async function getResource(yearNum: number, monthNum: number, dayNum: number, folderId: number, context: Context) {
   let doneNum = AppStorage.Get<number>("doneNum");
   let todoNum = AppStorage.Get<number>("todoNum");
-  let eventsShowResource = AppStorage.Get<EventResource[][]>("eventsShowResource");
+  let eventsShowResource:EventResource[][] = JSON.parse(AppStorage.Get<string>("eventsShowResource"));
 
   let obj = await getEventResource([yearNum, monthNum, dayNum], folderId, context)
 
@@ -165,7 +165,7 @@ export async function getResource(yearNum: number, monthNum: number, dayNum: num
 
   AppStorage.Set<number>("doneNum", doneNum)
   AppStorage.Set<number>("todoNum", todoNum)
-  AppStorage.Set<EventResource[][]>("eventsShowResource", eventsShowResource)
+  AppStorage.Set<string>("eventsShowResource", JSON.stringify(eventsShowResource))
 }
 
 /**
@@ -181,7 +181,7 @@ export async function getFormResource(yearNum: number, monthNum: number, dayNum:
 
   let doneNum = obj[0]
   let todoNum = obj[1]
-  let eventsShowResource = [[], [], []]
+  let eventsShowResource:EventResource[][] = [[], [], []]
 
   for (let i = 0;i < obj[2].length; i++)
     eventsShowResource[0].push(eventInfoToEventResource(obj[2][i]))
@@ -299,7 +299,7 @@ export function getDoneRate(): number {
  * @param type 事件类型
  */
 export function getOneCounter(type: number): number {
-  let eventsShowResource = AppStorage.Get<EventResource[][]>("eventsShowResource");
+  let eventsShowResource:EventResource[][] = JSON.parse(AppStorage.Get<string>("eventsShowResource"));
   var ret: number = 0;
   for (let i = 0;i < eventsShowResource[type].length; i++) {
     if (eventsShowResource[type][i].isChecked)
@@ -390,7 +390,7 @@ export async function SubCompTime(eventId: number, context: Context):Promise<voi
  */
 export function getIsAllChecked(): boolean {
   let isHidden = AppStorage.Get<boolean[]>("isHidden")
-  let eventsShowResource = AppStorage.Get<EventResource[][]>("eventsShowResource");
+  let eventsShowResource:EventResource[][] = JSON.parse(AppStorage.Get<string>("eventsShowResource"));
   for (let i = 0;i < 3; i++) {
     if (!isHidden[i] && (getOneCounter(i) != eventsShowResource[i].length))
       return false;
@@ -406,7 +406,7 @@ export function getIsAllChecked(): boolean {
  * @param value 是否被选择
  */
 export function changeAllChoice(value: boolean): void {
-  let eventsShowResource = AppStorage.Get<EventResource[][]>("eventsShowResource");
+  let eventsShowResource:EventResource[][] = JSON.parse(AppStorage.Get<string>("eventsShowResource"));
 
   for (var i = 0; i < 3; i++) {
     for (var j = 0;j < eventsShowResource[i].length; j++) {
@@ -414,7 +414,7 @@ export function changeAllChoice(value: boolean): void {
     }
   }
 
-  AppStorage.Set<EventResource[][]>("eventsShowResource", eventsShowResource)
+  AppStorage.Set<string>("eventsShowResource", JSON.stringify(eventsShowResource))
 }
 
 /**
@@ -424,7 +424,7 @@ export function changeAllChoice(value: boolean): void {
  * @param thingsId 事件ID
  */
 export function checkEvents(state: boolean, eventId: number): void {
-  let eventsShowResource = AppStorage.Get<EventResource[][]>("eventsShowResource");
+  let eventsShowResource:EventResource[][] = JSON.parse(AppStorage.Get<string>("eventsShowResource"));
 
   for (let i = 0;i < 3; i++) {
     var id = eventsShowResource[i].findIndex((item) => item.eventId == eventId)
@@ -432,7 +432,7 @@ export function checkEvents(state: boolean, eventId: number): void {
       eventsShowResource[i][id].isChecked = state;
   }
 
-  AppStorage.Set<EventResource[][]>("eventsShowResource", eventsShowResource)
+  AppStorage.Set<string>("eventsShowResource", JSON.stringify(eventsShowResource))
 }
 
 /*------------------------------------------------------移动-------------------------------------------------------*/
@@ -463,7 +463,7 @@ async function setFolder(id: number, folderId: number, context: Context): Promis
  */
 export async function setAllFolder(folderId: number, context: Context) {
   let isHidden = AppStorage.Get<boolean[]>("isHidden");
-  let eventsShowResource = AppStorage.Get<EventResource[][]>("eventsShowResource");
+  let eventsShowResource:EventResource[][] = JSON.parse(AppStorage.Get<string>("eventsShowResource"));
 
   let classify = getFolderClassify(folderId)
 
@@ -488,7 +488,7 @@ export async function setAllFolder(folderId: number, context: Context) {
           }
         }
 
-  AppStorage.Set<EventResource[][]>("eventsShowResource", eventsShowResource);
+  AppStorage.Set<string>("eventsShowResource", JSON.stringify(eventsShowResource))
 }
 
 /**
@@ -496,7 +496,7 @@ export async function setAllFolder(folderId: number, context: Context) {
  * @param folderId 需要改动的待办单ID
  */
 export function setAllFolderByFolder(folderId: number) {
-  let eventsShowResource = AppStorage.Get<EventResource[][]>("eventsShowResource");
+  let eventsShowResource:EventResource[][] = JSON.parse(AppStorage.Get<string>("eventsShowResource"));
 
   for (let i = 0;i < 3; i++)
     for (let j = 0;j < eventsShowResource[i].length; j++)
@@ -507,7 +507,7 @@ export function setAllFolderByFolder(folderId: number) {
         eventsShowResource[i][j].classify = ''
       }
 
-  AppStorage.Set<EventResource[][]>("eventsShowResource", eventsShowResource);
+  AppStorage.Set<string>("eventsShowResource", JSON.stringify(eventsShowResource))
 }
 
 /*------------------------------------------------------删除-------------------------------------------------------*/
@@ -516,7 +516,7 @@ export function setAllFolderByFolder(folderId: number) {
  */
 export function isCyclic(): boolean {
   let isHidden = AppStorage.Get<boolean[]>("isHidden");
-  let eventsShowResource = AppStorage.Get<EventResource[][]>("eventsShowResource");
+  let eventsShowResource:EventResource[][] = JSON.parse(AppStorage.Get<string>("eventsShowResource"));
 
   for (let i = 0;i < 3; i++) {
     if (!isHidden[i]) {
@@ -561,7 +561,7 @@ async function deleteEach(id: number, isWhole: boolean, context: Context): Promi
 export async function deleteAll(isWhole: boolean, context: Context) {
   let doneNum = AppStorage.Get<number>("doneNum");
   let todoNum = AppStorage.Get<number>("todoNum");
-  let eventsShowResource = AppStorage.Get<EventResource[][]>("eventsShowResource");
+  let eventsShowResource:EventResource[][] = JSON.parse(AppStorage.Get<string>("eventsShowResource"));
 
   var thingsId: number[] = []
   for (let i = 0;i < 3; i++)
@@ -602,7 +602,7 @@ export async function deleteAll(isWhole: boolean, context: Context) {
 
   AppStorage.Set<number>("doneNum", doneNum)
   AppStorage.Set<number>("todoNum", todoNum)
-  AppStorage.Set<EventResource[][]>("eventsShowResource", eventsShowResource);
+  AppStorage.Set<string>("eventsShowResource", JSON.stringify(eventsShowResource))
 
   refreshResource(context);
 }
@@ -613,7 +613,7 @@ export async function deleteAll(isWhole: boolean, context: Context) {
  */
 export function getIsAllCollect(): boolean {
   let isHidden = AppStorage.Get<boolean[]>("isHidden");
-  let eventsShowResource = AppStorage.Get<EventResource[][]>("eventsShowResource");
+  let eventsShowResource:EventResource[][] = JSON.parse(AppStorage.Get<string>("eventsShowResource"));
 
   for (let i = 0;i < 3; i++) {
     if (!isHidden[i]) {
@@ -653,7 +653,7 @@ async function setCollect(value: boolean, id: number, context: Context): Promise
  */
 export async function setAllCollect(value: boolean, context: Context) {
   let isHidden = AppStorage.Get<boolean[]>("isHidden");
-  let eventsShowResource = AppStorage.Get<EventResource[][]>("eventsShowResource");
+  let eventsShowResource:EventResource[][] = JSON.parse(AppStorage.Get<string>("eventsShowResource"));
 
   for (let i = 0;i < 3; i++)
     if (!isHidden[i])
@@ -666,7 +666,7 @@ export async function setAllCollect(value: boolean, context: Context) {
               addFolderCounter(-2, value ? 1 : -1)
             eventsShowResource[i][j].isCollected = value
             console.log("collect? " + eventsShowResource[i][j].eventId + ':' + eventsShowResource[i][j].isCollected)
-            AppStorage.Set<EventResource[][]>("eventsShowResource", eventsShowResource)
+            AppStorage.Set<string>("eventsShowResource", JSON.stringify(eventsShowResource))
             UpdateVersionNumber()
           } else {
             prompt.showToast({
@@ -676,7 +676,7 @@ export async function setAllCollect(value: boolean, context: Context) {
           }
         }
 
-  AppStorage.Set<EventResource[][]>("eventsShowResource", eventsShowResource)
+  AppStorage.Set<string>("eventsShowResource", JSON.stringify(eventsShowResource))
 }
 
 /**
@@ -832,7 +832,7 @@ async function putOffEvent(eventId: number, isToday: boolean, context: Context):
  * @param eventId 顺延事件的ID
  */
 export async function putOff(eventId: number, context: Context) {
-  let eventsShowResource = AppStorage.Get<EventResource[][]>("eventsShowResource");
+  let eventsShowResource:EventResource[][] = JSON.parse(AppStorage.Get<string>("eventsShowResource"));
 
   let showDate = AppStorage.Get<number[]>("showDate");
   let isToday: boolean = ((showDate[0] == (new Date().getFullYear())) && (showDate[1] == (new Date().getMonth() + 1)) && (showDate[2] == (new Date().getDate())))
@@ -855,7 +855,7 @@ export async function putOff(eventId: number, context: Context) {
       todoNum--
       AppStorage.Set<number>("todoNum", todoNum)
     }
-    AppStorage.Set<EventResource[][]>("eventsShowResource", eventsShowResource)
+    AppStorage.Set<string>("eventsShowResource", JSON.stringify(eventsShowResource))
     UpdateVersionNumber()
   } else {
     prompt.showToast({
@@ -870,7 +870,7 @@ export async function putOff(eventId: number, context: Context) {
  * 顺延所有事件
  */
 export async function putOffAll(context: Context) {
-  let eventsShowResource = AppStorage.Get<EventResource[][]>("eventsShowResource");
+  let eventsShowResource:EventResource[][] = JSON.parse(AppStorage.Get<string>("eventsShowResource"));
 
   let showDate = AppStorage.Get<number[]>("showDate");
   let isToday: boolean = ((showDate[0] == (new Date().getFullYear())) && (showDate[1] == (new Date().getMonth() + 1)) && (showDate[2] == (new Date().getDate())))
@@ -901,7 +901,7 @@ export async function putOffAll(context: Context) {
 
   }
   eventsShowResource[1] = []
-  AppStorage.Set<EventResource[][]>("eventsShowResource", eventsShowResource)
+  AppStorage.Set<string>("eventsShowResource", JSON.stringify(eventsShowResource))
 }
 
 function stringToNumberArr(tmp: string[]): number[] {

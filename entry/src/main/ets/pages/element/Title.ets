@@ -1,6 +1,6 @@
 import prompt from '@ohos.prompt'
 import FolderResource from '../../model/FolderResourceContact';
-import ThingsResource from '../../model/EventsResourceContact';
+import EventResource from '../../model/EventsResourceContact';
 import { getResource } from '../../control/EventsController';
 import { get_accent } from '../../control/AccentController';
 import common from '@ohos.app.ability.common';
@@ -298,7 +298,6 @@ export struct TitleOne {
   private changeDate: number[]
   @StorageLink('doneNum') doneNum: number = 0
   @StorageLink('todoNum') todoNum: number = 0
-  @StorageLink('thingsShowResource') thingsShowResource: ThingsResource[][] = [[], [], []]
   @StorageLink('folderId') folderId: number = 0
 
   /**
@@ -521,7 +520,7 @@ export struct TitleOne_small {
 @Component
 export struct EditTitleOne {
   //显示资源
-  @StorageLink('eventsShowResource') eventsShowResource: ThingsResource[][] = [[], [], []]
+  @StorageLink('eventsShowResource') eventsShowResource: string = JSON.stringify([[], [], []])
 
   //是否编辑模式
   @StorageLink('isEdit') isEdit: boolean = false
@@ -544,11 +543,13 @@ export struct EditTitleOne {
    * @param value 是否被选择
    */
   private changeAllChoice(value: boolean): void {
+    let temp = JSON.parse(this.eventsShowResource);
     for (var i = 0; i < 3; i++) {
-      for (var j = 0;j < this.eventsShowResource[i].length; j++) {
-        this.eventsShowResource[i][j].isChecked = value;
+      for (var j = 0;j < temp[i].length; j++) {
+        temp[i][j].isChecked = value;
       }
     }
+    this.eventsShowResource = JSON.stringify(temp);
   }
 
   /**
@@ -565,8 +566,9 @@ export struct EditTitleOne {
    */
   private getOneCounter(id: number): number {
     var ret: number = 0;
-    for (var i = 0;i < this.eventsShowResource[id].length; i++) {
-      if (this.eventsShowResource[id][i].isChecked)
+    let temp = JSON.parse(this.eventsShowResource);
+    for (var i = 0;i < temp[id].length; i++) {
+      if (temp[id][i].isChecked)
         ret++;
     }
     return ret;
