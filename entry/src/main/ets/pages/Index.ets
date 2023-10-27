@@ -101,7 +101,7 @@ struct Index {
    */
   /*-------------------------------------------------------------------------------------------------------------------*/
   @StorageLink('selectPos') selectPos: number = 0;
-  private barResource: BarResource[] = get_barResource()
+  @StorageLink('barResource') barResource: BarResource[] = get_barResource()
 
   /**
    * 内容资源
@@ -231,7 +231,7 @@ struct Index {
            * lg页签栏
            */
           if (this.screenType == 'lg') {
-            lgBar({ barResource: this.barResource })
+            lgBar()
           }
 
           if (this.screenType != '') {
@@ -262,10 +262,10 @@ struct Index {
            * sm和md页签栏
            */
           if (this.screenType == 'sm' && !this.isEdit) {
-            smBar({ barResource: this.barResource })
+            smBar()
           }
           if (this.screenType == 'md' && !this.isEdit) {
-            mdBar({ barResource: this.barResource })
+            mdBar()
           }
         }
         .width('100%')

@@ -1,21 +1,20 @@
 import BarResource from '../../model/BarResourceContact';
 import { changeAllChoice } from '../../control/EventsController';
 
-import { get_accent } from '../../control/AccentController';
+import { get_accent, get_barResource } from '../../control/AccentController';
 
 @Component
 export struct lgBar {
-  private barResource: {
-    iconOn: Resource,
-    iconOff: Resource,
-    text: Resource,
-    id: number
-  }[]
+  @StorageLink('barResource') @Watch("accentChanged") barResource: BarResource[] = get_barResource()
   @StorageLink('selectPos') selectPos: number = 0;
   @StorageLink('isEdit') isEdit: boolean = false
-  private accentColor: Resource
+  @State accentColor: Resource = get_accent()
 
   aboutToAppear() {
+    this.accentColor = get_accent()
+  }
+
+  accentChanged() {
     this.accentColor = get_accent()
   }
 
@@ -85,11 +84,15 @@ export struct lgBar {
 
 @Component
 export struct mdBar {
-  private barResource: BarResource[]
+  @StorageLink('barResource') @Watch("accentChanged") barResource: BarResource[] = get_barResource()
   @StorageLink('selectPos') selectPos: number = 0;
-  private accentColor: Resource
+  @State accentColor: Resource = get_accent()
 
   aboutToAppear() {
+    this.accentColor = get_accent()
+  }
+
+  accentChanged() {
     this.accentColor = get_accent()
   }
 
@@ -140,11 +143,15 @@ export struct mdBar {
 
 @Component
 export struct smBar {
-  private barResource: BarResource[]
+  @StorageLink('barResource') @Watch("accentChanged") barResource: BarResource[] = get_barResource()
   @StorageLink('selectPos') selectPos: number = 0;
-  private accentColor: Resource
+  @State accentColor: Resource = get_accent()
 
   aboutToAppear() {
+    this.accentColor = get_accent()
+  }
+
+  accentChanged() {
     this.accentColor = get_accent()
   }
 

@@ -111,8 +111,7 @@ export function get_add_Marking(): Resource {
   }
 }
 
-export function get_barResource(): BarResource[] {
-  let AccentColor1:string = AppStorage.Get<string>("AccentColor1");
+export function get_barResource(AccentColor1:string = AppStorage.Get<string>("AccentColor1")): BarResource[] {
   switch (AccentColor1) {
     case '_blue':
       return [

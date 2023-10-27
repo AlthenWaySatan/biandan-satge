@@ -23,12 +23,13 @@ import {
 } from '../../control/FileioController';
 import mediaLibrary from '@ohos.multimedia.mediaLibrary';
 import { backUpPath } from '../../model/BackUpContact';
-import { get_accent, getAccentColor } from '../../control/AccentController';
+import { get_accent, getAccentColor, get_barResource } from '../../control/AccentController';
 import { deleteAFolder } from '../../control/FolderController';
 import FolderResource from '../../model/FolderResourceContact';
 import prompt from '@ohos.prompt'
 import common from '@ohos.app.ability.common';
 import { setStorage } from '../../control/StorageController';
+import BarResource from '../../model/BarResourceContact';
 
 PersistentStorage.PersistProp('BackUpSwitch', 0)
 PersistentStorage.PersistProp('AutoBackUpSwitch', 0)
@@ -815,6 +816,7 @@ export struct DefaultUrgentTimePage {
 export struct AccentColorPage {
   @StorageLink('AccentColor0') AccentColor0: number = 0;
   @StorageLink('AccentColor1') AccentColor1: string = '';
+  @StorageLink('barResource') barResource: BarResource[] = get_barResource()
   @StorageLink('accentColorArray') accentColorArray: [string, string][] = [
     ['便单黄', ''],
     ['宇宙蓝', '_blue'],
@@ -824,6 +826,18 @@ export struct AccentColorPage {
     ['樱花粉', '_pink']
   ]
   private outPut: () => {} = () => void {}
+
+  setAccentColor(index: number, item1: string) {
+    this.AccentColor0 = index;
+    this.AccentColor1 = item1;
+    let context: Context = getContext(this) as common.Context
+    setStorage("setting", "accentColor", this.AccentColor1, context);
+    this.barResource = get_barResource(item1);
+    // prompt.showToast({
+    //   message: (Object)($r('app.string.restartToTakeEffect')),
+    //   duration: 500,
+    // });
+  }
 
   @Styles Card() {
     .width('100%')
@@ -865,14 +879,7 @@ export struct AccentColorPage {
                   .width(20)
                   .onChange((isChecked: boolean) => {
                     if (isChecked) {
-                      this.AccentColor0 = index;
-                      this.AccentColor1 = item[1];
-                      let context: Context = getContext(this) as common.Context
-                      setStorage("setting", "accentColor", this.AccentColor1, context);
-                      prompt.showToast({
-                        message: (Object)($r('app.string.restartToTakeEffect')),
-                        duration: 500,
-                      });
+                      this.setAccentColor(index, item[1])
                     }
                   })
               }
@@ -880,14 +887,7 @@ export struct AccentColorPage {
             }
             .onClick(() => {
               if (item[1] != this.AccentColor1) {
-                this.AccentColor0 = index
-                this.AccentColor1 = item[1]
-                let context: Context = getContext(this) as common.Context
-                setStorage("setting", "accentColor", this.AccentColor1, context);
-                prompt.showToast({
-                  message: (Object)($r('app.string.restartToTakeEffect')),
-                  duration: 500,
-                });
+                this.setAccentColor(index, item[1])
               }
             })
 

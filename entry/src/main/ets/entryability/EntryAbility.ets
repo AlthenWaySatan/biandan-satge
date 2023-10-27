@@ -72,18 +72,18 @@ export default class EntryAbility extends UIAbility {
     // Ability has back to background
     hilog.info(0x0000, 'testTag', '%{public}s', 'Ability onBackground');
     // refreshAllForm(this.context);
-    let reason: string = "";
-    // let reason: string = "刷新卡片";
-    let tasks: Function[] = [];
-    // tasks.push(refreshAllForm);
-    if ( AppStorage.Get<number>('AutoBackUpSwitch') != 0) {
-      tasks.push(backupFile);
-      reason += "，自动备份";
-    }
-    if (AppStorage.Get<number>('AutoTerminalsSyncSwitch') != 0) {
-      tasks.push(ExportNewVersion);
-      reason += "，同步新版本";
-    }
-    setBackgroundTask(reason, tasks, this.context);
+    // let reason: string = "";
+    // // let reason: string = "刷新卡片";
+    // let tasks: Function[] = [];
+    // // tasks.push(refreshAllForm);
+    // if ( AppStorage.Get<number>('AutoBackUpSwitch') != 0) {
+    //   tasks.push(backupFile);
+    //   reason += "，自动备份";
+    // }
+    // if (AppStorage.Get<number>('AutoTerminalsSyncSwitch') != 0) {
+    //   tasks.push(ExportNewVersion);
+    //   reason += "，同步新版本";
+    // }
+    // setBackgroundTask(reason, tasks, this.context);
   }
 }
