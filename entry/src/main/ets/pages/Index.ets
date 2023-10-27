@@ -24,7 +24,6 @@ import BarResource from '../model/BarResourceContact';
 import EventResource from '../model/EventsResourceContact';
 import FolderResource from '../model/FolderResourceContact';
 import common from '@ohos.app.ability.common';
-import { refreshAllForm } from '../control/FormController';
 
 PersistentStorage.PersistProp('IsFirstIn_', 0)
 PersistentStorage.PersistProp('AutoBackUpSwitch', 0)

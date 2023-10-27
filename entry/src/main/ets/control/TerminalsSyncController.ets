@@ -6,6 +6,7 @@ import distributedData from '@ohos.data.distributedKVStore';
 import { refreshResource } from './EventsController';
 import abilityAccessCtrl, { Permissions } from '@ohos.abilityAccessCtrl';
 import common from '@ohos.app.ability.common';
+import { refreshAllForm } from './FormController';
 
 
 PersistentStorage.PersistProp('TerminalsSyncSwitch', 0)
@@ -215,6 +216,8 @@ export function UpdateVersionNumber(newVersionNumber: number = new Date().getTim
     return;
   console.log('[Sync] UpdateVersionNumber:' + newVersionNumber)
   AppStorage.Set<number>('LocalVersionNumber', newVersionNumber)
+  let context: Context = getContext(this) as common.Context;
+  setTimeout(()=>{refreshAllForm(context)}, 100);
 }
 
 /**

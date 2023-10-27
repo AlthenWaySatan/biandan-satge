@@ -1,7 +1,6 @@
 import UIAbility from '@ohos.app.ability.UIAbility';
 import hilog from '@ohos.hilog';
 import window from '@ohos.window';
-import { refreshAllForm } from '../control/FormController';
 import { setBackgroundTask } from '../control/BackgroundTaskController';
 import { ExportNewVersion } from '../control/TerminalsSyncController';
 import { backupFile } from '../control/FileioController';
@@ -73,9 +72,10 @@ export default class EntryAbility extends UIAbility {
     // Ability has back to background
     hilog.info(0x0000, 'testTag', '%{public}s', 'Ability onBackground');
     // refreshAllForm(this.context);
-    let reason: string = "刷新卡片";
+    let reason: string = "";
+    // let reason: string = "刷新卡片";
     let tasks: Function[] = [];
-    tasks.push(refreshAllForm);
+    // tasks.push(refreshAllForm);
     if ( AppStorage.Get<number>('AutoBackUpSwitch') != 0) {
       tasks.push(backupFile);
       reason += "，自动备份";
