@@ -126,7 +126,7 @@ export async function CloseSyncListener(context: Context) {
  * 导出数据新版本到数据库
  * @param showPrompt 是否前台导出
  */
-export async function ExportNewVersion(context: Context, showPrompt: boolean = false):Promise<void> {
+export async function ExportNewVersion(context: Context, showPrompt: boolean = false) {
   const kvStore = await getKVStore(context)
 
   let data: object = await getBackupObject(context)
@@ -136,36 +136,34 @@ export async function ExportNewVersion(context: Context, showPrompt: boolean = f
   let newVersion: number = AppStorage.Get<number>('LocalVersionNumber')
 
   console.log('[Sync] newVersion: ' + newVersion);
-  return new Promise(async (resolve) => {
-    kvStore.get(Version_Key, function (err, SyncVersion) {
-      console.log("get success Version_Key: " + SyncVersion);
-      console.log("get error: " + err);
-      if (SyncVersion == undefined || SyncVersion < newVersion) {
-        console.log('[Sync] newVersion: ' + newVersion);
-        kvStore.put(Version_Key, newVersion)
+  kvStore.get(Version_Key, function (err, SyncVersion) {
+    console.log("get success Version_Key: " + SyncVersion);
+    console.log("get error: " + err);
+    if (SyncVersion == undefined || SyncVersion < newVersion) {
+      console.log('[Sync] newVersion: ' + newVersion);
+      kvStore.put(Version_Key, newVersion)
 
-        let i: number = 0;
-        for (; i < str.length; i += MaxLength) {
-          kvStore.put(Data_Key + (i.toString()), str.substring(i, i + MaxLength))
-          //        result.push(str.substring(i, i + MaxLength));
-        }
-        kvStore.put(Length_Key, str.length)
-        //      kvStore.put(Data_Key, str)
-        if (showPrompt)
-          prompt.showToast({
-            message: '发送成功，快去看看吧！',
-            duration: 1000,
-          });
-      } else {
-        if (showPrompt)
-          prompt.showToast({
-            message: '发送失败，发送数据不为最新',
-            duration: 1000,
-          });
+      let i: number = 0;
+      for (; i < str.length; i += MaxLength) {
+        kvStore.put(Data_Key + (i.toString()), str.substring(i, i + MaxLength))
+        //        result.push(str.substring(i, i + MaxLength));
       }
-      resolve();
-    });
-  })
+      kvStore.put(Length_Key, str.length)
+      //      kvStore.put(Data_Key, str)
+
+      if (showPrompt)
+        prompt.showToast({
+          message: '发送成功，快去看看吧！',
+          duration: 1000,
+        });
+    } else {
+      if (showPrompt)
+        prompt.showToast({
+          message: '发送失败，发送数据不为最新',
+          duration: 1000,
+        });
+    }
+  });
 }
 
 

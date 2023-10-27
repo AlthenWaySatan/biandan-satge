@@ -47,7 +47,7 @@ export async function getAllStorage(name:string, context: Context): Promise<stri
         data_preferences.getPreferences(context, name).then((preferences) => {
             preferences.getAll().then((value) => {
                 resolve(Object.keys(value));
-                console.log('myFormAbility 查询所有（' + name + '):' + value);
+                console.log('myFormAbility 查询所有（' + name + '):' + JSON.stringify(value));
             })
         })
     })

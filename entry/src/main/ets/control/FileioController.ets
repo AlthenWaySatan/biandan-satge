@@ -173,19 +173,16 @@ async function getBackupObject(context: Context): Promise<object> {
 /**
  * 备份文件
  */
-export async function backupFile(context: Context):Promise<void> {
+export async function backupFile(context: Context) {
   //  let data: object = { "text": new Date() }
   let value = await getPermission_WRITE_MEDIA(context)
-  return new Promise(async (resolve) => {
-    if (value) {
-      let data: object = await getBackupObject(context)
-      let str: string = JSON.stringify(data)
-      console.log('backup value: ' + str);
-      await writeFile(str, context)
-      await deleteRedundancyFile(context)
-    }
-    resolve();
-  })
+  if (value) {
+    let data: object = await getBackupObject(context)
+    let str: string = JSON.stringify(data)
+    console.log('backup value: ' + str);
+    await writeFile(str, context)
+    await deleteRedundancyFile(context)
+  }
 }
 
 /**

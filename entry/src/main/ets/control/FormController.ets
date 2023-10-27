@@ -264,55 +264,44 @@ export async function getFormObject(type: string, dimension: number, date: numbe
  * 根据卡片信息修改卡片
  * @param formId
  */
-export async function UpdateForm(formId: string, context: Context):Promise<void> {
+export async function UpdateForm(formId: string, context: Context) {
   let thisFormInfo: FormInfo = JSON.parse(await getStorage("thisFormInfo", formId, context));
   console.log('updateForm thisFormInfo' + JSON.stringify(thisFormInfo))
 
-  return new Promise((resolve) => {
-    getFormObject(thisFormInfo.formName, thisFormInfo.formDimension, thisFormInfo.formDate, thisFormInfo.formFolder, thisFormInfo.formPage, context).then((obj) => {
-      console.log('updateForm ', formId, JSON.stringify(obj));
-      // Called to return a FormBindingData object.
-      let formData = formBindingData.createFormBindingData(obj);
-      console.log('updateForm formData', formId, JSON.stringify(formData));
+  getFormObject(thisFormInfo.formName, thisFormInfo.formDimension, thisFormInfo.formDate, thisFormInfo.formFolder, thisFormInfo.formPage, context).then((obj) => {
+    console.log('updateForm ', formId, JSON.stringify(obj));
+    // Called to return a FormBindingData object.
+    let formData = formBindingData.createFormBindingData(obj);
+    console.log('updateForm formData', formId, JSON.stringify(formData));
 
-      formProvider.updateForm(formId, formData).catch((error) => {
-        console.log('updateForm formData updateForm, error:' + JSON.stringify(error));
-      }).then(() => {
-        resolve();
-      });
+    formProvider.updateForm(formId, formData).catch((error) => {
+      console.log('updateForm formData updateForm, error:' + JSON.stringify(error));
     });
-  })
+  });
 }
 
 /**
  * 刷新卡片
  * @param formId
  */
-export async function refreshForm(formId: string, context: Context):Promise<void> {
+export async function refreshForm(formId: string, context: Context) {
   let thisFormInfo: FormInfo = JSON.parse(await getStorage("thisFormInfo", formId, context));
   console.log('refreshForm thisFormInfo' + JSON.stringify(thisFormInfo))
   thisFormInfo.formDate = [new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate()],
   thisFormInfo.formPage = 0
-  await setStorage("thisFormInfo", formId, JSON.stringify(thisFormInfo), context);
-  return new Promise((resolve) => {
-    UpdateForm(formId, context).then(() => {
-      resolve()
-    });
-  })
+  setStorage("thisFormInfo", formId, JSON.stringify(thisFormInfo), context);
+  UpdateForm(formId, context);
 }
 
 /**
  * 刷新所有卡片，除了formId
  * @param formId
  */
-export async function refreshAllForm(context: Context, formId: string = null):Promise<void> {
+export async function refreshAllForm(context: Context, formId: string = null) {
   let formIds = await getAllStorage("thisFormInfo", context);
-  return new Promise(async (resolve) => {
-    for (let id of formIds)
-      if (id !== formId)
-        await refreshForm(id, context)
-    resolve();
-  })
+  for (let id of formIds)
+    if (id !== formId)
+      refreshForm(id, context)
 }
 
 /**
