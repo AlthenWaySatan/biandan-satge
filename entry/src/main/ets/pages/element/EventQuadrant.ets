@@ -3,7 +3,7 @@ import vibrator from '@ohos.vibrator';
 import { AddCompTime, queryCreateResource, SubCompTime } from '../../control/EventsController';
 import { refreshResource } from '../../control/EventsController';
 import common from '@ohos.app.ability.common';
-import { getDescription, getStateResource } from '../../control/EventsResourceController';
+import { checkQuadrant, getDescription, getStateResource } from '../../control/EventsResourceController';
 
 PersistentStorage.PersistProp('DefaultTimeFormat', 0)
 
@@ -78,7 +78,7 @@ export struct EventQuadrant {
     //    getResource(this.showDate[0], this.showDate[1], this.showDate[2], this.folderId);
     for (let i = 0;i < 3; i++) {
       for (let j = 0;j < temp[i].length; j++)
-        if(temp[i][j].checkQuadrant(this.isImportant, this.isUrgent, this.showDate))
+        if(checkQuadrant(temp[i][j], this.isImportant, this.isUrgent, this.showDate))
         // if (this.eventsShowResource[i][j].isImportant == this.isImportant && this.checkUrgent(this.eventsShowResource[i][j]) == this.isUrgent)
           this.thisQuadrant[i].push(temp[i][j])
     }
