@@ -13,46 +13,16 @@ export struct lgBar {
 
   aboutToAppear() {
     this.accentColor = get_accent()
-    this.selectAnimation[this.selectPos] = 100;
+    this.selectAnimation[this.selectPos] = 1;
   }
 
   accentChanged() {
     this.accentColor = get_accent()
   }
 
-  delay(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
-
-  easeInOutQuad(s: number, t: number, x: number): number {
-    return s + (t - s) * (x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2);
-  }
-
   async selectPosChanged() {
-    let f:number = 0, t:number = 0;
-    for (let i:number = 0; i < this.selectAnimation.length; i++)
-      if ((this.selectAnimation[i] == 100) != (this.selectPos == i)){
-        if (this.selectAnimation[i] == 100) f = i;
-        else t = i;
-      }
-    if (f == t) return;
-    console.log("selectPosChanged from " + f.toString() + "to " +  t.toString())
-    let temp:number = 0;
-    var d_rate:number = 0.1;
-    for (let j:number = 0; j < 10; j++) {
-      if (temp == 1) {
-        this.selectAnimation[t] = 100;
-        this.selectAnimation[f] = 0;
-        d_rate = 0;
-        break;
-      } else {
-        temp += d_rate;
-        let i_temp = this.easeInOutQuad(0, 100, temp)
-        this.selectAnimation[t] = i_temp;
-        this.selectAnimation[f] = 100 - i_temp;
-        await this.delay(2);
-      }
-    }
+    this.selectAnimation = [0, 0, 0, 0];
+    this.selectAnimation[this.selectPos] = 1;
   }
 
   public barClick(id: number) {
@@ -101,21 +71,12 @@ export struct lgBar {
                 .justifyContent(FlexAlign.Center)
                 .layoutWeight(1)
                 .height("100%")
-                .clip(
-                  new Ellipse({
-                    width: this.selectAnimation[item.id].toString() + "%",
-                    height: this.selectAnimation[item.id].toString() + "%"
-                  })
-                )
-
-                Column() {
-                  this.BarIcon({icon: item.iconOn})
-                  this.BarTextBut({text: item.text, color: this.accentColor})
-                }
-                .justifyContent(FlexAlign.Center)
-                .layoutWeight(1)
-                .height("100%")
-                .visibility(this.selectPos == item.id && this.selectAnimation[item.id] == 100 ? Visibility.Visible : Visibility.None)
+                .opacity(this.selectAnimation[item.id])
+                .animation({
+                  delay: 0,
+                  duration: 300, // 动画时长
+                  curve: Curve.EaseInOut, // 动画曲线
+                })
 
               }
               .width("100%")
@@ -166,46 +127,16 @@ export struct mdBar {
 
   aboutToAppear() {
     this.accentColor = get_accent()
-    this.selectAnimation[this.selectPos] = 100;
+    this.selectAnimation[this.selectPos] = 1;
   }
 
   accentChanged() {
     this.accentColor = get_accent()
   }
 
-  delay(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
-
-  easeInOutQuad(s: number, t: number, x: number): number {
-    return s + (t - s) * (x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2);
-  }
-
   async selectPosChanged() {
-    let f:number = 0, t:number = 0;
-    for (let i:number = 0; i < this.selectAnimation.length; i++)
-      if ((this.selectAnimation[i] == 100) != (this.selectPos == i)){
-        if (this.selectAnimation[i] == 100) f = i;
-        else t = i;
-      }
-    if (f == t) return;
-    console.log("selectPosChanged from " + f.toString() + "to " +  t.toString())
-    let temp:number = 0;
-    var d_rate:number = 0.1;
-    for (let j:number = 0; j < 10; j++) {
-      if (temp == 1) {
-        this.selectAnimation[t] = 100;
-        this.selectAnimation[f] = 0;
-        d_rate = 0;
-        break;
-      } else {
-        temp += d_rate;
-        let i_temp = this.easeInOutQuad(0, 100, temp)
-        this.selectAnimation[t] = i_temp;
-        this.selectAnimation[f] = 100 - i_temp;
-        await this.delay(2);
-      }
-    }
+    this.selectAnimation = [0, 0, 0, 0];
+    this.selectAnimation[this.selectPos] = 1;
   }
 
   public barClick(id: number) {
@@ -246,19 +177,12 @@ export struct mdBar {
               this.BarTextRig({text: item.text, color: this.accentColor})
             }
             .justifyContent(FlexAlign.Center)
-            .clip(
-              new Ellipse({
-                width: this.selectAnimation[item.id].toString() + "%",
-                height: this.selectAnimation[item.id].toString() + "%"
-              })
-            )
-
-            Row() {
-              this.BarIcon({icon: item.iconOn})
-              this.BarTextRig({text: item.text, color: this.accentColor})
-            }
-            .justifyContent(FlexAlign.Center)
-            .visibility(this.selectPos == item.id && this.selectAnimation[item.id] == 100 ? Visibility.Visible : Visibility.None)
+            .opacity(this.selectAnimation[item.id])
+            .animation({
+              delay: 0,
+              duration: 300, // 动画时长
+              curve: Curve.EaseInOut, // 动画曲线
+            })
 
           }
           .width("100%")
@@ -292,46 +216,16 @@ export struct smBar {
 
   aboutToAppear() {
     this.accentColor = get_accent()
-    this.selectAnimation[this.selectPos] = 100;
+    this.selectAnimation[this.selectPos] = 1;
   }
 
   accentChanged() {
     this.accentColor = get_accent()
   }
 
-  delay(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
-
-  easeInOutQuad(s: number, t: number, x: number): number {
-    return s + (t - s) * (x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2);
-  }
-
   async selectPosChanged() {
-    let f:number = 0, t:number = 0;
-    for (let i:number = 0; i < this.selectAnimation.length; i++)
-      if ((this.selectAnimation[i] == 100) != (this.selectPos == i)){
-        if (this.selectAnimation[i] == 100) f = i;
-        else t = i;
-      }
-    if (f == t) return;
-    console.log("selectPosChanged from " + f.toString() + "to " +  t.toString())
-    let temp:number = 0;
-    var d_rate:number = 0.1;
-    for (let j:number = 0; j < 10; j++) {
-      if (temp == 1) {
-        this.selectAnimation[t] = 100;
-        this.selectAnimation[f] = 0;
-        d_rate = 0;
-        break;
-      } else {
-        temp += d_rate;
-        let i_temp = this.easeInOutQuad(0, 100, temp)
-        this.selectAnimation[t] = i_temp;
-        this.selectAnimation[f] = 100 - i_temp;
-        await this.delay(2);
-      }
-    }
+    this.selectAnimation = [0, 0, 0, 0];
+    this.selectAnimation[this.selectPos] = 1;
   }
 
   public barClick(id: number) {
@@ -374,20 +268,12 @@ export struct smBar {
             }
             .height("100%")
             .padding({ top: 7 })
-            .clip(
-              new Ellipse({
-                width: this.selectAnimation[item.id].toString() + "%",
-                height: this.selectAnimation[item.id].toString() + "%"
-              })
-            )
-
-            Column() {
-              this.BarIcon({icon: item.iconOn})
-              this.BarTextBut({text: item.text, color: this.accentColor})
-            }
-            .height("100%")
-            .padding({ top: 7 })
-            .visibility(this.selectPos == item.id && this.selectAnimation[item.id] == 100 ? Visibility.Visible : Visibility.None)
+            .opacity(this.selectAnimation[item.id])
+            .animation({
+              delay: 0,
+              duration: 300, // 动画时长
+              curve: Curve.EaseInOut, // 动画曲线
+            })
 
           }
           .width("100%")
