@@ -11,17 +11,26 @@ export struct ProgressRing {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
+  easeInOutQuad(s: number, t: number, x: number): number {
+    return s + (t - s) * (x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2);
+  }
+
   async doneRateChanged() {
-    this.tempDoneRate = this.doneRate;
-    var d_rate = (this.tempDoneRate - this.ringDoneRate) > 0 ? 0.001 : -0.001;
-    for (let i = 0; i < 1000; i++) {
-      if (Math.abs(this.tempDoneRate - this.ringDoneRate) < Math.abs(d_rate)) {
-        this.ringDoneRate = this.tempDoneRate;
+    let s = this.ringDoneRate
+    let t = this.doneRate
+    let temp = 0;
+    var d_rate = 0.01;
+    console.log("doneRateChanged ~", this.doneRate, this.ringDoneRate)
+    for (let i = 0; i < 100; i++) {
+      if (temp == 1) {
+        this.ringDoneRate = this.doneRate;
         d_rate = 0;
         break;
       } else {
-        this.ringDoneRate += d_rate;
-        await this.delay(2);
+        temp += d_rate;
+        this.ringDoneRate = this.easeInOutQuad(s, t, temp);
+        console.log("doneRateChanged :", this.doneRate, this.ringDoneRate, temp)
+        await this.delay(5);
       }
     }
     // console.log("doneRateChanged ~", this.tempDoneRate, this.ringDoneRate)
