@@ -74,7 +74,7 @@ export struct lgBar {
                 .opacity(this.selectAnimation[item.id])
                 .animation({
                   delay: 0,
-                  duration: 300, // 动画时长
+                  duration: 200, // 动画时长
                   curve: Curve.EaseInOut, // 动画曲线
                 })
 
@@ -180,7 +180,7 @@ export struct mdBar {
             .opacity(this.selectAnimation[item.id])
             .animation({
               delay: 0,
-              duration: 300, // 动画时长
+              duration: 200, // 动画时长
               curve: Curve.EaseInOut, // 动画曲线
             })
 
@@ -271,7 +271,7 @@ export struct smBar {
             .opacity(this.selectAnimation[item.id])
             .animation({
               delay: 0,
-              duration: 300, // 动画时长
+              duration: 200, // 动画时长
               curve: Curve.EaseInOut, // 动画曲线
             })
 

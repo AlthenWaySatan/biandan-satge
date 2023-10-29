@@ -11,13 +11,20 @@ PersistentStorage.PersistProp('TerminalsSyncSwitch', 0)
 @Component
 export struct AddEventButton {
   @StorageLink('isEdit') @Watch('openEdit') isEdit: boolean = false
+  @StorageLink('AccentColor1') @Watch('accentColorChanged') AccentColor1: string = '';
   @StorageLink('showEventAddPanel') showEventAddPanel: boolean = false
   @StorageLink('showAddMore') showAddMore: boolean = false
-  private addIcon: Resource
-  private accentColor: Resource
-  private shadowColor: Resource
+  @State addIcon: Resource = get_add_Marking()
+  @State accentColor: Resource = get_accent()
+  @State shadowColor: Resource = get_translucentSaturation_accent()
 
   aboutToAppear() {
+    this.addIcon = get_add_Marking()
+    this.accentColor = get_accent()
+    this.shadowColor = get_translucentSaturation_accent()
+  }
+
+  accentColorChanged() {
     this.addIcon = get_add_Marking()
     this.accentColor = get_accent()
     this.shadowColor = get_translucentSaturation_accent()

@@ -244,6 +244,12 @@ struct Index {
             .width('100%')
             .height('100%')
             .visibility(this.selectPos == 0 ? Visibility.Visible : Visibility.None)
+            .opacity(this.selectPos == 0 ? 1 : 0)
+            .animation({
+              delay: 0,
+              duration: 200, // 动画时长
+              curve: Curve.EaseInOut, // 动画曲线
+            })
 
             Column() {
               CalendarPage({
@@ -253,6 +259,12 @@ struct Index {
             .width('100%')
             .height('100%')
             .visibility(this.selectPos == 1 ? Visibility.Visible : Visibility.None)
+            .opacity(this.selectPos == 1 ? 1 : 0)
+            .animation({
+              delay: 0,
+              duration: 200, // 动画时长
+              curve: Curve.EaseInOut, // 动画曲线
+            })
 
             Column() {
               FourQuadrantPage({
@@ -262,6 +274,12 @@ struct Index {
             .width('100%')
             .height('100%')
             .visibility(this.selectPos == 2 ? Visibility.Visible : Visibility.None)
+            .opacity(this.selectPos == 2 ? 1 : 0)
+            .animation({
+              delay: 0,
+              duration: 200, // 动画时长
+              curve: Curve.EaseInOut, // 动画曲线
+            })
 
             Column() {
               SettingPage({
@@ -271,6 +289,12 @@ struct Index {
             .width('100%')
             .height('100%')
             .visibility(this.selectPos == 3 ? Visibility.Visible : Visibility.None)
+            .opacity(this.selectPos == 3 ? 1 : 0)
+            .animation({
+              delay: 0,
+              duration: 200, // 动画时长
+              curve: Curve.EaseInOut, // 动画曲线
+            })
           }
           }
 
