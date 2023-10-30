@@ -37,9 +37,9 @@ struct Index {
    * 媒体监听器
    */
   /*-------------------------------------------------------------------------------------------------------------------*/
-  smListener = mediaquery.matchMediaSync('(width < ' + 1500 + ')');
-  mdListener = mediaquery.matchMediaSync('(width >= ' + 1500 + ') and (width <= ' + 2500 + ')');
-  lgListener = mediaquery.matchMediaSync('(width > ' + 2500 + ')');
+  smListener = mediaquery.matchMediaSync('(width < ' + 520 + 'vp)');
+  mdListener = mediaquery.matchMediaSync('(width >= ' + 520 + 'vp) and (width <= ' + 840 + 'vp)');
+  lgListener = mediaquery.matchMediaSync('(width > ' + 840 + 'vp)');
   darkmodeListener = mediaquery.matchMediaSync('screen and (dark-mode: true)');
   portraitFuncSm = null;
   portraitFuncMd = null;
