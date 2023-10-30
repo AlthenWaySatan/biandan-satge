@@ -16,14 +16,21 @@ export struct CalendarDate {
   private accentColor: Resource
   private translucentSaturationAccentColor: Resource
 
+  @StorageLink('selectPos') selectPos: number = 0;
+
   private getResource() {
     let context: Context = getContext(this) as common.Context
-    getResource_little(this.date[0], this.date[1], this.date[2], this.folderId, context).then((ret) => {
-      this.showResource = ret[2]
-      this.showResource0 = ret[0];
-      this.showResource1 = ret[1];
-      console.log('getResource_little ', this.showResource);
-    })
+    // this.showResource = [0, 10, Array(10).fill(["xxxxx", $r('app.color.foreground'), 0])];
+    if (this.selectPos == 1)
+      setTimeout(async () => {
+        console.log("ref calendar " + this.date[0] + " " + this.date[1] + " " + this.date[2] + " " + this.folderId);
+        getResource_little(this.date[0], this.date[1], this.date[2], this.folderId, context).then((ret) => {
+          this.showResource = ret[2]
+          this.showResource0 = ret[0];
+          this.showResource1 = ret[1];
+          console.log('getResource_little ', this.showResource);
+        })
+      }, 200)
   }
 
   aboutToAppear() {

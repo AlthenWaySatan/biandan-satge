@@ -263,56 +263,53 @@ export struct EventsList_little {
 
   build() {
     Column() {
-      Scroll() {
-        Column() {
-          Column() {
-            Text(this.doneNum + ' / ' + this.showResource.length)
-              .fontSize(10)
-              .maxLines(1)
-              .fontWeight(FontWeight.Medium)
-              .textOverflow({ overflow: TextOverflow.Ellipsis })
-              .fontColor(this.titleColor)
+      List() {
+        ListItem() {
+          Text(this.doneNum + ' / ' + this.showResource.length)
+            .fontSize(10)
+            .maxLines(1)
+            .fontWeight(FontWeight.Medium)
+            .textOverflow({ overflow: TextOverflow.Ellipsis })
+            .fontColor(this.titleColor)
+            .textAlign(TextAlign.Center)
+        }
+        .padding({ left: 3, right: 3 })
+        // .justifyContent(FlexAlign.Center)
+        .height(14)
+        .width('100%')
+        .borderRadius(4)
+
+        ForEach(this.showResource, (item: [string, string, number]) => {
+          ListItem() {
+            Column() {
+              Text(item[0])
+                .fontSize(10)
+                .maxLines(1)
+                .textOverflow({ overflow: TextOverflow.Ellipsis })
+                .fontColor(item[2] == 1 ? $r('app.color.warning') : $r('app.color.text_level2'))
+                .decoration({
+                  type: item[2] == 2 ? TextDecorationType.LineThrough : TextDecorationType.None,
+                  color: $r('app.color.icon_level2')
+                })
+            }
+            .padding({ left: 3, right: 3 })
+            .alignItems(HorizontalAlign.Start)
+            .justifyContent(FlexAlign.Center)
+            .backgroundColor(item[1])
+            .height('100%')
+            .width('100%')
+            .borderRadius(4)
           }
-          .padding({ left: 3, right: 3 })
-          .justifyContent(FlexAlign.Center)
+          //        .displayPriority(this.showResource.length - index - 1)
+          .margin({ top: 2 })
+          .backgroundColor($r('app.color.foreground'))
           .height(14)
           .width('100%')
           .borderRadius(4)
-          //      .displayPriority(this.showResource.length)
-
-          ForEach(this.showResource, (item: [string, string, number]) => {
-            Column() {
-              Column() {
-                Text(item[0])
-                  .fontSize(10)
-                  .maxLines(1)
-                  .textOverflow({ overflow: TextOverflow.Ellipsis })
-                  .fontColor(item[2] == 1 ? $r('app.color.warning') : $r('app.color.text_level2'))
-                  .decoration({
-                    type: item[2] == 2 ? TextDecorationType.LineThrough : TextDecorationType.None,
-                    color: $r('app.color.icon_level2')
-                  })
-              }
-              .padding({ left: 3, right: 3 })
-              .alignItems(HorizontalAlign.Start)
-              .justifyContent(FlexAlign.Center)
-              .backgroundColor(item[1])
-              .height('100%')
-              .width('100%')
-              .borderRadius(4)
-            }
-            //        .displayPriority(this.showResource.length - index - 1)
-            .margin({ top: 2 })
-            .backgroundColor($r('app.color.foreground'))
-            .height(14)
-            .width('100%')
-            .borderRadius(4)
-          })
-        }
-      }
-      .edgeEffect(EdgeEffect.Spring)
-      .scrollBar(BarState.Off)
+        }, item => JSON.stringify(item))
+      }.cachedCount(5)
       .width('100%')
+      .height('100%')
     }
     .justifyContent(FlexAlign.End)
   }
