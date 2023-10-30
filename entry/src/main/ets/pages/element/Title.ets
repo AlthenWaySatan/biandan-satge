@@ -4,6 +4,7 @@ import EventResource from '../../model/EventsResourceContact';
 import { getResource } from '../../control/EventsController';
 import { get_accent } from '../../control/AccentController';
 import common from '@ohos.app.ability.common';
+import vibrator from '@ohos.vibrator';
 
 @Component
 export struct TitleTwo {
@@ -189,6 +190,7 @@ export struct TitleTwo {
         })
           .lunar(this.isLunar)
           .onChange((value: DatePickerResult) => {
+            vibrator.startVibration({ type: 'time', duration: 10, }, { id: 0, usage: 'physicalFeedback' })
             this.changeDate = [value.year, value.month + 1, value.day]
             console.info('select this.changeDate is: ', this.changeDate)
           })
@@ -330,6 +332,7 @@ export struct TitleOne {
         })
           .lunar(this.isLunar)
           .onChange((value: DatePickerResult) => {
+            vibrator.startVibration({ type: 'time', duration: 10, }, { id: 0, usage: 'physicalFeedback' })
             this.changeDate = [value.year, value.month + 1, value.day]
             console.info('select current date is: ' + value.year)
           })

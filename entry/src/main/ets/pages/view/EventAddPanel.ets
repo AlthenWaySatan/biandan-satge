@@ -5,6 +5,7 @@ import CreateResource from '../../model/CreateResourceContact';
 import { get_accent, get_translucentSaturation_accent } from '../../control/AccentController';
 import { getFolderClassify, getFolderIcon } from '../../control/FolderController';
 import common from '@ohos.app.ability.common';
+import vibrator from '@ohos.vibrator';
 
 PersistentStorage.PersistProp('FirstDayOfWeek', 0)
 PersistentStorage.PersistProp('DefaultTimeFormat', 0)
@@ -269,6 +270,7 @@ export struct EventAddPanel {
           selected: new Date(this.thisEvent.thisDate[0], this.thisEvent.thisDate[1] - 1, this.thisEvent.thisDate[2])
         })
           .onChange((value: DatePickerResult) => {
+            vibrator.startVibration({ type: 'time', duration: 10, }, { id: 0, usage: 'physicalFeedback' })
             this.thisEvent.setDate(value.year, value.month + 1, value.day, this.DefineCycleLength)
             this.CODE_DISTURBANCE()
             console.info('select current date is: ' + value.year + '-' + (value.month + 1) + '-' + value.day)
@@ -514,6 +516,7 @@ export struct EventAddPanel {
         })
           .useMilitaryTime(this.DefaultTimeFormat == 0)
           .onChange((value: TimePickerResult) => {
+            vibrator.startVibration({ type: 'time', duration: 10, }, { id: 0, usage: 'physicalFeedback' })
             if (this.thisEvent.validStartTime[3] < value.hour || (this.thisEvent.validStartTime[3] == value.hour && this.thisEvent.validStartTime[4] < value.minute)) {
               prompt.showToast({
                 message: (Object)($r('app.string.clockCantBeEarlier')),
@@ -545,6 +548,7 @@ export struct EventAddPanel {
             selected: new Date(this.thisEvent.clockTime[0], this.thisEvent.clockTime[1] - 1, this.thisEvent.clockTime[2], this.thisEvent.clockTime[3], this.thisEvent.clockTime[4])
           })
             .onChange((value: DatePickerResult) => {
+              vibrator.startVibration({ type: 'time', duration: 10, }, { id: 0, usage: 'physicalFeedback' })
               this.thisEvent.clockTime = [value.year, value.month + 1, value.day, this.thisEvent.clockTime[3], this.thisEvent.clockTime[4]]
               console.info('select current date is: ' + value.year + '-' + (value.month + 1) + '-' + value.day)
             })
@@ -564,6 +568,7 @@ export struct EventAddPanel {
         })
           .useMilitaryTime(this.DefaultTimeFormat == 0)
           .onChange((value: TimePickerResult) => {
+            vibrator.startVibration({ type: 'time', duration: 10, }, { id: 0, usage: 'physicalFeedback' })
             this.thisEvent.clockTime = [this.thisEvent.clockTime[0], this.thisEvent.clockTime[1], this.thisEvent.clockTime[2], value.hour, value.minute]
             console.info('select current time is: ' + value.hour + ':' + value.minute)
           })
@@ -662,6 +667,7 @@ export struct EventAddPanel {
           end: new Date(this.thisEvent.cycleEndDate[0], this.thisEvent.cycleEndDate[1] - 1, this.thisEvent.cycleEndDate[2])
         })
           .onChange((value: DatePickerResult) => {
+            vibrator.startVibration({ type: 'time', duration: 10, }, { id: 0, usage: 'physicalFeedback' })
             this.changedCycle = true
             this.thisEvent.cycleStartDate = [value.year, value.month + 1, value.day]
             console.info('select current date is: ' + value.year + '-' + (value.month + 1) + '-' + value.day)
@@ -687,6 +693,7 @@ export struct EventAddPanel {
           selected: new Date(this.thisEvent.cycleEndDate[0], this.thisEvent.cycleEndDate[1] - 1, this.thisEvent.cycleEndDate[2])
         })
           .onChange((value: DatePickerResult) => {
+            vibrator.startVibration({ type: 'time', duration: 10, }, { id: 0, usage: 'physicalFeedback' })
             this.changedCycle = true
             this.thisEvent.cycleEndDate = [value.year, value.month + 1, value.day]
             console.info('select current date is: ' + value.year + '-' + (value.month + 1) + '-' + value.day)
@@ -712,6 +719,7 @@ export struct EventAddPanel {
           .height('100%')
         TextPicker({ range: this.createNumberRange(1, 99), selected: this.thisEvent.cycleBaseNumber - 1 })
           .onChange((value: string, index: number) => {
+            vibrator.startVibration({ type: 'time', duration: 10, }, { id: 0, usage: 'physicalFeedback' })
             this.changedCycle = true
             this.thisEvent.cycleBaseNumber = index + 1
           })
@@ -719,6 +727,7 @@ export struct EventAddPanel {
           .height('100%')
         TextPicker({ range: $r('app.strarray.dateUnit'), selected: this.thisEvent.cycleUnit - 1 })
           .onChange((value: string, index: number) => {
+            vibrator.startVibration({ type: 'time', duration: 10, }, { id: 0, usage: 'physicalFeedback' })
             this.changedCycle = true
             this.thisEvent.cycleDate = []
             this.thisEvent.cycleDateYear = []
@@ -824,6 +833,7 @@ export struct EventAddPanel {
                 selected: new Date(2020, this.tempDate[0] - 1, this.tempDate[1])
               })
                 .onChange((value: DatePickerResult) => {
+                  vibrator.startVibration({ type: 'time', duration: 10, }, { id: 0, usage: 'physicalFeedback' })
                   this.tempDate = [value.month + 1, value.day]
                   console.info('select current date is: ' + value.year + '-' + (value.month + 1) + '-' + value.day)
                 })
@@ -916,6 +926,7 @@ export struct EventAddPanel {
       Row() {
         TextPicker({ range: this.createNumberRange(1, 99), selected: this.thisEvent.cycleDateLimit - 1 })
           .onChange((value: string, index: number) => {
+            vibrator.startVibration({ type: 'time', duration: 10, }, { id: 0, usage: 'physicalFeedback' })
             this.changedCycle = true
             this.thisEvent.cycleDateLimit = index + 1
           })
@@ -950,6 +961,7 @@ export struct EventAddPanel {
         })
           .useMilitaryTime(this.DefaultTimeFormat == 0)
           .onChange((value: TimePickerResult) => {
+            vibrator.startVibration({ type: 'time', duration: 10, }, { id: 0, usage: 'physicalFeedback' })
             let temp = [this.thisEvent.validStartTime[0], this.thisEvent.validStartTime[1], this.thisEvent.validStartTime[2], value.hour, value.minute]
             if (this.checkTimeValue(temp, this.thisEvent.validEndTime)) {
               this.thisEvent.validStartTime = temp
@@ -983,6 +995,7 @@ export struct EventAddPanel {
             selected: new Date(this.thisEvent.validEndTime[0], this.thisEvent.validEndTime[1] - 1, this.thisEvent.validEndTime[2], this.thisEvent.validEndTime[3], this.thisEvent.validEndTime[4])
           })
             .onChange((value: DatePickerResult) => {
+              vibrator.startVibration({ type: 'time', duration: 10, }, { id: 0, usage: 'physicalFeedback' })
               let temp = [value.year, value.month + 1, value.day, this.thisEvent.validEndTime[3], this.thisEvent.validEndTime[4]]
               if (this.checkTimeValue(this.thisEvent.validStartTime, temp)) {
                 this.thisEvent.validEndTime = temp
@@ -1010,6 +1023,7 @@ export struct EventAddPanel {
         })
           .useMilitaryTime(this.DefaultTimeFormat == 0)
           .onChange((value: TimePickerResult) => {
+            vibrator.startVibration({ type: 'time', duration: 10, }, { id: 0, usage: 'physicalFeedback' })
             let temp = [this.thisEvent.validEndTime[0], this.thisEvent.validEndTime[1], this.thisEvent.validEndTime[2], value.hour, value.minute]
             if (this.checkTimeValue(this.thisEvent.validStartTime, temp)) {
               this.thisEvent.validEndTime = temp
@@ -1041,6 +1055,7 @@ export struct EventAddPanel {
       Row() {
         TextPicker({ range: this.createNumberRange(1, 99), selected: this.thisEvent.countNumber - 1 })
           .onChange((value: string, index: number) => {
+            vibrator.startVibration({ type: 'time', duration: 10, }, { id: 0, usage: 'physicalFeedback' })
             this.thisEvent.countNumber = index + 1
           })
           .width('100%')

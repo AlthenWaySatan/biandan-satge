@@ -30,6 +30,7 @@ import prompt from '@ohos.prompt'
 import common from '@ohos.app.ability.common';
 import { setStorage } from '../../control/StorageController';
 import BarResource from '../../model/BarResourceContact';
+import vibrator from '@ohos.vibrator';
 
 PersistentStorage.PersistProp('BackUpSwitch', 0)
 PersistentStorage.PersistProp('AutoBackUpSwitch', 0)
@@ -729,6 +730,7 @@ export struct DefaultClockTimePage {
       Column() {
         TimePicker({ selected: new Date(2023, 3, 11, this.DefaultClockTime0, this.DefaultClockTime1) })
           .onChange((value: TimePickerResult) => {
+            vibrator.startVibration({ type: 'time', duration: 10, }, { id: 0, usage: 'physicalFeedback' })
             this.tempTime = [value.hour, value.minute]
           })
           .useMilitaryTime(this.DefaultTimeFormat == 0)
@@ -780,6 +782,7 @@ export struct DefaultUrgentTimePage {
       Column() {
         TimePicker({ selected: new Date(2023, 3, 11, this.DefaultUrgentTime0, this.DefaultUrgentTime1) })
           .onChange((value: TimePickerResult) => {
+            vibrator.startVibration({ type: 'time', duration: 10, }, { id: 0, usage: 'physicalFeedback' })
             while (value.hour == 23 && value.minute == 59) {
               value.minute = 58;
               prompt.showToast({

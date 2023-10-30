@@ -106,7 +106,7 @@ export struct EventsList {
                   if (item.doneTimes != 0) {
                     let context: Context = getContext(this) as common.Context
                     SubCompTime(item.eventId, context)
-                    vibrator.vibrate(10)
+                    vibrator.startVibration({ type: 'time', duration: 10, }, { id: 0, usage: 'touch' })
                     this.CODE_DISTURBANCE()
                   }
                 })
@@ -169,7 +169,7 @@ export struct EventsList {
                   if (!this.isEdit) {
                     this.checkEvents(true, item.eventId)
                     this.isEdit = true
-                    vibrator.vibrate(20)
+                    vibrator.startVibration({ type: 'time', duration: 20, }, { id: 0, usage: 'touch' })
                   }
                 })
               )
