@@ -187,9 +187,9 @@ struct guide {
 
       StepperItem() {
         Swiper() {
-          this.stepPage($r('app.media.img_fourQuadrants'), '展开象限', '在四象限界面点击对应象限标题展开象限视图')
-          this.stepPage($r('app.media.img_fourQuadrants2'), '在象限中添加事项', '在展开象限视图后，添加的待办事项将默认归类进展开的象限')
-          this.stepPage($r('app.media.img_fourQuadrants3'), '改变事项的象限', '在四象限界面拖动待办事项至其他象限，可以更改待办事项所归类的象限')
+          this.stepPage({img: $r('app.media.img_fourQuadrants'), title: '展开象限', info: '在四象限界面点击对应象限标题展开象限视图', icon: false})
+          this.stepPage({img: $r('app.media.img_fourQuadrants2'), title: '在象限中添加事项', info: '在展开象限视图后，添加的待办事项将默认归类进展开的象限', icon: false})
+          this.stepPage({img: $r('app.media.img_fourQuadrants3'), title: '改变事项的象限', info: '在四象限界面拖动待办事项至其他象限，可以更改待办事项所归类的象限', icon: false})
         }
         .cachedCount(2)
         .indicatorStyle({
