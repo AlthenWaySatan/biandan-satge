@@ -1,12 +1,15 @@
-import { TitleTwo, TitleOne } from '../element/Title';
+import { TitleTwo, TitleOne, EditTitleOne } from '../element/Title';
 import { SiderFolder } from '../element/SiderFolder';
 import { FourQuadrant } from '../element/FourQuadrant';
 import FolderResource from '../../model/FolderResourceContact';
 import { AddEventButton } from '../element/AddEventButton';
+import { ToolBar } from '../element/ToolBar';
 
 @Component
 export struct FourQuadrantPage {
   @StorageLink('selectPos') selectPos: number = 2;
+  //是否编辑模式
+  @StorageLink('isEdit') isEdit: boolean = false
 
   //当前日期和待办单
   @StorageLink('showDate') showDate: number[] = []
@@ -75,27 +78,34 @@ export struct FourQuadrantPage {
         }
         Column() {
           //标题
-          if (this.screenType == 'sm') {
-            TitleTwo({
-              mainTitle: $showDateToSon,
-              subTitle: this.getFolderTitle(),
-              columnNum: 4,
-              offsetNum: 0
-            })
-          } else if (this.screenType == 'md') {
-            TitleTwo({
-              mainTitle: $showDateToSon,
-              subTitle: this.getFolderTitle(),
-              columnNum: 8,
-              offsetNum: 1
+          if (this.isEdit) {
+            EditTitleOne({
+              columnNum: this.screenType == 'sm' ? 4 : 8,
+              offsetNum: this.screenType == 'sm' ? 0 : 1
             })
           } else {
-            TitleOne({
-              showDate: $showDate,
-              mainTitle: $showDateToSon,
-              columnNum: 8,
-              offsetNum: 1
-            })
+            if (this.screenType == 'sm') {
+              TitleTwo({
+                mainTitle: $showDateToSon,
+                subTitle: this.getFolderTitle(),
+                columnNum: 4,
+                offsetNum: 0
+              })
+            } else if (this.screenType == 'md') {
+              TitleTwo({
+                mainTitle: $showDateToSon,
+                subTitle: this.getFolderTitle(),
+                columnNum: 8,
+                offsetNum: 1
+              })
+            } else {
+              TitleOne({
+                showDate: $showDate,
+                mainTitle: $showDateToSon,
+                columnNum: 8,
+                offsetNum: 1
+              })
+            }
           }
 
 
@@ -127,6 +137,9 @@ export struct FourQuadrantPage {
           }
           .layoutWeight(1)
 
+          ToolBar({
+            isHidden: $isEdit,
+          })
         }
         .width((this.screenType == 'lg' ? '60%' : '100%'))
         .margin({ top: this.statusBarHeightVp })

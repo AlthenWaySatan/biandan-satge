@@ -1,18 +1,46 @@
+import vibrator from '@ohos.vibrator';
+import common from '@ohos.app.ability.common';
+import { changeQuadrant } from '../../control/EventsController';
 import { EventQuadrant } from '../element/EventQuadrant';
+
+PersistentStorage.PersistProp('DefaultUrgentTime0', 22)
+PersistentStorage.PersistProp('DefaultUrgentTime1', 0)
 
 @Component
 export struct FourQuadrant {
   @StorageLink('isQuadrantHidden') isQuadrantHidden: boolean[] = [false, false, false, false]
 
+  @StorageLink('showDate') showDate: number[] = []
+
+  //是否编辑模式
+  @StorageLink('isEdit') isEdit: boolean = false
+
   //当前打开的象限属性
   @StorageLink('isQuadrantImportant') isQuadrantImportant: boolean = false;
   @StorageLink('isQuadrantUrgent') isQuadrantUrgent: boolean = false;
+  @StorageLink('movingEvent') movingEventResource: [number, boolean, boolean] = [0, false, false];
+  @StorageLink('DefaultUrgentTime0') DefaultUrgentTime0: number = 22;
+  @StorageLink('DefaultUrgentTime1') DefaultUrgentTime1: number = 0;
 
   private isAllShow(): boolean {
     return this.isQuadrantHidden[0] == false && this.isQuadrantHidden[1] == false && this.isQuadrantHidden[2] == false && this.isQuadrantHidden[3] == false
   }
 
+  private moveQuadrant(isImportant: boolean, isUrgent: boolean) {
+    if (this.movingEventResource[0] == 0) return;
+    if (this.movingEventResource[1] == isImportant && this.movingEventResource[2] == isUrgent)
+      return;
+
+    console.log("move " + this.movingEventResource[0] + " " + isImportant + "," + isUrgent);
+    let context: Context = getContext(this) as common.Context
+    changeQuadrant(this.movingEventResource[0], isImportant, (isUrgent ?
+      [this.showDate[0], this.showDate[1], this.showDate[2], this.DefaultUrgentTime0, this.DefaultUrgentTime1] :
+      [this.showDate[0], this.showDate[1], this.showDate[2], 23, 59]), context)
+    this.movingEventResource = [0, false, false];
+  }
+
   private clickCard(type: number) {
+    if (this.isEdit) return;
     if (this.isQuadrantHidden[type] || this.isAllShow()) {
       this.isQuadrantHidden = [true, true, true, true]
       this.isQuadrantHidden[type] = false
@@ -145,6 +173,12 @@ export struct FourQuadrant {
         .onClick(() => {
           this.clickCard(0)
         })
+        .onDragEnter(() => {
+          vibrator.startVibration({ type: 'time', duration: 20, }, { id: 0, usage: 'touch' })
+        })
+        .onDrop(() => {
+          this.moveQuadrant(true, true);
+        })
 
         Column() {
           Stack() {
@@ -202,6 +236,12 @@ export struct FourQuadrant {
         .column1()
         .onClick(() => {
           this.clickCard(1)
+        })
+        .onDragEnter(() => {
+          vibrator.startVibration({ type: 'time', duration: 20, }, { id: 0, usage: 'touch' })
+        })
+        .onDrop(() => {
+          this.moveQuadrant(true, false);
         })
       }
       .row0()
@@ -264,6 +304,12 @@ export struct FourQuadrant {
         .onClick(() => {
           this.clickCard(2)
         })
+        .onDragEnter(() => {
+          vibrator.startVibration({ type: 'time', duration: 20, }, { id: 0, usage: 'touch' })
+        })
+        .onDrop(() => {
+          this.moveQuadrant(false, true);
+        })
 
         Column() {
           Stack() {
@@ -321,6 +367,12 @@ export struct FourQuadrant {
         .column1()
         .onClick(() => {
           this.clickCard(3)
+        })
+        .onDragEnter(() => {
+          vibrator.startVibration({ type: 'time', duration: 20, }, { id: 0, usage: 'touch' })
+        })
+        .onDrop(() => {
+          this.moveQuadrant(false, false);
         })
       }
       .row1()

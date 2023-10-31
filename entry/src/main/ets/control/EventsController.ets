@@ -973,3 +973,28 @@ export function queryCreateResource(id2: number, context: Context) {
     }, context)
   }, context)
 }
+
+/**
+ * 修改事项象限
+ * @param id2
+ * @param isImportant
+ * @param newValidEndTime
+ */
+export function changeQuadrant(id2: number, newIsImportant: boolean, newValidEndTime: number[], context: Context) {
+  console.log(JSON.stringify(newValidEndTime));
+  const showTaskImpl: ShowTaskInterface = new ShowTaskImpl();
+  const taskImpl: TaskInterface = new TaskImpl();
+  showTaskImpl.queryID1ByID2(id2, (id1: number, isLoop: boolean, unitTimeNumber: number) => {
+    taskImpl.queryTask((id1), (taskData: TaskData) => {
+      console.log("query id1:" + id1)
+      if (taskData != null) {
+        let thisEvent:CreateResource = taskDataToCreateResource(taskData);
+        thisEvent.isImportant = newIsImportant;
+        thisEvent.validEndTime = newValidEndTime;
+        console.log(JSON.stringify(thisEvent));
+        editThisEvent(thisEvent.id1, thisEvent, false, context);
+        console.log("set done :" + AppStorage.Get<boolean>("editEvent"))
+      }
+    }, context)
+  }, context)
+}

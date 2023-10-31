@@ -280,6 +280,9 @@ export struct ToolBar {
 
   //是否隐藏
   @StorageLink('isHidden') isCardHidden: boolean[] = [false, false, false]
+  @StorageLink('isQuadrantHidden') isQuadrantHidden: boolean[] = [false, false, false, false]
+  @StorageLink('AccentColor') @Watch('accentColorChanged') AccentColor: [number, string] = [0, '']
+
   @StorageLink('screenType') screenType: string = ''
   @State CODE_DISTURBANCE_BOOL: boolean = true;
   @Link isHidden: boolean
@@ -293,7 +296,16 @@ export struct ToolBar {
     this.ic_collect_on_Marking = get_collect_on_Marking()
   }
 
+
+  accentColorChanged() {
+    this.accentColor = get_accent()
+    this.ic_allChoose_on_Marking = get_allChoose_on_Marking()
+    this.ic_collect_on_Marking = get_collect_on_Marking()
+  }
+
   private CODE_DISTURBANCE() {
+    this.isQuadrantHidden[0] = !this.isQuadrantHidden[0];
+    this.isQuadrantHidden[0] = !this.isQuadrantHidden[0];
     this.isCardHidden[0] = !this.isCardHidden[0];
     this.isCardHidden[0] = !this.isCardHidden[0];
     this.CODE_DISTURBANCE_BOOL = !this.CODE_DISTURBANCE_BOOL;
