@@ -2,10 +2,28 @@ import { get_accent } from '../../control/AccentController';
 
 @Component
 export struct ProgressRing {
+  // @StorageLink('doneNum') doneNum: number = 0
+  // @StorageLink('todoNum') todoNum: number = 0
   @Link @Watch("doneRateChanged") doneRate: number;
-  private tempDoneRate: number = this.doneRate
-  private accentColor: Resource
-  @State ringDoneRate: number = this.tempDoneRate;
+  // private tempDoneRate: number = this.doneRate
+  @StorageLink('AccentColor1') @Watch('accentColorChanged') AccentColor1: string = '';
+  @State accentColor: Resource = get_accent()
+  @State ringDoneRate: number = this.doneRate;
+
+  aboutToAppear() {
+    this.accentColor = get_accent()
+  }
+
+  accentColorChanged() {
+    this.accentColor = get_accent()
+  }
+
+  // getDoneRate(): number {
+  //   if ((this.todoNum + this.doneNum) == 0)
+  //     return 0
+  //   else
+  //     return (this.doneNum) / (this.todoNum + this.doneNum)
+  // }
 
   delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -34,10 +52,6 @@ export struct ProgressRing {
       }
     }
     // console.log("doneRateChanged ~", this.tempDoneRate, this.ringDoneRate)
-  }
-
-  aboutToAppear() {
-    this.accentColor = get_accent()
   }
 
   build() {
