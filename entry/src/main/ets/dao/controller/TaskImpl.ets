@@ -192,9 +192,9 @@ export default class TaskImpl implements TaskInterface {
                             if (newTask.isLoop == false) {
                                 showTaskArray[i].startTime = newTask.startTime;
                                 showTaskArray[i].endTime = newTask.endTime;
-                                showTaskArray[i].validStartTime = newTask.validStartTime;
-                                showTaskArray[i].validEndTime = newTask.validEndTime;
                             }
+                            showTaskArray[i].validStartTime = newTask.validStartTime;
+                            showTaskArray[i].validEndTime = newTask.validEndTime;
                             const showTaskTable = new ShowTaskTable();
                             let promise2 = showTaskTable.update(context, showTaskArray[i])
                             promise2.then((ret) => {
