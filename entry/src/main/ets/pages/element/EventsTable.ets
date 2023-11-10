@@ -206,6 +206,7 @@ export struct EventsTable {
         console.log('onRefreshing test')
       })
     }
+    .height('100%')
     .onTouch((event: TouchEvent) => {
       if (this.selectPos == 1 && this.openCalendar) {
         if (event.type == TouchType.Down){
