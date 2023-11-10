@@ -14,7 +14,11 @@ export struct FolderList {
   @StorageLink('showDate') showDate: number[] = []
   @StorageLink('showFolderAddPanel') showFolderAddPanel: boolean = false
 
-  private accentColor: Resource
+  @StorageLink('AccentColor1') @Watch('accentColorChanged') AccentColor1: string = '';
+  @State accentColor: Resource = get_accent()
+  accentColorChanged() {
+    this.accentColor = get_accent()
+  }
 
   aboutToAppear() {
     this.accentColor = get_accent();

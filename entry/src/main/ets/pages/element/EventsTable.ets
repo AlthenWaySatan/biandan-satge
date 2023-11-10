@@ -12,6 +12,9 @@ export struct EventsTable {
   //是否编辑模式
   @StorageLink('isEdit') isEdit: boolean = false
 
+
+  @StorageLink('AccentColor1') @Watch('accentColorChanged') AccentColor1: string = '';
+
   //是否隐藏
   @StorageLink('isHidden') isHidden: boolean[] = [false, false, false]
 
@@ -19,7 +22,7 @@ export struct EventsTable {
   @State IsRotate0: number = 0;
   @State IsRotate1: number = 0;
   @State IsRotate2: number = 0;
-  private accentColor: Resource
+  @State accentColor: Resource = get_accent()
   @State isRefreshing: boolean = false
   @State isScroll: boolean = false
   private tootleOffset: number = 0
@@ -30,6 +33,10 @@ export struct EventsTable {
   @StorageLink('openCalendar') openCalendar: boolean = false
   private miny: number;
   private mint: number;
+
+  accentColorChanged() {
+    this.accentColor = get_accent()
+  }
 
   aboutToAppear() {
     this.accentColor = get_accent()

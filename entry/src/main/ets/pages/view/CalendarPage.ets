@@ -6,9 +6,6 @@ import { ToolBar } from '../element/ToolBar';
 import FolderResource from '../../model/FolderResourceContact';
 import { get_accent, get_translucentSaturation_accent } from '../../control/AccentController';
 
-const CAL_MIN_HEIGHT: number = 80;
-const DELAY_TIME: number = 50;
-
 @Component
 export struct CalendarPage {
   @StorageLink('selectPos') selectPos: number = 1;
@@ -26,6 +23,7 @@ export struct CalendarPage {
   @StorageLink('openCalendar') @Watch('calendarViewChanged') openCalendar: boolean = false
   @StorageLink('systemFolderResource') systemFolderResource: FolderResource[] = []
   @StorageLink('userFolderResource') userFolderResource: FolderResource[] = []
+  @StorageLink('AccentColor1') @Watch('accentColorChanged') AccentColor1: string = '';
   @State accentColor: Resource = get_accent()
   @State translucentSaturationAccentColor: Resource = get_translucentSaturation_accent()
 
@@ -33,6 +31,11 @@ export struct CalendarPage {
     .width('100%')
     .backgroundColor($r('app.color.foreground'))
     .borderRadius(16)
+  }
+
+  accentColorChanged() {
+    this.accentColor = get_accent()
+    this.translucentSaturationAccentColor = get_translucentSaturation_accent()
   }
 
   @StorageLink('FirstDayOfWeek') FirstDayOfWeek: number = 0

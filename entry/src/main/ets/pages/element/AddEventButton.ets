@@ -6,12 +6,12 @@ import vibrator from '@ohos.vibrator';
 import { get_translucentSaturation_accent } from '../../control/AccentController';
 import common from '@ohos.app.ability.common';
 
-PersistentStorage.PersistProp('TerminalsSyncSwitch', false)
+PersistentStorage.PersistProp('TerminalsSyncSwitch', 0)
 
 @Component
 export struct AddEventButton {
   @StorageLink('isEdit') @Watch('openEdit') isEdit: boolean = false
-  @StorageLink('AccentColor') @Watch('accentColorChanged') AccentColor: [number, string] = [0, '']
+  @StorageLink('AccentColor1') @Watch('accentColorChanged') AccentColor1: string = '';
   @StorageLink('showEventAddPanel') showEventAddPanel: boolean = false
   @StorageLink('showAddMore') showAddMore: boolean = false
   @State accentColor: Resource = get_accent()
