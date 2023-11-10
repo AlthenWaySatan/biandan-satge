@@ -1,50 +1,46 @@
 import { CalendarWeek } from '../element/CalendarWeek';
-import { getResource } from '../../control/EventsController';
-import { EventsTable } from '../element/EventsTable';
-import { AddEventButton } from '../element/AddEventButton';
-import { ToolBar } from '../element/ToolBar';
-import { getStartDate, getNextNDay, getNextNMonth} from '../../control/CalendarControl';
-import common from '@ohos.app.ability.common';
-
 
 PersistentStorage.PersistProp('FirstDayOfWeek', 0)
 
 @Component
 export struct CalendarMonth {
-  @StorageLink('selectPos') selectPos: number = 0;
-  //是否编辑模式
-  @StorageLink('isEdit') isEdit: boolean = false
-  @StorageLink('screenType') screenType: string = ''
-  @StorageLink('showDate') @Watch('RefreshResource') showDate: number[] = [(new Date().getFullYear()), (new Date().getMonth() + 1), (new Date().getDate())]
-  @StorageLink('folderId') folderId: number = 0
   @StorageLink('openCalendar') openCalendar: boolean = false
-  @StorageLink('showSixLine') showSixLine: boolean = false
   @StorageLink('FirstDayOfWeek') FirstDayOfWeek: number = 0
+  @Link isShow : boolean;
+  @Link accentColor: Resource
+  @Link translucentSaturationAccentColor: Resource
 
-  private changeShowDate(value: number) {
-    if (this.openCalendar)
-      this.showDate = getNextNDay(this.showDate, 7 * value)
+  private getStartDate(date: number[]): number[] {
+    var dateTime = new Date(date[0], date[1] - 1, 1);
+    if (this.FirstDayOfWeek == 0)
+      dateTime = new Date(dateTime.setDate(dateTime.getDate() - (dateTime.getDay() + 6) % 7));
     else
-      this.showDate = getNextNMonth(this.showDate, value)
-    console.log('1-2.事件内容：??? next -> ', this.showDate);
+      dateTime = new Date(dateTime.setDate(dateTime.getDate() - dateTime.getDay()));
+    return [(dateTime.getFullYear()), (dateTime.getMonth() + 1), (dateTime.getDate())]
+  }
 
-    let context: Context = getContext(this) as common.Context
-    getResource(this.showDate[0], this.showDate[1], this.showDate[2], this.folderId, context);
+  /**
+   * 获取下n天
+   */
+  private getNextNDay(date: number[], n: number): number[] {
+    var dateTime = new Date(date[0], date[1] - 1, date[2]);
+    dateTime = new Date(dateTime.setDate(dateTime.getDate() + n));
+    return [(dateTime.getFullYear()), (dateTime.getMonth() + 1), (dateTime.getDate())]
   }
 
   private checkNeedClose(startDate: number[]): boolean {
-    for (let i = 0;i < 7; i++) {
-      let temp: number[] = getNextNDay(startDate, i)
-      if (temp[1] == this.showDate[1] && temp[2] == this.showDate[2])
+    for (let i = 0; i < 7; i++) {
+      let temp: number[] = this.getNextNDay(startDate, i)
+      if (temp[1] == this.startDate[1] && temp[2] == this.startDate[2])
         return false
     }
     return true
   }
 
-  @Builder WeekTitle($$:{text: string | Resource}) {
+  @Builder WeekTitle(text: string | Resource) {
     Column() {
       Column() {
-        Text($$.text)
+        Text(text)
           .fontColor($r('app.color.text_level2'))
           .fontWeight(FontWeight.Medium)
           .fontSize(14)
@@ -60,181 +56,62 @@ export struct CalendarMonth {
     .layoutWeight(1)
   }
 
-  @State startDate0:number[] = getStartDate(this.showDate);
-  @State startDate7:number[] = getNextNDay(getStartDate(this.showDate), 7);
-  @State startDate14:number[] = getNextNDay(getStartDate(this.showDate), 14);
-  @State startDate21:number[] = getNextNDay(getStartDate(this.showDate), 21);
-  @State startDate28:number[] = getNextNDay(getStartDate(this.showDate), 28);
-  @State startDate35:number[] = getNextNDay(getStartDate(this.showDate), 35);
+  @State @Watch('aboutToAppear') startDate: number[] = []
+  @State data2: number[][] = new Array(5).fill([])
+  @State showSixWeek: boolean = false;
 
-  @State isNeedClose0: boolean = this.checkNeedClose(getStartDate(this.showDate));
-  @State isNeedClose7: boolean = this.checkNeedClose(getNextNDay(getStartDate(this.showDate), 7));
-  @State isNeedClose14: boolean = this.checkNeedClose(getNextNDay(getStartDate(this.showDate), 14));
-  @State isNeedClose21: boolean = this.checkNeedClose(getNextNDay(getStartDate(this.showDate), 21));
-  @State isNeedClose28: boolean = this.checkNeedClose(getNextNDay(getStartDate(this.showDate), 28));
-  @State isNeedClose35: boolean = this.checkNeedClose(getNextNDay(getStartDate(this.showDate), 35));
-
-  private RefreshResource() {
-    this.startDate0 = getStartDate(this.showDate);
-    this.startDate7 = getNextNDay(getStartDate(this.showDate), 7);
-    this.startDate14 = getNextNDay(getStartDate(this.showDate), 14);
-    this.startDate21 = getNextNDay(getStartDate(this.showDate), 21);
-    this.startDate28 = getNextNDay(getStartDate(this.showDate), 28);
-    this.startDate35 = getNextNDay(getStartDate(this.showDate), 35);
-
-    this.isNeedClose0 = this.checkNeedClose(getStartDate(this.showDate));
-    this.isNeedClose7 = this.checkNeedClose(getNextNDay(getStartDate(this.showDate), 7));
-    this.isNeedClose14 = this.checkNeedClose(getNextNDay(getStartDate(this.showDate), 14));
-    this.isNeedClose21 = this.checkNeedClose(getNextNDay(getStartDate(this.showDate), 21));
-    this.isNeedClose28 = this.checkNeedClose(getNextNDay(getStartDate(this.showDate), 28));
-    this.isNeedClose35 = this.checkNeedClose(getNextNDay(getStartDate(this.showDate), 35));
+  aboutToAppear() {
   }
 
   build() {
     Column() {
-      if (this.selectPos == 1)
-      Column() {
-        Column() {
-          Row() {
-            if (this.FirstDayOfWeek == 1)
-              this.WeekTitle({text: $r('app.string.Sun')})
-            this.WeekTitle({text: $r('app.string.Mon')})
-            this.WeekTitle({text: $r('app.string.Tue')})
-            this.WeekTitle({text: $r('app.string.Wed')})
-            this.WeekTitle({text: $r('app.string.Thu')})
-            this.WeekTitle({text: $r('app.string.Fri')})
-            this.WeekTitle({text: $r('app.string.Sat')})
-            if (this.FirstDayOfWeek == 0)
-              this.WeekTitle({text: $r('app.string.Sun')})
-          }
-          .height(24)
-          .width('100%')
-          .animation({
-            delay: 200,
-            duration: 200, // 动画时长
-            curve: Curve.EaseOut, // 动画曲线
-          })
-
-          Column() {
-            CalendarWeek({
-              startDate: $startDate0,
-              isNeedClose: $isNeedClose0
-            })
-
-            CalendarWeek({
-              startDate: $startDate7,
-              isNeedClose: $isNeedClose7
-            })
-
-            CalendarWeek({
-              startDate: $startDate14,
-              isNeedClose: $isNeedClose14
-            })
-
-            CalendarWeek({
-              startDate: $startDate21,
-              isNeedClose: $isNeedClose21
-            })
-
-            CalendarWeek({
-              startDate: $startDate28,
-              isNeedClose: $isNeedClose28
-            })
-
-            if (this.showSixLine = (getNextNDay(getStartDate(this.showDate), 35)[1] == this.showDate[1])) {
-              CalendarWeek({
-                startDate: $startDate35,
-                isNeedClose: $isNeedClose35
-              })
-            }
-          }
-          .width('100%')
-          .layoutWeight(1)
-          .gesture(
-          GestureGroup(GestureMode.Parallel,
-          PanGesture({ direction: PanDirection.Up, distance: 1 })
-            .onActionEnd(() => {
-              this.openCalendar = true
-            }),
-          PanGesture({ direction: PanDirection.Down, distance: 1 })
-            .onActionEnd(() => {
-              this.openCalendar = false
-            }),
-          PanGesture({ direction: PanDirection.Right, distance: 1 })
-            .onActionEnd(() => {
-              this.changeShowDate(-1)
-            }),
-          PanGesture({ direction: PanDirection.Left, distance: 1 })
-            .onActionEnd(() => {
-              this.changeShowDate(1)
-            })
-          )
-          )
-
-          Column() {
-            Image(this.openCalendar ? $r('app.media.ic_calendar_open') : $r('app.media.ic_calendar_close'))
-              .width(34.01)
-              .height(9.69)
-          }
-          .justifyContent(FlexAlign.Center)
-          .height(16)
-          .width(60)
-          .margin(6)
-          .onClick(() => {
-            this.openCalendar = !this.openCalendar
+      ForEach(this.data2, (item: number[], index: number) => {
+        Row() {
+          CalendarWeek({
+            startDate: this.getNextNDay(this.getStartDate(this.startDate), index * 7),
+            isNeedClose: this.checkNeedClose(this.getNextNDay(this.getStartDate(this.startDate), index * 7)),
+            showDate: $startDate,
+            accentColor: $accentColor,
+            translucentSaturationAccentColor: $translucentSaturationAccentColor,
+            showSixLine: this.getNextNDay(this.getStartDate(this.startDate), 35)[1] == this.startDate[1],
+            isShow: $isShow
           })
         }
-        .height('100%')
-        .width('100%')
-      }
-      .padding({
-        left: this.screenType == 'sm' ? 9 : 21,
-        right: this.screenType == 'sm' ? 9 : 21,
-        bottom: this.screenType == 'lg' ? 6 : 0 })
-      .height(this.openCalendar ? '30%' : '100%')
-      //      .height(this.screenType == 'lg' ? '30%' : '20%')
-      .width('100%')
-      .animation({
-        delay: 150,
-        duration: 300, // 动画时长
-        curve: Curve.EaseOut, // 动画曲线
-      })
-
-      if (this.openCalendar)
-      Column() {
-        GridContainer({ columns: this.screenType == 'sm' ? 4 : 8, gutter: 12, margin: 12 }) {
-          Column() {
-            Stack() {
-              Column() {
-                EventsTable({})
-              }
-              .height('100%')
-              .width('100%')
-
-              AddEventButton()
-            }
-            .width('100%')
-            .height('100%')
-            .alignContent(Alignment.BottomEnd)
-          }
-          .useSizeType({
-            xs: { span: this.screenType == 'sm' ? 4 : 6, offset: this.screenType == 'sm' ? 0 : 1 },
-            sm: { span: this.screenType == 'sm' ? 4 : 6, offset: this.screenType == 'sm' ? 0 : 1 },
-            md: { span: this.screenType == 'sm' ? 4 : 6, offset: this.screenType == 'sm' ? 0 : 1 },
-            lg: { span: this.screenType == 'sm' ? 4 : 6, offset: this.screenType == 'sm' ? 0 : 1 },
+        .backgroundColor($r('app.color.background'))
+      },)
+      if (this.getNextNDay(this.getStartDate(this.startDate), 35)[1] == this.startDate[1]) {
+        Row() {
+          CalendarWeek({
+            startDate: this.getNextNDay(this.getStartDate(this.startDate), 35),
+            isNeedClose: this.checkNeedClose(this.getNextNDay(this.getStartDate(this.startDate), 35)),
+            showDate: $startDate,
+            accentColor: $accentColor,
+            translucentSaturationAccentColor: $translucentSaturationAccentColor,
+            showSixLine: this.getNextNDay(this.getStartDate(this.startDate), 35)[1] == this.startDate[1],
+            isShow: $isShow
           })
         }
-        .layoutWeight(1)
-
-        ToolBar({
-          isHidden: $isEdit,
-        })
+        .backgroundColor($r('app.color.background'))
       }
-      .height('70%')
-      .width('100%')
-
     }
-    .height('100%')
     .width('100%')
+    .height('100%')
+    .animation({
+      delay: 150,
+      duration: 300, // 动画时长
+      curve: Curve.EaseOut, // 动画曲线
+    })
+    .gesture(
+      GestureGroup(GestureMode.Parallel,
+        PanGesture({ direction: PanDirection.Up, distance: 1 })
+          .onActionEnd(() => {
+            this.openCalendar = true
+          }),
+        PanGesture({ direction: PanDirection.Down, distance: 1 })
+          .onActionEnd(() => {
+            this.openCalendar = false
+          })
+      )
+    )
   }
 }

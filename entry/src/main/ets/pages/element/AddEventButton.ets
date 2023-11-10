@@ -3,29 +3,27 @@ import { getNewAndImportData } from '../../control/TerminalsSyncController';
 import { ExportNewVersion } from '../../control/TerminalsSyncController';
 import { get_accent } from '../../control/AccentController';
 import vibrator from '@ohos.vibrator';
-import { get_translucentSaturation_accent, get_add_Marking } from '../../control/AccentController';
+import { get_translucentSaturation_accent } from '../../control/AccentController';
 import common from '@ohos.app.ability.common';
 
-PersistentStorage.PersistProp('TerminalsSyncSwitch', 0)
+PersistentStorage.PersistProp('TerminalsSyncSwitch', false)
 
 @Component
 export struct AddEventButton {
   @StorageLink('isEdit') @Watch('openEdit') isEdit: boolean = false
-  @StorageLink('AccentColor1') @Watch('accentColorChanged') AccentColor1: string = '';
+  @StorageLink('AccentColor') @Watch('accentColorChanged') AccentColor: [number, string] = [0, '']
   @StorageLink('showEventAddPanel') showEventAddPanel: boolean = false
   @StorageLink('showAddMore') showAddMore: boolean = false
-  @State addIcon: Resource = get_add_Marking()
   @State accentColor: Resource = get_accent()
   @State shadowColor: Resource = get_translucentSaturation_accent()
+  @State imgSize: number = 60;
 
   aboutToAppear() {
-    this.addIcon = get_add_Marking()
     this.accentColor = get_accent()
     this.shadowColor = get_translucentSaturation_accent()
   }
 
   accentColorChanged() {
-    this.addIcon = get_add_Marking()
     this.accentColor = get_accent()
     this.shadowColor = get_translucentSaturation_accent()
   }
@@ -58,20 +56,20 @@ export struct AddEventButton {
 
   private longPress() {
     if (!this.isEdit && !this.showAddMore) {
-      if (AppStorage.Get<number>('TerminalsSyncSwitch') == 0) return;
-      vibrator.startVibration({ type: 'time', duration: 20, }, { id: 0, usage: 'touch' })
+      if (!AppStorage.Get<boolean>('TerminalsSyncSwitch')) return;
+      vibrator.vibrate(20)
       this.showAddMore = true
     }
   }
 
   build() {
     Stack() {
-      Column() {
+      Button() {
         Image($r('app.media.ic_setting_upload'))
           .width(24)
           .height(24)
       }
-      .justifyContent(FlexAlign.Center)
+      // .justifyContent(FlexAlign.Center)
       .width(36)
       .height(36)
       .borderRadius(18)
@@ -93,12 +91,12 @@ export struct AddEventButton {
         this.exportNow()
       })
 
-      Column() {
+      Button() {
         Image($r('app.media.ic_setting_download'))
           .width(24)
           .height(24)
       }
-      .justifyContent(FlexAlign.Center)
+      // .justifyContent(FlexAlign.Center)
       .width(36)
       .height(36)
       .borderRadius(18)
@@ -120,10 +118,10 @@ export struct AddEventButton {
         this.importNow()
       })
 
-      Column() {
-        Image(this.addIcon)
-          .width(60)
-          .height(60)
+      Button() {
+        Image($r("app.media.ic_add_Marking"))
+          .width('100%')
+          .height('100%')
           .rotate({
             x: 0,
             y: 0,
@@ -138,6 +136,7 @@ export struct AddEventButton {
       .width(60)
       .height(60)
       .borderRadius(30)
+      .backgroundColor(this.accentColor)
       .shadow({
         radius: 20,
         color: this.shadowColor,
@@ -147,11 +146,19 @@ export struct AddEventButton {
         this.shortPress()
       })
       .gesture(
-      LongPressGesture()
-        .onAction(() => {
-          this.longPress()
-        })
+        LongPressGesture()
+          .onAction(() => {
+            this.longPress()
+          })
       )
+      .onTouch((event: TouchEvent) => {
+        if (event.type === TouchType.Down) {
+          this.imgSize = 48
+        }
+        if (event.type === TouchType.Up) {
+          this.imgSize = 60
+        }
+      })
     }
     .offset({
       x: -12,

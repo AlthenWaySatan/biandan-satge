@@ -73,16 +73,25 @@ export struct SiderFolder {
       .height('100%')
       .width('100%')
 
-      if(this.isEdit){
+      Column() {
         Column()
           .width('100%')
           .height('100%')
           .backgroundColor($r('app.color.mask'))
-          .onClick(()=>{
+          .onClick(() => {
             this.isEdit = false
             changeAllChoice(false)
           })
+          .opacity(this.isEdit ? 1 : 0)
+          .animation({
+            delay: 0,
+            duration: 200, // 动画时长
+            curve: Curve.EaseInOut, // 动画曲线
+          })
       }
+      .width('100%')
+      .height('100%')
+      .visibility(this.isEdit ? Visibility.Visible : Visibility.None)
     }
     .height('100%')
     .width('40%')

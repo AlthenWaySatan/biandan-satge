@@ -1,13 +1,28 @@
+import { getResource } from '../../control/EventsController';
 import { CalendarDate } from '../element/CalendarDate';
-import { getNextNDay } from '../../control/CalendarControl';
 
 @Component
 export struct CalendarWeek {
-  @StorageLink('showDate') showDate: number[] = [(new Date().getFullYear()), (new Date().getMonth() + 1), (new Date().getDate())]
-  @Link @Watch('StartDateRefresh') startDate: number[]
-  @StorageLink('openCalendar') openCalendar: boolean = false
-  @StorageLink('showSixLine') showSixLine: boolean = false
-  @Link isNeedClose: boolean
+  @Link showDate: number[]
+  private data3: number[] = [1, 2, 3, 4, 5, 6, 7]
+  @State startDate: number[] = []
+  @StorageLink('openCalendar') @Watch('openCalendarChanged') openCalendar: boolean = false
+  @State @Watch('changeShow') openCalendarDelay:boolean = this.openCalendar;
+
+  @Link accentColor: Resource
+  @Link translucentSaturationAccentColor: Resource
+
+  private isNeedClose: boolean = false;
+  private showSixLine: boolean = false;
+  @Link @Watch('changeShow') isShow: boolean;
+  @State isShowItem: boolean = this.isShow && (!(this.openCalendarDelay || this.openCalendar) || !this.isNeedClose)
+
+  openCalendarChanged() {
+    setTimeout(()=> {
+      this.openCalendarDelay = this.openCalendar;
+      this.changeShow()
+    }, 450)
+  }
 
   /**
    * 获取下n天
@@ -16,68 +31,49 @@ export struct CalendarWeek {
    * @param day 日
    * @param n 之后的n天数
    */
+  private getNextNDay(date: number[], n: number): number[] {
+    var dateTime = new Date(date[0], date[1] - 1, date[2]);
+    dateTime = new Date(dateTime.setDate(dateTime.getDate() + n));
+    return [(dateTime.getFullYear()), (dateTime.getMonth() + 1), (dateTime.getDate())]
+  }
 
-  @State isHidden: boolean = this.openCalendar && this.isNeedClose
-  @State date0: number[] = getNextNDay(this.startDate, 0)
-  @State date1: number[] = getNextNDay(this.startDate, 1)
-  @State date2: number[] = getNextNDay(this.startDate, 2)
-  @State date3: number[] = getNextNDay(this.startDate, 3)
-  @State date4: number[] = getNextNDay(this.startDate, 4)
-  @State date5: number[] = getNextNDay(this.startDate, 5)
-  @State date6: number[] = getNextNDay(this.startDate, 6)
+  changeShow() {
+    this.isShowItem = this.isShow && (!(this.openCalendarDelay || this.openCalendar) || !this.isNeedClose)
+  }
 
-  private StartDateRefresh() {
-    this.date0 = getNextNDay(this.startDate, 0)
-    this.date1 = getNextNDay(this.startDate, 1)
-    this.date2 = getNextNDay(this.startDate, 2)
-    this.date3 = getNextNDay(this.startDate, 3)
-    this.date4 = getNextNDay(this.startDate, 4)
-    this.date5 = getNextNDay(this.startDate, 5)
-    this.date6 = getNextNDay(this.startDate, 6)
+  aboutToAppear() {
+    this.changeShow()
   }
 
   build() {
     Column() {
-      if (!this.openCalendar || !this.isNeedClose)
-      Row() {
-        CalendarDate({
-          date: $date0,
-          isHidden: $isHidden
-        })
-        CalendarDate({
-          date: $date1,
-          isHidden: $isHidden
-        })
-        CalendarDate({
-          date: $date2,
-          isHidden: $isHidden
-        })
-        CalendarDate({
-          date: $date3,
-          isHidden: $isHidden
-        })
-        CalendarDate({
-          date: $date4,
-          isHidden: $isHidden
-        })
-        CalendarDate({
-          date: $date5,
-          isHidden: $isHidden
-        })
-        CalendarDate({
-          date: $date6,
-          isHidden: $isHidden
+      // Row() {
+      //   ForEach(this.data3, (item: number, index: number) => {
+      //     CalendarDate({
+      //       date: this.getNextNDay(this.startDate, index),
+      //       showDate: this.showDate,
+      //       accentColor: this.accentColor,
+      //       translucentSaturationAccentColor: this.translucentSaturationAccentColor,
+      //       isShow: !(this.openCalendarDelay || this.openCalendar) || !this.isNeedClose
+      //     })
+      //   })
+      // }
+      Grid() {
+        ForEach(this.data3, (item: number, index: number) => {
+          GridItem() {
+            CalendarDate({
+              date: this.getNextNDay(this.startDate, index),
+              showDate: $showDate,
+              accentColor: $accentColor,
+              translucentSaturationAccentColor: $translucentSaturationAccentColor,
+              isShow: $isShowItem,
+            })
+          }
         })
       }
-      .height('100%')
-      .width('100%')
+      .rowsTemplate("1fr")
+      .columnsTemplate("1fr 1fr 1fr 1fr 1fr 1fr 1fr")
     }
     .height(this.openCalendar ? (this.isNeedClose ? '0%' : '100%') : (this.showSixLine ? '16.667%' : '20%'))
-    .width('100%')
-    .animation({
-      delay: 100,
-      duration: 200, // 动画时长
-      curve: Curve.Linear, // 动画曲线
-    })
   }
 }

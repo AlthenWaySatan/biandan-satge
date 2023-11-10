@@ -171,7 +171,7 @@ export default class TaskImpl implements TaskInterface {
     updateNotLoopTask(newTask: TaskData, callback: Function, context: Context) {
         let taskId1 = newTask.id1;
         this.queryTask(taskId1, (oldTask: TaskData) => {
-            if (oldTask != null && newTask.isLoop == oldTask.isLoop) {
+            if (oldTask != null) {
                 //修改task信息
                 const taskTable = new TaskTable();
                 let promise1 = taskTable.update(context, newTask)
@@ -229,7 +229,7 @@ export default class TaskImpl implements TaskInterface {
     updateLoopTask(newTask: TaskData, callback: Function, context: Context): void {
         let taskId1 = newTask.id1;
         this.queryTask(taskId1, (oldTask: TaskData) => {
-            if (oldTask != null && newTask.isLoop == true) {
+            if (oldTask != null) {
                 //先删除所有相关showTask
                 this.deleteTask(taskId1, (flag1, reason1) => {
                     if (!flag1) {

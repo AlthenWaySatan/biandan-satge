@@ -93,24 +93,6 @@ export function get_collect_on_Marking(): Resource {
   }
 }
 
-export function get_add_Marking(): Resource {
-  let AccentColor1:string = AppStorage.Get<string>("AccentColor1");
-  switch (AccentColor1) {
-    case '_blue':
-      return $r('app.media.ic_add_Marking_blue');
-    case '_red':
-      return $r('app.media.ic_add_Marking_red');
-    case '_green':
-      return $r('app.media.ic_add_Marking_green');
-    case '_purple':
-      return $r('app.media.ic_add_Marking_purple');
-    case '_pink':
-      return $r('app.media.ic_add_Marking_pink');
-    default:
-      return $r('app.media.ic_add_Marking');
-  }
-}
-
 export function get_barResource(AccentColor1:string = AppStorage.Get<string>("AccentColor1")): BarResource[] {
   switch (AccentColor1) {
     case '_blue':

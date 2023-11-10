@@ -9,9 +9,6 @@
         </mask>
         <g mask="url(#bg-mask-0)">
             <g opacity="1" transform="translate(0 0)  rotate(0 12 12)">
-                <path id="_椭圆形" fill-rule="evenodd" style="fill:#5ba854" transform="translate(0 0)  rotate(0 12 12)"
-                      opacity="1"
-                      d="M0,12C0,18.63 5.37,24 12,24C18.63,24 24,18.63 24,12C24,5.37 18.63,0 12,0C5.37,0 0,5.37 0,12Z "/>
                 <g opacity="1"
                    transform="translate(5.454545454545454 5.454545454545454)  rotate(0 6.545454545454546 6.545454545454546)">
                     <path id="_形状" fill-rule="evenodd" style="fill:#FFFFFF"

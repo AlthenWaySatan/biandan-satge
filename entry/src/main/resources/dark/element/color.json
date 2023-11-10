@@ -105,8 +105,16 @@
       "value": "#000000"
     },
     {
+      "name": "background_half",
+      "value": "#CC000000"
+    },
+    {
       "name": "foreground",
       "value": "#2E3033"
+    },
+    {
+      "name": "foreground_half",
+      "value": "#CC2E3033"
     },
     {
       "name": "warning",

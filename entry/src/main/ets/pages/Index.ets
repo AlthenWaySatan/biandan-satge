@@ -24,6 +24,10 @@ import BarResource from '../model/BarResourceContact';
 import EventResource from '../model/EventsResourceContact';
 import FolderResource from '../model/FolderResourceContact';
 import common from '@ohos.app.ability.common';
+import { SiderFolder } from './element/SiderFolder';
+import { EditTitleOne, TitleOne, TitleTwo } from './element/Title';
+import { AddEventButton } from './element/AddEventButton';
+import { ToolBar } from './element/ToolBar';
 
 PersistentStorage.PersistProp('IsFirstIn_', 0)
 PersistentStorage.PersistProp('AutoBackUpSwitch', 0)
@@ -158,7 +162,49 @@ struct Index {
 
   /*-------------------------------------------------------------------------------------------------------------------*/
 
+  //状态栏高度
+  private statusBarHeightVp: number
+  //今日日期
+  private todayDate: number[] = [(new Date().getFullYear()), (new Date().getMonth() + 1), (new Date().getDate())]
+
+  /**
+   * 获取日期
+   */
+  private getShowDate() {
+    if (this.todayDate[0] == this.showDate[0]) {
+      if (this.todayDate[1] == this.showDate[1] && this.todayDate[2] == this.showDate[2])
+        return '今天';
+      else
+        return this.showDate[1] + '月' + this.showDate[2] + '日';
+    }
+    else
+      return this.showDate[0] + '年' + this.showDate[1] + '月' + this.showDate[2] + '日';
+  }
+
+  @Styles Card() {
+    .width('100%')
+    .backgroundColor($r('app.color.foreground'))
+    .borderRadius(16)
+  }
+
+  /**
+   * 获取当前待办单标题
+   */
+  private getFolderTitle() {
+    if (this.folderId <= 0)
+      return this.systemFolderResource[-this.folderId].title;
+    else {
+      let id = this.userFolderResource.findIndex((item) => item.id == this.folderId)
+      return this.userFolderResource[id].title;
+    }
+  }
+
   @StorageLink('IsFirstIn_') IsFirstIn: number = 0;
+  @State showDateToSon: string = '今天'
+
+  private RefreshShowDate() {
+    this.showDateToSon = this.getShowDate();
+  }
 
   aboutToAppear() {
     var that = this;
@@ -181,6 +227,8 @@ struct Index {
     this.mdListener.on('change', this.portraitFuncMd)
     this.portraitFuncLg = this.onPortraitLg.bind(this)
     this.lgListener.on('change', this.portraitFuncLg)
+    this.RefreshShowDate();
+
     // this.portraitFuncDarkmode = this.onPortraitDarkMode.bind(this)
     // this.darkmodeListener.on('change', this.portraitFuncDarkmode)
 
@@ -236,66 +284,114 @@ struct Index {
 
           if (this.screenType != '') {
             Column() {
-            Column() {
-              TodoPage({
-                statusBarHeightVp: this.statusBarHeight / this.screenDensity
-              })
-            }
-            .width('100%')
-            .height('100%')
-            .visibility(this.selectPos == 0 ? Visibility.Visible : Visibility.None)
-            .opacity(this.selectPos == 0 ? 1 : 0)
-            .animation({
-              delay: 0,
-              duration: 200, // 动画时长
-              curve: Curve.EaseInOut, // 动画曲线
-            })
+              Column() {
+                Row() {
+                  if (this.screenType == 'lg') {
+                    SiderFolder({
+                      statusBarHeightVp: this.statusBarHeight / this.screenDensity,
+                    })
+                  }
+                  Column() {
+                    //标题
+                    if (this.isEdit) {
+                      EditTitleOne({
+                        columnNum: this.screenType == 'sm' ? 4 : 8,
+                        offsetNum: this.screenType == 'sm' ? 0 : 1
+                      })
+                    } else {
+                      if (this.screenType == 'sm') {
+                        TitleTwo({
+                          mainTitle: $showDateToSon,
+                          subTitle: this.getFolderTitle(),
+                          columnNum: 4,
+                          offsetNum: 0
+                        })
+                      } else if (this.screenType == 'md') {
+                        TitleTwo({
+                          mainTitle: $showDateToSon,
+                          subTitle: this.getFolderTitle(),
+                          columnNum: 8,
+                          offsetNum: 1
+                        })
+                      } else {
+                        TitleOne({
+                          showDate: $showDate,
+                          mainTitle: $showDateToSon,
+                          columnNum: 8,
+                          offsetNum: 1
+                        })
+                      }
+                    }
 
-            Column() {
-              CalendarPage({
-                statusBarHeightVp: this.statusBarHeight / this.screenDensity
-              })
-            }
-            .width('100%')
-            .height('100%')
-            .visibility(this.selectPos == 1 ? Visibility.Visible : Visibility.None)
-            .opacity(this.selectPos == 1 ? 1 : 0)
-            .animation({
-              delay: 0,
-              duration: 200, // 动画时长
-              curve: Curve.EaseInOut, // 动画曲线
-            })
+                    //数据区
+                    Column() {
+                      //列表展示区
+                      GridContainer({ columns: this.screenType == 'sm' ? 4 : 8, gutter: 12, margin: 12 }) {
+                        Column() {
+                          Stack() {
+                            Column() {
+                              //todoList
+                              TodoPage()
 
-            Column() {
-              FourQuadrantPage({
-                statusBarHeightVp: this.statusBarHeight / this.screenDensity
-              })
-            }
-            .width('100%')
-            .height('100%')
-            .visibility(this.selectPos == 2 ? Visibility.Visible : Visibility.None)
-            .opacity(this.selectPos == 2 ? 1 : 0)
-            .animation({
-              delay: 0,
-              duration: 200, // 动画时长
-              curve: Curve.EaseInOut, // 动画曲线
-            })
+                              //Calendar
+                              CalendarPage()
 
-            Column() {
-              SettingPage({
-                statusBarHeightVp: this.statusBarHeight / this.screenDensity
+                              //FourQuadrant
+                              FourQuadrantPage()
+                            }
+                            .width('100%')
+                            .height('100%')
+
+                            AddEventButton()
+                          }
+                          .alignContent(Alignment.BottomEnd)
+
+                        }
+                        .useSizeType({
+                          xs: { span: this.screenType == 'sm' ? 4 : 6, offset: this.screenType == 'sm' ? 0 : 1 },
+                          sm: { span: this.screenType == 'sm' ? 4 : 6, offset: this.screenType == 'sm' ? 0 : 1 },
+                          md: { span: this.screenType == 'sm' ? 4 : 6, offset: this.screenType == 'sm' ? 0 : 1 },
+                          lg: { span: this.screenType == 'sm' ? 4 : 6, offset: this.screenType == 'sm' ? 0 : 1 },
+                        })
+                      }
+                      .layoutWeight(1)
+                    }
+                    .layoutWeight(1)
+
+
+                    ToolBar({
+                      isHidden: $isEdit,
+                    })
+                  }
+                  .width((this.screenType == 'lg' ? '60%' : '100%'))
+                  .margin({ top: this.statusBarHeight / this.screenDensity })
+                }
+              }
+              .width('100%')
+              .height('100%')
+              .visibility(this.selectPos != 3 ? Visibility.Visible : Visibility.None)
+              .opacity(this.selectPos != 3 ? 1 : 0)
+              .animation({
+                delay: 0,
+                duration: 200, // 动画时长
+                curve: Curve.EaseInOut, // 动画曲线
+              })
+
+              Column() {
+                SettingPage({
+                  statusBarHeightVp: this.statusBarHeight / this.screenDensity
+                })
+              }
+              .width('100%')
+              .height('100%')
+              .visibility(this.selectPos == 3 ? Visibility.Visible : Visibility.None)
+              .opacity(this.selectPos == 3 ? 1 : 0)
+              .animation({
+                delay: 0,
+                duration: 200, // 动画时长
+                curve: Curve.EaseInOut, // 动画曲线
               })
             }
-            .width('100%')
-            .height('100%')
-            .visibility(this.selectPos == 3 ? Visibility.Visible : Visibility.None)
-            .opacity(this.selectPos == 3 ? 1 : 0)
-            .animation({
-              delay: 0,
-              duration: 200, // 动画时长
-              curve: Curve.EaseInOut, // 动画曲线
-            })
-          }
           }
 
           /**
@@ -313,7 +409,7 @@ struct Index {
         .backgroundColor($r('app.color.background'))
       }
 
-      if (this.showEventAddPanel) {
+      Column() {
         Column()
           .width('100%')
           .height('100%')
@@ -321,13 +417,25 @@ struct Index {
           .onClick(() => {
             this.showEventAddPanel = false
           })
+          .opacity(this.showEventAddPanel ? 1 : 0)
+          .animation({
+            delay: 0,
+            duration: 200, // 动画时长
+            curve: Curve.EaseInOut, // 动画曲线
+          })
+      }
+      .width('100%')
+      .height('100%')
+      .visibility(this.showEventAddPanel ? Visibility.Visible : Visibility.None)
+
+      if (this.showEventAddPanel) {
         Column() {
           EventAddPanel()
         }.padding({ top: this.statusBarHeight / this.screenDensity })
       }
 
 
-      if (this.showFolderAddPanel) {
+      Column() {
         Column()
           .width('100%')
           .height('100%')
@@ -335,6 +443,18 @@ struct Index {
           .onClick(() => {
             this.showFolderAddPanel = false
           })
+          .opacity(this.showFolderAddPanel ? 1 : 0)
+          .animation({
+            delay: 0,
+            duration: 200, // 动画时长
+            curve: Curve.EaseInOut, // 动画曲线
+          })
+      }
+      .width('100%')
+      .height('100%')
+      .visibility(this.showFolderAddPanel ? Visibility.Visible : Visibility.None)
+
+      if (this.showFolderAddPanel) {
         Column() {
           FolderAddPanel()
         }.padding({ top: this.statusBarHeight / this.screenDensity })

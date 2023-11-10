@@ -570,12 +570,12 @@ export struct TerminalsSyncPage {
 
           Column() {
             if (this.TerminalsSyncSwitch == 1)
-              Text('开启后将允许其他设备数据覆盖本地数据')
+              Text('开启后将允许其他设备数据覆盖本地数据' + '\n长按添加按钮可以快捷同步')
                 .fontSize(14)
                 .fontColor($r('app.color.text_level2'))
           }
           .alignItems(HorizontalAlign.Start)
-          .height(this.TerminalsSyncSwitch == 1 ? 30 : 0)
+          .height(this.TerminalsSyncSwitch ? 45 : 0)
           .width('100%')
           .padding({ left: 12, right: 12 })
           .animation({
@@ -584,7 +584,7 @@ export struct TerminalsSyncPage {
           })
         }
         .Card()
-        .height(this.TerminalsSyncSwitch == 1 ? 86 : 56)
+        .height(this.TerminalsSyncSwitch ? 101 : 56)
         .animation({
           duration: 200, // 动画时长
           curve: Curve.EaseOut, // 动画曲线

@@ -104,7 +104,7 @@ export struct lgBar {
       .height('100%')
       .backgroundColor($r('app.color.bar'))
 
-      if (this.isEdit) {
+      Column() {
         Column()
           .width('100%')
           .height('100%')
@@ -113,7 +113,16 @@ export struct lgBar {
             this.isEdit = false
             changeAllChoice(false)
           })
+          .opacity(this.isEdit ? 1 : 0)
+          .animation({
+            delay: 0,
+            duration: 200, // 动画时长
+            curve: Curve.EaseInOut, // 动画曲线
+          })
       }
+      .width('100%')
+      .height('100%')
+      .visibility(this.isEdit ? Visibility.Visible : Visibility.None)
     }
   }
 }

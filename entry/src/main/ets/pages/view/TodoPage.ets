@@ -21,32 +21,6 @@ export struct TodoPage {
   //屏幕类型
   @StorageLink('screenType') screenType: string = ''
   //状态栏高度
-  private statusBarHeightVp: number
-  //今日日期
-  private todayDate: number[] = [(new Date().getFullYear()), (new Date().getMonth() + 1), (new Date().getDate())]
-
-  /**
-   * 获取日期
-   */
-  private getShowDate() {
-    if (this.todayDate[0] == this.showDate[0]) {
-      if (this.todayDate[1] == this.showDate[1] && this.todayDate[2] == this.showDate[2])
-        return '今天';
-      else
-        return this.showDate[1] + '月' + this.showDate[2] + '日';
-    }
-    else
-      return this.showDate[0] + '年' + this.showDate[1] + '月' + this.showDate[2] + '日';
-  }
-  @State showDateToSon: string = '今天'
-
-  private RefreshShowDate() {
-    this.showDateToSon = this.getShowDate();
-  }
-
-  aboutToAppear() {
-    this.RefreshShowDate();
-  }
 
   @StorageLink('systemFolderResource') systemFolderResource: FolderResource[] = []
   @StorageLink('userFolderResource') userFolderResource: FolderResource[] = []
@@ -57,108 +31,29 @@ export struct TodoPage {
     .borderRadius(16)
   }
 
-  /**
-   * 获取当前待办单标题
-   */
-  private getFolderTitle() {
-    if (this.folderId <= 0)
-      return this.systemFolderResource[-this.folderId].title;
-    else {
-      let id = this.userFolderResource.findIndex((item) => item.id == this.folderId)
-      return this.userFolderResource[id].title;
-    }
-  }
-
   build() {
     Column() {
-      Row() {
-        if (this.screenType == 'lg') {
-          SiderFolder({
-            statusBarHeightVp: this.statusBarHeightVp,
-          })
-        }
-        Column() {
-          //标题
-          if (this.isEdit) {
-            EditTitleOne({
-              columnNum: this.screenType == 'sm' ? 4 : 8,
-              offsetNum: this.screenType == 'sm' ? 0 : 1
-            })
-          } else {
-            if (this.screenType == 'sm') {
-              TitleTwo({
-                mainTitle: $showDateToSon,
-                subTitle: this.getFolderTitle(),
-                columnNum: 4,
-                offsetNum: 0
-              })
-            } else if (this.screenType == 'md') {
-              TitleTwo({
-                mainTitle: $showDateToSon,
-                subTitle: this.getFolderTitle(),
-                columnNum: 8,
-                offsetNum: 1
-              })
-            } else {
-              TitleOne({
-                showDate: $showDate,
-                mainTitle: $showDateToSon,
-                columnNum: 8,
-                offsetNum: 1
-              })
-            }
-          }
-
-          //数据区
-          if (this.screenType == 'sm') {
-            DaraField({
-              columnNum: 4,
-              offsetNum: 0
-            })
-          } else {
-            DaraField({
-              columnNum: 8,
-              offsetNum: 1
-            })
-          }
-
-          //列表展示区
-          GridContainer({ columns: this.screenType == 'sm' ? 4 : 8, gutter: 12, margin: 12 }) {
-            Column() {
-              Stack() {
-                if (this.selectPos == 0)
-                Column() {
-                  EventsTable({})
-                }
-                .height('100%')
-                .width('100%')
-
-                AddEventButton()
-              }
-              .width('100%')
-              .height('100%')
-              .alignContent(Alignment.BottomEnd)
-            }
-            .useSizeType({
-              xs: { span: this.screenType == 'sm' ? 4 : 6, offset: this.screenType == 'sm' ? 0 : 1 },
-              sm: { span: this.screenType == 'sm' ? 4 : 6, offset: this.screenType == 'sm' ? 0 : 1 },
-              md: { span: this.screenType == 'sm' ? 4 : 6, offset: this.screenType == 'sm' ? 0 : 1 },
-              lg: { span: this.screenType == 'sm' ? 4 : 6, offset: this.screenType == 'sm' ? 0 : 1 },
-            })
-            .margin({ top: 12 })
-          }
-          .layoutWeight(1)
-
-          ToolBar({
-            isHidden: $isEdit,
-          })
-        }
-        .width((this.screenType == 'lg' ? '60%' : '100%'))
-        .margin({ top: this.statusBarHeightVp })
+      Column() {
+        DaraField()
       }
+      .margin({ bottom: 12 })
+
+      Column() {
+        // if (this.selectPos == 0)
+        Column() {
+          EventsTable({})
+        }
+        .height('100%')
+        .width('100%')
+      }
+      .layoutWeight(1)
     }
-    .width('100%')
-    .height('100%')
-    .backgroundColor($r('app.color.background'))
+    .visibility(this.selectPos == 0 ? Visibility.Visible : Visibility.None)
+    .opacity(this.selectPos == 0 ? 1 : 0)
+    .animation({
+      delay: 0,
+      duration: 200, // 动画时长
+      curve: Curve.EaseInOut, // 动画曲线
+    })
   }
 }

@@ -110,7 +110,7 @@ struct ProgressExample {
       .height('100%')
       .width('100%')
 
-      if (this.showFolderAddPanel) {
+      Column() {
         Column()
           .width('100%')
           .height('100%')
@@ -118,11 +118,16 @@ struct ProgressExample {
           .onClick(() => {
             this.showFolderAddPanel = false
           })
-
-        Column() {
-          FolderAddPanel()
-        }.padding({ top: this.statusBarHeightVp })
+          .opacity(this.showFolderAddPanel ? 1 : 0)
+          .animation({
+            delay: 0,
+            duration: 200, // 动画时长
+            curve: Curve.EaseInOut, // 动画曲线
+          })
       }
+      .width('100%')
+      .height('100%')
+      .visibility(this.showFolderAddPanel ? Visibility.Visible : Visibility.None)
 
     }
     .height('100%')

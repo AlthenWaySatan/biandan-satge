@@ -105,8 +105,16 @@
       "value": "#F1F2F3"
     },
     {
+      "name": "background_half",
+      "value": "#CCF1F2F3"
+    },
+    {
       "name": "foreground",
       "value": "#FFFFFF"
+    },
+    {
+      "name": "foreground_half",
+      "value": "#CCFFFFFF"
     },
     {
       "name": "warning",
