@@ -53,20 +53,25 @@ export struct SettingSpecific {
             .height(56)
             .width('100%')
             Scroll() {
-              if (this.settingNum == 3)
-                LocationBackUpPage()
-              else if (this.settingNum == 4)
-                TerminalsSyncPage()
-              else if (this.settingNum == 5)
-                FolderEditPage()
-              else if (this.settingNum == 6)
-                AccentColorPage()
-              else if (this.settingNum == 7)
-                DefineCycleLengthPage()
-              else if (this.settingNum == 8)
-                DefaultClockTimePage()
-              else if (this.settingNum == 15)
-                DefaultUrgentTimePage()
+              Column() {
+                if (this.settingNum == 3)
+                  LocationBackUpPage()
+                else if (this.settingNum == 4)
+                  TerminalsSyncPage()
+                else if (this.settingNum == 5)
+                  FolderEditPage()
+                else if (this.settingNum == 6)
+                  AccentColorPage()
+                else if (this.settingNum == 7)
+                  DefineCycleLengthPage()
+                else if (this.settingNum == 8)
+                  DefaultClockTimePage()
+                else if (this.settingNum == 15)
+                  DefaultUrgentTimePage()
+                else
+                  Column()
+              }
+              .height('100%')
             }
             .edgeEffect(EdgeEffect.Spring)
             .scrollBar(BarState.Off)
@@ -80,7 +85,7 @@ export struct SettingSpecific {
             lg: { span: this.columnNum - 2 * this.offsetNum, offset: this.offsetNum },
           })
         }
-        .layoutWeight(1)
+        .height('100%')
       }
       .height('100%')
       .width('100%')
