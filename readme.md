@@ -1,4 +1,5 @@
-﻿# **一、关于项目**
+﻿
+# **一、关于项目**
 
 ## **1.1 项目信息**
 
@@ -87,20 +88,17 @@
     ├─src
         ├─main
             ├─ets
-            |  ├─calendar                       //卡片——日历
             |  ├─control                        //控制器
             |  ├─dao                            //数据访问对象
             |  ├─entryability
             |  |      └EntryAbility.ets         //卡片生命周期管理文件
             |  ├─entryformability
             |  |        └EntryFormAbility.ets   //应用生命周期管理文件
-            |  ├─pages                          //视图界面
-            |  |   ├─element                    //其他小组件
-            |  |   └view                        //视图界面组件
-            |  ├─fourquadrants                  //卡片——四象限
+            |  ├─formview                       //卡片视图
             |  ├─model                          //结构模型
-            |  ├─todolist                       //卡片——列表
-            |  └recommend                       //卡片——推荐
+            |  └pages                           //视图
+            |     ├─element                     //其他自定义组件
+            |     └view                         //界面组件
             ├─resources                         //资源文件
             |  ├─base
             |  ├─dark                           //深色模式资源
@@ -585,7 +583,7 @@ async function ImportNewVersion(): Promise<[boolean, number, string]> {
 
 # **六、附件**
 
-1. 该APP的API8版本已上线华为应用市场，同时元服务版本也已上线，目前下载量2w+，评分4.8分。
+1. 该APP的API8版本已上线华为应用市场，同时元服务版本也已上线，目前下载量2w+，评分4.7分。
 
 ![](readmeImg/Screenshot_20231110_152159_com.huawei.appmarket.jpg)
 
@@ -604,7 +602,7 @@ async function ImportNewVersion(): Promise<[boolean, number, string]> {
 
 熟悉软件工程的基本知识，掌握各自软件体系结构设计模式，并能在实践中遵守规范并保持良好的工程习惯， 且对新生技术有浓厚兴趣，乐于持续学习广泛尝试。
 
-##### 竞赛经历：
+1. 竞赛经历：
 全国信息学奥林匹克联赛NOIP2018提高组一等奖
 
 全国信息学奥林匹克竞赛NOI2019冬令营三等奖
@@ -618,7 +616,7 @@ async function ImportNewVersion(): Promise<[boolean, number, string]> {
 HarmonyOS极客马拉松2023三等奖
 
 
-##### 开发经历：
+2. 开发经历：
 2022.08~2022.09 课程项目盲盒二手交易市场Web应
 
 2022.11~2023.08 HarmonyOS应用——“便单”APP
@@ -638,11 +636,11 @@ HarmonyOS极客马拉松2023三等奖
 
 熟悉Arkts、FA模型、鸿蒙分布式数据库，了解Stage模型。熟悉前后端分离技术。
 
-##### 竞赛经历：
+1. 竞赛经历：
 
 HarmonyOS极客马拉松2023三等奖
 
-##### 开发经历：
+2. 开发经历：
 便单app，后端开发工程师
 
 HarmonyOS原生的，具有原子化卡片、多端适配和同步备份等功能的待办清单类应用。
@@ -663,10 +661,10 @@ HarmonyOS原生的，具有原子化卡片、多端适配和同步备份等功�
 
 熟悉运用Python，SAS进行整理分析处理数据，为产品决策提供支持。
 
-##### 竞赛经历：
+1. 竞赛经历：
 十二届蓝桥杯江苏赛区c/c++程序设计大学B组二等奖（2021）
 
 HarmonyOS极客马拉松2023年比赛三等奖（2023）
 
-##### 开发经历：
+2. 开发经历：
 便单app，用户市场需求分析，前端设计，前端开发，使用figma和ArkTS语言基于FA模型开发。

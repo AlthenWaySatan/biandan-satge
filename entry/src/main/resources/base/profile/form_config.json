@@ -3,7 +3,7 @@
     {
       "name": "recommend",
       "description": "今天的待办信息推荐",
-      "src": "./ets/recommend/pages/RecommendCard.ets",
+      "src": "./ets/formview/recommend/pages/RecommendCard.ets",
       "uiSyntax": "arkts",
       "window": {
         "designWidth": 720,
@@ -21,7 +21,7 @@
     {
       "name": "todolist",
       "description": "获取今天的待办信息",
-      "src": "./ets/todolist/pages/TodolistCard.ets",
+      "src": "./ets/formview/todolist/pages/TodolistCard.ets",
       "uiSyntax": "arkts",
       "window": {
         "designWidth": 720,
@@ -41,7 +41,7 @@
     {
       "name": "fourQuadrants",
       "description": "四象限视图",
-      "src": "./ets/fourquadrants/pages/FourQuadrantsCard.ets",
+      "src": "./ets/formview/fourquadrants/pages/FourQuadrantsCard.ets",
       "uiSyntax": "arkts",
       "window": {
         "designWidth": 720,
@@ -59,7 +59,7 @@
   ,{
       "name": "calendar",
       "description": "日历视图",
-      "src": "./ets/calendar/pages/CalendarCard.ets",
+      "src": "./ets/formview/calendar/pages/CalendarCard.ets",
       "uiSyntax": "arkts",
       "window": {
         "designWidth": 720,
