@@ -170,6 +170,7 @@ export struct CalendarPage {
               this.data[(index + 1) % 3] = this.getNextNMonth(this.data[index], 1);
             }
             this.index = index;
+            getResource(this.data[index][0], this.data[index][1], this.data[index][2], this.folderId)
             this.showDate = this.data[this.index]
             this.monthShow0 = (index == 0)
             this.monthShow1 = (index == 1)
