@@ -5,6 +5,8 @@ import { EventsTable } from '../element/EventsTable';
 import { ToolBar } from '../element/ToolBar';
 import FolderResource from '../../model/FolderResourceContact';
 import { get_accent, get_translucentSaturation_accent } from '../../control/AccentController';
+import { getResource } from '../../control/EventsController';
+import common from '@ohos.app.ability.common';
 
 @Component
 export struct CalendarPage {
@@ -170,7 +172,8 @@ export struct CalendarPage {
               this.data[(index + 1) % 3] = this.getNextNMonth(this.data[index], 1);
             }
             this.index = index;
-            getResource(this.data[index][0], this.data[index][1], this.data[index][2], this.folderId)
+            let context: Context = getContext(this) as common.Context
+            getResource(this.data[index][0], this.data[index][1], this.data[index][2], this.folderId, context)
             this.showDate = this.data[this.index]
             this.monthShow0 = (index == 0)
             this.monthShow1 = (index == 1)
