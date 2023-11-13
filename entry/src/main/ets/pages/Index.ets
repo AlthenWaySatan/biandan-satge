@@ -165,15 +165,13 @@ struct Index {
 
   //状态栏高度
   private statusBarHeightVp: number
-  //今日日期
-  private todayDate: number[] = [(new Date().getFullYear()), (new Date().getMonth() + 1), (new Date().getDate())]
 
   /**
    * 获取日期
    */
   private getShowDate() {
-    if (this.todayDate[0] == this.showDate[0]) {
-      if (this.todayDate[1] == this.showDate[1] && this.todayDate[2] == this.showDate[2])
+    if ((new Date().getFullYear()) == this.showDate[0]) {
+      if ((new Date().getMonth() + 1) == this.showDate[1] && (new Date().getDate()) == this.showDate[2])
         return '今天';
       else
         return this.showDate[1] + '月' + this.showDate[2] + '日';
