@@ -72,31 +72,32 @@ struct Index {
     }
   }
 
-  // public onPortraitDarkMode(mediaQueryResult) {
-  //   console.info('darkmode? ' + mediaQueryResult.matches)
-  //   window.getTopWindow((err, data) => {
-  //     var windowClass = data;
-  //     if (mediaQueryResult.matches) {
-  //       console.info('set darkmode dark');
-  //       windowClass.setSystemBarProperties({
-  //         statusBarColor: '#000000',
-  //         isStatusBarLightIcon: true,
-  //         navigationBarColor: '#000000',
-  //         isNavigationBarLightIcon: true
-  //       }, () => {
-  //       });
-  //     } else {
-  //       console.info('set darkmode light');
-  //       windowClass.setSystemBarProperties({
-  //         statusBarColor: '#F1F2F3',
-  //         isStatusBarLightIcon: false,
-  //         navigationBarColor: '#F1F2F3',
-  //         isNavigationBarLightIcon: false
-  //       }, () => {
-  //       });
-  //     }
-  //   });
-  // }
+  public onPortraitDarkMode(mediaQueryResult) {
+    console.info('darkmode? ' + mediaQueryResult.matches)
+    let context: Context = getContext(this) as common.Context
+    window.getLastWindow(context, (err, data) => {
+      var windowClass = data;
+      if (mediaQueryResult.matches) {
+        console.info('set darkmode dark');
+        windowClass.setWindowSystemBarProperties({
+          statusBarColor: '#000000',
+          isStatusBarLightIcon: true,
+          navigationBarColor: '#000000',
+          isNavigationBarLightIcon: true
+        }, () => {
+        });
+      } else {
+        console.info('set darkmode light');
+        windowClass.setWindowSystemBarProperties({
+          statusBarColor: '#F1F2F3',
+          isStatusBarLightIcon: false,
+          navigationBarColor: '#F1F2F3',
+          isNavigationBarLightIcon: false
+        }, () => {
+        });
+      }
+    });
+  }
   /*-------------------------------------------------------------------------------------------------------------------*/
   @StorageLink('settingNum') settingNum: number = 0
 
@@ -228,9 +229,8 @@ struct Index {
     this.portraitFuncLg = this.onPortraitLg.bind(this)
     this.lgListener.on('change', this.portraitFuncLg)
     this.RefreshShowDate();
-
-    // this.portraitFuncDarkmode = this.onPortraitDarkMode.bind(this)
-    // this.darkmodeListener.on('change', this.portraitFuncDarkmode)
+    this.portraitFuncDarkmode = this.onPortraitDarkMode.bind(this)
+    this.darkmodeListener.on('change', this.portraitFuncDarkmode)
 
     this.barResource = get_barResource()
 
