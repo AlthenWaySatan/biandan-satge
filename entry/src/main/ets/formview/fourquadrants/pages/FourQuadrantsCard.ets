@@ -551,6 +551,7 @@ struct FourQuadrantsCard {
       .flexGrow(1)
       .padding({top: 3, left: 12, bottom: 12, right: 12})
     }
+    .backgroundColor($r('app.color.foreground'))
     .height('100%')
     .onClick(() => {
       postCardAction(this, {

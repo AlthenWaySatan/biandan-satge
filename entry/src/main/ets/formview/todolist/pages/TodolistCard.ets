@@ -86,13 +86,12 @@ struct TodolistCard {
     });
   }
 
-  @LocalStorageProp('widthLength') widthLength:number = 4;
-  @LocalStorageProp('listLength') listLength:number = 5;
-
-  @LocalStorageProp('Date') Date:string = "--月--日";
-  @LocalStorageProp('Folder') Folder:string = "全部代办";
-  @LocalStorageProp('accentColor') accentColor:Resource = $r('app.color.accent')
-  @LocalStorageProp('events') events:Event[] = [
+  @LocalStorageProp('widthLength') widthLength: number = 4;
+  @LocalStorageProp('listLength') listLength: number = 5;
+  @LocalStorageProp('Date') Date: string = "--月--日";
+  @LocalStorageProp('Folder') Folder: string = "全部代办";
+  @LocalStorageProp('accentColor') accentColor: Resource = $r('app.color.accent')
+  @LocalStorageProp('events') events: Event[] = [
     {
       Title: "----",
       Time: "--:-----:--",
@@ -154,14 +153,12 @@ struct TodolistCard {
       eventId: 0
     }
   ]
-
-  @LocalStorageProp('doneNum') doneNum:number = 0
-  @LocalStorageProp('allNum') allNum:number = 0
-  @LocalStorageProp('doneRate') doneRate:number = 0
-
-  @LocalStorageProp('pageNum') pageNum:number = 0;
-
-  @LocalStorageProp('doneStr') doneStr:string = "0/0"
+  // @LocalStorageProp('events') events: Event[] = []
+  @LocalStorageProp('doneNum') doneNum: number = 0
+  @LocalStorageProp('allNum') allNum: number = 0
+  @LocalStorageProp('doneRate') doneRate: number = 0
+  @LocalStorageProp('pageNum') pageNum: number = 0;
+  @LocalStorageProp('doneStr') doneStr: string = "0/0"
 
   build() {
     Column() {
@@ -173,7 +170,7 @@ struct TodolistCard {
                 .fontSize(14)
                 .fontWeight(FontWeight.Medium)
                 .fontColor($r('app.color.text_level1'))
-                .textOverflow({overflow :TextOverflow.Clip})
+                .textOverflow({ overflow: TextOverflow.Clip })
                 .maxLines(1)
             }
             .height('100%')
@@ -183,31 +180,31 @@ struct TodolistCard {
           .width(0)
           .flexGrow(1)
 
-          if(this.widthLength == 4)
-            Row() {
-              Text(this.Folder)
-                .fontSize(10)
-                .fontWeight(FontWeight.Medium)
-                .fontColor($r('app.color.text_level2'))
-                .textOverflow({overflow :TextOverflow.Clip})
-                .maxLines(1)
-            }
-            .margin({right: 4})
+          if (this.widthLength == 4)
+          Row() {
+            Text(this.Folder)
+              .fontSize(10)
+              .fontWeight(FontWeight.Medium)
+              .fontColor($r('app.color.text_level2'))
+              .textOverflow({ overflow: TextOverflow.Clip })
+              .maxLines(1)
+          }
+          .margin({ right: 4 })
 
-          if(this.widthLength == 4)
-            Row() {
-              Text(this.doneStr)
-                .fontSize(10)
-                .fontWeight(FontWeight.Medium)
-                .fontColor($r('app.color.text_level2'))
-                .textOverflow({overflow :TextOverflow.Clip})
-                .maxLines(1)
-            }
-          .margin({right: 4})
+          if (this.widthLength == 4)
+          Row() {
+            Text(this.doneStr)
+              .fontSize(10)
+              .fontWeight(FontWeight.Medium)
+              .fontColor($r('app.color.text_level2'))
+              .textOverflow({ overflow: TextOverflow.Clip })
+              .maxLines(1)
+          }
+          .margin({ right: 4 })
           Image($r('app.media.ic_form_shuffle'))
             .height(14)
             .width(14)
-            .margin({left: 4})
+            .margin({ left: 4 })
             .flexBasis('auto')
             .onClick(() => {
               this.changePage();
@@ -215,7 +212,7 @@ struct TodolistCard {
           Image($r('app.media.ic_form_add'))
             .height(14)
             .width(14)
-            .margin({left: 4})
+            .margin({ left: 4 })
             .flexBasis('auto')
             .onClick(() => {
               this.addEvent();
@@ -223,7 +220,7 @@ struct TodolistCard {
           Image($r('app.media.ic_form_refresh'))
             .height(14)
             .width(14)
-            .margin({left: 4})
+            .margin({ left: 4 })
             .flexBasis('auto')
             .onClick(() => {
               this.refreshInfo();
@@ -233,16 +230,18 @@ struct TodolistCard {
       }
       .height(31)
       .width('100%')
-      .padding({top: 12, left: 12, right: 30})
+      .padding({ top: 12, left: 12, right: 30 })
       .backgroundColor(this.accentColor)
+
       Row() {
+        if(this.events.length > 0)
         Column() {
           ForEach(this.events, (item) => {
             Row() {
               Image(item.stateResource)
                 .width(20)
                 .height(20)
-                .margin({right: 3})
+                .margin({ right: 3 })
                 .onClick(() => {
                   this.completeEvent(item.eventId, item.State)
                 })
@@ -251,7 +250,7 @@ struct TodolistCard {
                   .fontSize(14)
                   .fontWeight(FontWeight.Medium)
                   .fontColor(this.getTitleColor(item.isPath, item.State))
-                  .textOverflow({overflow :TextOverflow.Clip})
+                  .textOverflow({ overflow: TextOverflow.Clip })
                   .maxLines(1)
                   .decoration({
                     type: item.State == 2 ? TextDecorationType.LineThrough : TextDecorationType.None,
@@ -261,20 +260,21 @@ struct TodolistCard {
               .height('100%')
               .width(0)
               .flexGrow(2)
-              if(this.widthLength == 4)
-                Row() {
-                  Blank()
-                    .flexGrow(1)
-                  Text(item.Time)
-                    .fontSize(12)
-                    .fontWeight(FontWeight.Medium)
-                    .fontColor(this.getDescriptionColor(item.isPath, item.State))
-                    .textOverflow({overflow :TextOverflow.Clip})
-                    .maxLines(1)
-                }
-                .height('100%')
-                .width(0)
-                .flexGrow(1)
+
+              if (this.widthLength == 4)
+              Row() {
+                Blank()
+                  .flexGrow(1)
+                Text(item.Time)
+                  .fontSize(12)
+                  .fontWeight(FontWeight.Medium)
+                  .fontColor(this.getDescriptionColor(item.isPath, item.State))
+                  .textOverflow({ overflow: TextOverflow.Clip })
+                  .maxLines(1)
+              }
+              .height('100%')
+              .width(0)
+              .flexGrow(1)
             }
             .width("100%")
             .height(this.listLength == 5 ? '20%' : '10%')
@@ -282,12 +282,29 @@ struct TodolistCard {
         }
         .width('100%')
         .height('100%')
+        else
+        Column() {
+            Column(){
+              Text("暂无待办")
+                .height('100%')
+                .fontColor($r('app.color.text_level3'))
+                .fontSize(14)
+            }
+            .backgroundColor('#10000000')
+            .width('100%')
+            .height('100%')
+            .borderRadius(6)
+        }
+        .padding({top: 9})
+        .width('100%')
+        .height('100%')
       }
       .width('100%')
       .height(0)
       .flexGrow(1)
-      .padding({top: 3, left: 12, bottom: 12, right: 12})
+      .padding({ top: 3, left: 12, bottom: 12, right: 12 })
     }
+    .backgroundColor($r('app.color.foreground'))
     .height('100%')
     .onClick(() => {
       postCardAction(this, {

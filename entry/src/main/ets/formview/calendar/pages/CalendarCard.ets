@@ -125,14 +125,13 @@ struct CalendarCard {
     return this.accentColor;
   }
 
-  @LocalStorageProp('thisYear') thisYear:number = 2023
-  @LocalStorageProp('thisDate') thisDate:number = 28;
-  @LocalStorageProp('thisMonth') thisMonth:number = 10;
-
-  @LocalStorageProp('Month') Month:string = "----年--月";
-  @LocalStorageProp('Date') Date:string = "--月--日";
-  @LocalStorageProp('Folder') Folder:string = "全部代办";
-  @LocalStorageProp('accentColor') accentColor:Resource = $r('app.color.accent')
+  @LocalStorageProp('thisYear') thisYear: number = 2023
+  @LocalStorageProp('thisDate') thisDate: number = 28;
+  @LocalStorageProp('thisMonth') thisMonth: number = 10;
+  @LocalStorageProp('Month') Month: string = "----年--月";
+  @LocalStorageProp('Date') Date: string = "--月--日";
+  @LocalStorageProp('Folder') Folder: string = "全部代办";
+  @LocalStorageProp('accentColor') accentColor: Resource = $r('app.color.accent')
   @LocalStorageProp('events') events:Event[] = [
     {
       Title: "----",
@@ -195,8 +194,8 @@ struct CalendarCard {
       eventId: 0
     }
   ]
-
-  @LocalStorageProp('dates') dates:CalendarDate[][] = [
+  // @LocalStorageProp('events') events: Event[] = []
+  @LocalStorageProp('dates') dates: CalendarDate[][] = [
     [
       {
         date: 1,
@@ -418,16 +417,12 @@ struct CalendarCard {
       }
     ]
   ]
-
-  @LocalStorageProp('dateHeader') dateHeader:string[] = ['日', '一', '二', '三', '四', '五', '六']
-
-  @LocalStorageProp('doneNum') doneNum:number = 0
-  @LocalStorageProp('allNum') allNum:number = 0
-  @LocalStorageProp('doneRate') doneRate:number = 0
-
-  @LocalStorageProp('pageNum') pageNum:number = 0;
-
-  @LocalStorageProp('doneStr') doneStr:string = "0/0"
+  @LocalStorageProp('dateHeader') dateHeader: string[] = ['日', '一', '二', '三', '四', '五', '六']
+  @LocalStorageProp('doneNum') doneNum: number = 0
+  @LocalStorageProp('allNum') allNum: number = 0
+  @LocalStorageProp('doneRate') doneRate: number = 0
+  @LocalStorageProp('pageNum') pageNum: number = 0;
+  @LocalStorageProp('doneStr') doneStr: string = "0/0"
 
   build() {
     Row() {
@@ -437,12 +432,12 @@ struct CalendarCard {
             .width('50%')
             .height('100%')
             .backgroundColor(this.accentColor)
-            .position({x: 0, y: 0})
+            .position({ x: 0, y: 0 })
           Column()
             .width('100%')
             .height('50%')
             .backgroundColor(this.accentColor)
-            .position({x: 0, y: 0})
+            .position({ x: 0, y: 0 })
           Column() {
             Row() {
               Row() {
@@ -451,7 +446,7 @@ struct CalendarCard {
                     .fontSize(14)
                     .fontWeight(FontWeight.Medium)
                     .fontColor($r('app.color.text_level1'))
-                    .textOverflow({overflow :TextOverflow.Clip})
+                    .textOverflow({ overflow: TextOverflow.Clip })
                     .maxLines(1)
                 }
                 .height('100%')
@@ -464,7 +459,7 @@ struct CalendarCard {
               Image($r('app.media.ic_form_shuffle'))
                 .height(14)
                 .width(14)
-                .margin({left: 4})
+                .margin({ left: 4 })
                 .flexBasis('auto')
                 .onClick(() => {
                   this.changePage();
@@ -472,7 +467,7 @@ struct CalendarCard {
               Image($r('app.media.ic_form_add'))
                 .height(14)
                 .width(14)
-                .margin({left: 4})
+                .margin({ left: 4 })
                 .flexBasis('auto')
                 .onClick(() => {
                   this.addEvent();
@@ -480,7 +475,7 @@ struct CalendarCard {
               Image($r('app.media.ic_form_refresh'))
                 .height(14)
                 .width(14)
-                .margin({left: 4})
+                .margin({ left: 4 })
                 .flexBasis('auto')
                 .onClick(() => {
                   this.refreshInfo();
@@ -490,20 +485,22 @@ struct CalendarCard {
           }
           .width('100%')
           .height('100%')
-          .padding({top: 12, left: 12, right: 12})
+          .padding({ top: 12, left: 12, right: 12 })
           .backgroundColor(this.accentColor)
           .borderRadius(12)
         }
         .width('100%')
         .height(31)
+
         Row() {
+          if(this.events.length > 0)
           Column() {
             ForEach(this.events, (item) => {
               Row() {
                 Image(item.stateResource)
                   .width(20)
                   .height(20)
-                  .margin({right: 3})
+                  .margin({ right: 3 })
                   .onClick(() => {
                     this.completeEvent(item.eventId, item.State)
                   })
@@ -512,7 +509,7 @@ struct CalendarCard {
                     .fontSize(14)
                     .fontWeight(FontWeight.Medium)
                     .fontColor(this.getTitleColor(item.isPath, item.State))
-                    .textOverflow({overflow :TextOverflow.Clip})
+                    .textOverflow({ overflow: TextOverflow.Clip })
                     .maxLines(1)
                     .decoration({
                       type: item.State == 2 ? TextDecorationType.LineThrough : TextDecorationType.None,
@@ -529,20 +526,37 @@ struct CalendarCard {
           }
           .width('100%')
           .height('100%')
+          else
+          Column() {
+            Column(){
+              Text("暂无待办")
+                .height('100%')
+                .fontColor($r('app.color.text_level3'))
+                .fontSize(14)
+            }
+            .backgroundColor('#10000000')
+            .width('100%')
+            .height('100%')
+            .borderRadius(6)
+          }
+          .padding({top: 9})
+          .width('100%')
+          .height('100%')
         }
         .width('100%')
         .height(0)
         .flexGrow(1)
-        .padding({top: 3, left: 12, bottom: 12, right: 12})
+        .padding({ top: 3, left: 12, bottom: 12, right: 12 })
       }
       .width('50%')
       .height('100%')
+
       Column() {
         Row() {
           Image($r('app.media.ic_card_arrow_left'))
             .height(14)
             .width(14)
-            .margin({left: 4})
+            .margin({ left: 4 })
             .flexBasis('auto')
             .onClick(() => {
               this.lastMonth();
@@ -554,7 +568,7 @@ struct CalendarCard {
               .fontSize(14)
               .fontWeight(FontWeight.Medium)
               .fontColor($r('app.color.text_level1'))
-              .textOverflow({overflow :TextOverflow.Clip})
+              .textOverflow({ overflow: TextOverflow.Clip })
               .maxLines(1)
               .textAlign(TextAlign.Center)
           }
@@ -566,7 +580,7 @@ struct CalendarCard {
           Image($r('app.media.ic_card_arrow_right'))
             .height(14)
             .width(14)
-            .margin({left: 4})
+            .margin({ left: 4 })
             .flexBasis('auto')
             .onClick(() => {
               this.nextMonth();
@@ -574,11 +588,12 @@ struct CalendarCard {
         }
         .width('100%')
         .height(31)
-        .padding({top: 12, right: 30, left: 30})
+        .padding({ top: 12, right: 30, left: 30 })
+
         Column() {
           Row() {
             ForEach(this.dateHeader, (item) => {
-              Column(){
+              Column() {
                 Text(item)
                   .fontSize(10)
                   .fontWeight(FontWeight.Medium)
@@ -591,30 +606,33 @@ struct CalendarCard {
           }
           .height(12)
           .width('100%')
+
           Column() {
             ForEach(this.dates, (weekDates) => {
               Row() {
                 ForEach(weekDates, (item) => {
                   Stack() {
                     if (this.thisMonth == item.month && this.thisDate == item.date)
-                      Column() {}
-                      .width('100%')
-                      .height('100%')
-                      .backgroundColor(this.accentColor)
-                      .borderRadius(12)
+                    Column() {
+                    }
+                    .width('100%')
+                    .height('100%')
+                    .backgroundColor(this.accentColor)
+                    .borderRadius(12)
                     Text(item.date.toString())
                       .fontSize(10)
                       .fontWeight(FontWeight.Medium)
                       .fontColor(this.getDateTextColor(item.date, item.month, item.year))
-                      .textOverflow({overflow :TextOverflow.Clip})
+                      .textOverflow({ overflow: TextOverflow.Clip })
                       .maxLines(1)
                     if (item.haveEvent)
-                      Column() {}
-                      .width(4)
-                      .height(4)
-                      .borderRadius(2)
-                      .backgroundColor(this.getPointColor(item.date, item.month, item.year))
-                      .offset({x: 0, y: 7})
+                    Column() {
+                    }
+                    .width(4)
+                    .height(4)
+                    .borderRadius(2)
+                    .backgroundColor(this.getPointColor(item.date, item.month, item.year))
+                    .offset({ x: 0, y: 7 })
                   }
                   .height('100%')
                   .width(0)
@@ -636,13 +654,14 @@ struct CalendarCard {
         .width('100%')
         .height(0)
         .flexGrow(1)
-        .padding({top: 3, left: 12, bottom: 12, right: 12})
+        .padding({ top: 3, left: 12, bottom: 12, right: 12 })
       }
       .width('50%')
       .height('100%')
     }
     .height('100%')
-	.onClick(() => {
+    .backgroundColor($r('app.color.foreground'))
+    .onClick(() => {
       postCardAction(this, {
         "action": this.ACTION_TYPE,
         "abilityName": this.ABILITY_NAME,

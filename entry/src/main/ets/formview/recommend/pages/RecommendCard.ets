@@ -303,11 +303,21 @@ struct RecommendCard {
           .height('100%')
           .borderRadius(12)
           .padding(3)
+        else
+          Column(){
+            Text("暂无待办")
+              .height('100%')
+              .fontColor($r('app.color.text_level3'))
+              .fontSize(14)
+          }
+          .width('100%')
+          .height('100%')
       }
       .width('100%')
       .height(42)
     }
     .padding(12)
+    .backgroundColor($r('app.color.foreground'))
     .height('100%')
     .onClick(() => {
       postCardAction(this, {
