@@ -124,7 +124,7 @@ struct Index {
   /**
    * 当前时间和分类
    */
-  @StorageLink('showDate') showDate: number[] = [(new Date().getFullYear()), (new Date().getMonth() + 1), (new Date().getDate())]
+  @StorageLink('showDate') @Watch("RefreshShowDate") showDate: number[] = [(new Date().getFullYear()), (new Date().getMonth() + 1), (new Date().getDate())]
   @StorageLink('folderId') folderId: number = 0
 
   /**

@@ -4,9 +4,12 @@ PersistentStorage.PersistProp('FirstDayOfWeek', 0)
 
 @Component
 export struct CalendarMonth {
+  @Link @Watch('startDatesChanged') startDates: number[][]
+  @Link @Watch('isShowsChanged') isShows: boolean[]
+  private index: number
   @StorageLink('openCalendar') openCalendar: boolean = false
   @StorageLink('FirstDayOfWeek') FirstDayOfWeek: number = 0
-  @Link isShow : boolean;
+  @State isShow : boolean = true;
   @Link accentColor: Resource
   @Link translucentSaturationAccentColor: Resource
 
@@ -56,11 +59,39 @@ export struct CalendarMonth {
     .layoutWeight(1)
   }
 
-  @State @Watch('aboutToAppear') startDate: number[] = []
+  @State @Watch('refreshData') startDate: number[] = []
   @State data2: number[][] = new Array(5).fill([])
+  @State checkNeedCloseArr: boolean[] = new Array(5).fill(false)
   @State showSixWeek: boolean = false;
 
+  startDatesChanged() {
+    this.startDate = this.startDates[this.index]
+  }
+
+  isShowsChanged() {
+    this.isShow = this.isShows[this.index]
+  }
+
+  refreshData() {
+    let temp = this.getStartDate(this.startDate)
+    this.data2 = new Array(5).fill([])
+    this.checkNeedCloseArr = new Array(5).fill(false)
+    this.showSixWeek = false;
+    for (let i = 0; i < 5; i++) {
+      this.data2[i] = this.getNextNDay(temp, i * 7)
+      this.checkNeedCloseArr[i] = this.checkNeedClose(this.data2[i])
+    }
+    if (this.getNextNDay(temp, 35)[1] == this.startDate[1]) {
+      this.showSixWeek = true;
+      this.data2.push(this.getNextNDay(temp, 35))
+      this.checkNeedCloseArr.push(this.checkNeedClose(this.data2[5]))
+    }
+  }
+
   aboutToAppear() {
+    this.startDatesChanged()
+    this.isShowsChanged()
+    this.refreshData()
   }
 
   build() {
@@ -68,31 +99,31 @@ export struct CalendarMonth {
       ForEach(this.data2, (item: number[], index: number) => {
         Row() {
           CalendarWeek({
-            startDate: this.getNextNDay(this.getStartDate(this.startDate), index * 7),
-            isNeedClose: this.checkNeedClose(this.getNextNDay(this.getStartDate(this.startDate), index * 7)),
+            startDate: item,
+            isNeedClose: this.checkNeedCloseArr[index],
             showDate: $startDate,
             accentColor: $accentColor,
             translucentSaturationAccentColor: $translucentSaturationAccentColor,
-            showSixLine: this.getNextNDay(this.getStartDate(this.startDate), 35)[1] == this.startDate[1],
+            showSixLine: $showSixWeek,
             isShow: $isShow
           })
         }
         .backgroundColor($r('app.color.background'))
       },)
-      if (this.getNextNDay(this.getStartDate(this.startDate), 35)[1] == this.startDate[1]) {
-        Row() {
-          CalendarWeek({
-            startDate: this.getNextNDay(this.getStartDate(this.startDate), 35),
-            isNeedClose: this.checkNeedClose(this.getNextNDay(this.getStartDate(this.startDate), 35)),
-            showDate: $startDate,
-            accentColor: $accentColor,
-            translucentSaturationAccentColor: $translucentSaturationAccentColor,
-            showSixLine: this.getNextNDay(this.getStartDate(this.startDate), 35)[1] == this.startDate[1],
-            isShow: $isShow
-          })
-        }
-        .backgroundColor($r('app.color.background'))
-      }
+      // if (this.showSixWeek) {
+      //   Row() {
+      //     CalendarWeek({
+      //       startDate: this.getNextNDay(this.getStartDate(this.startDate), 35),
+      //       isNeedClose: this.Six_checkNeedClose,
+      //       showDate: $startDate,
+      //       accentColor: $accentColor,
+      //       translucentSaturationAccentColor: $translucentSaturationAccentColor,
+      //       showSixLine: this.showSixWeek,
+      //       isShow: $isShow
+      //     })
+      //   }
+      //   .backgroundColor($r('app.color.background'))
+      // }
     }
     .width('100%')
     .height('100%')

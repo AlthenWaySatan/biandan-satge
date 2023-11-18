@@ -66,9 +66,7 @@ export struct CalendarPage {
   this.showDate,
   this.getNextNMonth(this.showDate, 1)
   ]
-  @State monthShow0: boolean = false;
-  @State monthShow1: boolean = true;
-  @State monthShow2: boolean = false;
+  @State monthShow: boolean[] = [false, true, false];
   @State data2: number[][][] = []
   @State index: number = 1
 
@@ -130,34 +128,14 @@ export struct CalendarPage {
 
           if (this.selectPos == 1)
           Swiper() {
-            // ForEach(this.data, (item: number[], index: number) => {
-            //   CalendarMonth({
-            //     startDate: item,
-            //     accentColor: $accentColor,
-            //     translucentSaturationAccentColor: $translucentSaturationAccentColor,
-            //     isShow: $monthShow[index]
-            //   })
-            // })
-
-            CalendarMonth({
-              startDate: this.data[0],
-              accentColor: $accentColor,
-              translucentSaturationAccentColor: $translucentSaturationAccentColor,
-              isShow: $monthShow0
-            })
-
-            CalendarMonth({
-              startDate: this.data[1],
-              accentColor: $accentColor,
-              translucentSaturationAccentColor: $translucentSaturationAccentColor,
-              isShow: $monthShow1
-            })
-
-            CalendarMonth({
-              startDate: this.data[2],
-              accentColor: $accentColor,
-              translucentSaturationAccentColor: $translucentSaturationAccentColor,
-              isShow: $monthShow2
+            ForEach(this.data, (item: number[], index: number) => {
+              CalendarMonth({
+                startDates: $data,
+                index: index,
+                accentColor: $accentColor,
+                translucentSaturationAccentColor: $translucentSaturationAccentColor,
+                isShows: $monthShow
+              })
             })
           }
           .loop(true)
@@ -175,9 +153,8 @@ export struct CalendarPage {
             let context: Context = getContext(this) as common.Context
             getResource(this.data[index][0], this.data[index][1], this.data[index][2], this.folderId, context)
             this.showDate = this.data[this.index]
-            this.monthShow0 = (index == 0)
-            this.monthShow1 = (index == 1)
-            this.monthShow2 = (index == 2)
+            this.monthShow = [false, false, false]
+            this.monthShow[this.index] = true;
           })
           .itemSpace(16)
           .width('100%')

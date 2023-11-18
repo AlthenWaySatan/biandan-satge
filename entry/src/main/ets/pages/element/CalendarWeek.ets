@@ -5,7 +5,7 @@ import { CalendarDate } from '../element/CalendarDate';
 export struct CalendarWeek {
   @Link showDate: number[]
   private data3: number[] = [1, 2, 3, 4, 5, 6, 7]
-  @State startDate: number[] = []
+  @State @Watch('aboutToAppear') startDate: number[] = []
   @StorageLink('openCalendar') @Watch('openCalendarChanged') openCalendar: boolean = false
   @State @Watch('changeShow') openCalendarDelay:boolean = this.openCalendar;
 
@@ -13,7 +13,7 @@ export struct CalendarWeek {
   @Link translucentSaturationAccentColor: Resource
 
   private isNeedClose: boolean = false;
-  private showSixLine: boolean = false;
+  @Link showSixLine: boolean;
   @Link @Watch('changeShow') isShow: boolean;
   @State isShowItem: boolean = this.isShow && (!(this.openCalendarDelay || this.openCalendar) || !this.isNeedClose)
 
