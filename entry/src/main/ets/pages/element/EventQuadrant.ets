@@ -20,6 +20,7 @@ export struct EventQuadrant {
   @StorageLink('eventsShowResource') eventsShowResource: string = JSON.stringify([[], [], []])
   @State thisQuadrant: EventResource[][] = [[], [], []]
   @StorageLink('movingEvent') movingEventResource: [number, boolean, boolean] = [0, false, false];
+  @StorageLink('showDetailPanelDoneNumber') showDetailPanelDoneNumber: number = 0
 
   private accentColor: Resource
 
@@ -269,8 +270,9 @@ export struct EventQuadrant {
                         let context: Context = getContext(this) as common.Context
                         console.log("edit event " + item.eventId)
                         queryCreateResource(item.eventId, context)
+                        this.showDetailPanelDoneNumber = item.doneTimes
                         setTimeout(() => {
-                          AppStorage.Set<boolean>("showEventAddPanel", true)
+                          AppStorage.Set<boolean>("showDetailPanel", true)
                         }, 200)
                       }
                     })

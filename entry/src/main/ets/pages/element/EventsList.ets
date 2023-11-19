@@ -25,6 +25,8 @@ export struct EventsList {
   @StorageLink('editEvent') editEvent: boolean = false
   @StorageLink('thisEvent') thisEvent: CreateResource = new CreateResource([0,0,0])
 
+  @StorageLink('showDetailPanelDoneNumber') showDetailPanelDoneNumber: number = 0
+
   private type: number //类型
   private isPath: boolean = false //是否已过期
   private isDone: boolean = false //是否已完成
@@ -180,8 +182,9 @@ export struct EventsList {
                   let context: Context = getContext(this) as common.Context
                   console.log("edit event " + item.eventId)
                   queryCreateResource(item.eventId, context)
+                  this.showDetailPanelDoneNumber = item.doneTimes
                   setTimeout(() => {
-                    AppStorage.Set<boolean>("showEventAddPanel", true)
+                    AppStorage.Set<boolean>("showDetailPanel", true)
                   }, 200)
                 }
               })

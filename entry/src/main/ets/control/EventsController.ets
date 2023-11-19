@@ -955,7 +955,7 @@ function taskDataToCreateResource(taskData: TaskData): CreateResource {
 
 export function queryCreateResource(id2: number, context: Context) {
   let thisEvent = AppStorage.Get<CreateResource>("thisEvent")
-  let editEvent = AppStorage.Get<boolean>("editEvent")
+  // let editEvent = AppStorage.Get<boolean>("editEvent")
 
   const showTaskImpl: ShowTaskInterface = new ShowTaskImpl();
   const taskImpl: TaskInterface = new TaskImpl();
@@ -965,8 +965,8 @@ export function queryCreateResource(id2: number, context: Context) {
       console.log("query id1:" + id1)
       if (taskData != null) {
         thisEvent = taskDataToCreateResource(taskData)
-        editEvent = true
-        AppStorage.Set<boolean>("editEvent", editEvent)
+        // editEvent = true
+        // AppStorage.Set<boolean>("editEvent", editEvent)
         AppStorage.Set<CreateResource>("thisEvent", thisEvent)
         console.log("set done :" + AppStorage.Get<boolean>("editEvent"))
       }

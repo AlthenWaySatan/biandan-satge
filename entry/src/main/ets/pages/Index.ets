@@ -28,6 +28,7 @@ import { SiderFolder } from './element/SiderFolder';
 import { EditTitleOne, TitleOne, TitleTwo } from './element/Title';
 import { AddEventButton } from './element/AddEventButton';
 import { ToolBar } from './element/ToolBar';
+import { EventDetailPanel } from './view/EventDetailPanel';
 
 PersistentStorage.PersistProp('IsFirstIn_', 0)
 PersistentStorage.PersistProp('AutoBackUpSwitch', 0)
@@ -149,6 +150,7 @@ struct Index {
    */
   @StorageLink('showFolderAddPanel') showFolderAddPanel: boolean = false
   @StorageLink('showEventAddPanel') showEventAddPanel: boolean = false
+  @StorageLink('showDetailPanel') showDetailPanel: boolean = false
 
   /*-------------------------------------------------------------------------------------------------------------------*/
   //是否编辑模式
@@ -415,7 +417,7 @@ struct Index {
           .onClick(() => {
             this.showEventAddPanel = false
           })
-          .opacity(this.showEventAddPanel ? 1 : 0)
+          .opacity(this.showEventAddPanel || this.showDetailPanel ? 1 : 0)
           .animation({
             delay: 0,
             duration: 200, // 动画时长
@@ -424,11 +426,16 @@ struct Index {
       }
       .width('100%')
       .height('100%')
-      .visibility(this.showEventAddPanel ? Visibility.Visible : Visibility.None)
+      .visibility(this.showEventAddPanel || this.showDetailPanel ? Visibility.Visible : Visibility.None)
 
       if (this.showEventAddPanel) {
         Column() {
           EventAddPanel()
+        }.padding({ top: this.statusBarHeight / this.screenDensity })
+      }
+      if (this.showDetailPanel) {
+        Column() {
+          EventDetailPanel()
         }.padding({ top: this.statusBarHeight / this.screenDensity })
       }
 
@@ -487,6 +494,10 @@ struct Index {
     }
     if (this.showEventAddPanel) {
       this.showEventAddPanel = false
+      return true
+    }
+    if (this.showDetailPanel) {
+      this.showDetailPanel = false
       return true
     }
     if (this.isEdit) {
