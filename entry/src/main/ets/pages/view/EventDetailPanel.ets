@@ -164,7 +164,7 @@ export struct EventDetailPanel {
                     if (this.showDetailPanel) {
                       Row() {
                         Text(this.thisEvent.name)
-                          .fontSize(18)
+                          .fontSize(16)
                           .fontWeight(FontWeight.Medium)
                           .fontColor($r('app.color.text_level1'))
                       }
