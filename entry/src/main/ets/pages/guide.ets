@@ -159,7 +159,7 @@ struct guide {
 
       StepperItem() {
         Swiper() {
-          this.stepPage({img: $r('app.media.img_todolist'), title: '修改待办事项', info: '点击修改待办，长按进入页面编辑', icon: false})
+          this.stepPage({img: $r('app.media.img_todolist'), title: '修改待办事项', info: '点击查看待办详情和待办编辑，长按进入页面编辑', icon: false})
           this.stepPage({img: $r('app.media.img_todolist2'), title: '完成待办事项', info: '点击完成一次，长按取消一次', icon: false})
           this.stepPage({img: $r('app.media.img_todolist3'), title: '待办事项标记', info: '三种图标对应三种状态：\n待完成，正在完成，已完成\n不同颜色也对应不同分类 ', icon: false})
         }
