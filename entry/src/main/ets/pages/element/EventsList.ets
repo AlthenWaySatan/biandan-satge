@@ -260,28 +260,12 @@ export struct EventsList {
 
 @Component
 export struct EventsList_little {
-  @Link doneNum: number
   @Link showResource: [string, Resource, number][]
   @State titleColor: Resource = $r('app.color.text_level1')
 
   build() {
     Column() {
       List() {
-        ListItem() {
-          Text(this.doneNum + ' / ' + this.showResource.length)
-            .fontSize(10)
-            .maxLines(1)
-            .fontWeight(FontWeight.Medium)
-            .textOverflow({ overflow: TextOverflow.Ellipsis })
-            .fontColor(this.titleColor)
-            .textAlign(TextAlign.Center)
-        }
-        .padding({ left: 3, right: 3 })
-        // .justifyContent(FlexAlign.Center)
-        .height(14)
-        .width('100%')
-        .borderRadius(4)
-
         ForEach(this.showResource, (item: [string, string, number]) => {
           ListItem() {
             Column() {

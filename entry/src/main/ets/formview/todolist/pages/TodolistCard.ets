@@ -180,7 +180,7 @@ struct TodolistCard {
           .width(0)
           .flexGrow(1)
 
-          if (this.widthLength == 4)
+          if (this.widthLength >= 4)
           Row() {
             Text(this.Folder)
               .fontSize(10)
@@ -191,7 +191,7 @@ struct TodolistCard {
           }
           .margin({ right: 4 })
 
-          if (this.widthLength == 4)
+          if (this.widthLength >= 4)
           Row() {
             Text(this.doneStr)
               .fontSize(10)
@@ -261,7 +261,7 @@ struct TodolistCard {
               .width(0)
               .flexGrow(2)
 
-              if (this.widthLength == 4)
+              if (this.widthLength >= 4)
               Row() {
                 Blank()
                   .flexGrow(1)
