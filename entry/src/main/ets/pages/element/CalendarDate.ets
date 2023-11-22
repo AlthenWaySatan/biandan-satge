@@ -121,6 +121,6 @@ export struct CalendarDate {
         this.openCalendar = true
       })
     }
-    .padding(3)
+    .padding(1)
   }
 }

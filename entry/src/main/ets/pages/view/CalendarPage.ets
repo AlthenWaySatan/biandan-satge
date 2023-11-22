@@ -56,7 +56,7 @@ export struct CalendarPage {
       .width('100%')
       .borderRadius(8)
     }
-    .padding(3)
+    .padding(1)
     .height('100%')
     .layoutWeight(1)
   }
